@@ -1,0 +1,2834 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Guia didático e interativo das operações de uma árvore de busca balanceada aumentada para o grupo 5."
+    />
+    <title>Operações em árvores · Grupo 5</title>
+    <style>
+      :root {
+        --ink: #172338;
+        --muted: #5d6b80;
+        --paper: #f5f7fb;
+        --panel: #ffffff;
+        --line: #d9e0eb;
+        --navy: #142447;
+        --blue: #2f5bd3;
+        --blue-soft: #eaf0ff;
+        --mint: #087d69;
+        --mint-soft: #e4f7f1;
+        --amber: #a66700;
+        --amber-soft: #fff3d9;
+        --red: #b43c4a;
+        --red-soft: #fff0f2;
+        --violet: #6950ad;
+        --violet-soft: #f0ecff;
+        --shadow: 0 12px 30px rgba(20, 36, 71, 0.07);
+        --radius: 18px;
+        --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        --sans:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: var(--sans);
+        line-height: 1.58;
+      }
+      a {
+        color: var(--blue);
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      a:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid #f0b429;
+        outline-offset: 3px;
+      }
+      .shell {
+        width: min(1180px, calc(100% - 34px));
+        margin: 0 auto;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(245, 247, 251, 0.95);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(10px);
+      }
+      .topbar-inner {
+        min-height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      .brand {
+        color: var(--navy);
+        font-size: 0.78rem;
+        font-weight: 850;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .nav {
+        display: flex;
+        gap: 4px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .nav::-webkit-scrollbar {
+        display: none;
+      }
+      .nav a {
+        padding: 8px 10px;
+        border-radius: 9px;
+        color: var(--muted);
+        font-size: 0.84rem;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .nav a:hover {
+        background: var(--blue-soft);
+        color: var(--blue);
+      }
+
+      .hero {
+        color: #fff;
+        background: var(--navy);
+        padding: 78px 0 68px;
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(290px, 0.75fr);
+        gap: 54px;
+        align-items: end;
+      }
+      .eyebrow,
+      .section-kicker {
+        font-size: 0.76rem;
+        font-weight: 850;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+      .eyebrow {
+        color: #aec1ff;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        line-height: 1.12;
+        letter-spacing: -0.035em;
+      }
+      h1 {
+        max-width: 760px;
+        margin: 16px 0 18px;
+        font-size: clamp(2.8rem, 6vw, 5.4rem);
+      }
+      h2 {
+        margin: 8px 0 13px;
+        font-size: clamp(2rem, 4vw, 3.3rem);
+      }
+      h3 {
+        margin: 0 0 10px;
+        font-size: 1.3rem;
+      }
+      h4 {
+        margin: 0 0 6px;
+        font-size: 1rem;
+      }
+      p {
+        margin: 0 0 14px;
+      }
+      .hero p {
+        max-width: 710px;
+        color: #d9e2f5;
+        font-size: 1.12rem;
+      }
+      .hero-note {
+        border-left: 3px solid #7c98f4;
+        padding-left: 20px;
+        color: #d9e2f5;
+      }
+      .hero-note strong {
+        display: block;
+        margin-bottom: 7px;
+        color: #fff;
+        font-size: 1.05rem;
+      }
+      .hero-actions,
+      .button-row {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .hero-actions {
+        margin-top: 27px;
+      }
+      .button {
+        display: inline-block;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        padding: 10px 14px;
+        background: var(--blue);
+        color: #fff;
+        font-weight: 800;
+        text-decoration: none;
+      }
+      .button:hover {
+        background: #4a70dc;
+      }
+      .button.secondary {
+        border-color: #7288c5;
+        background: transparent;
+      }
+      .button.secondary:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .hero-code {
+        margin: 17px 0 0;
+        padding: 17px;
+        overflow: auto;
+        border: 1px solid #384c80;
+        border-radius: 13px;
+        background: #0d1935;
+        color: #e3eaff;
+        font: 0.83rem/1.55 var(--mono);
+      }
+      .code-comment {
+        color: #91a9f0;
+      }
+
+      main {
+        padding: 54px 0 100px;
+      }
+      section {
+        margin: 0 0 82px;
+        scroll-margin-top: 84px;
+      }
+      .section-kicker {
+        color: var(--blue);
+      }
+      .lead {
+        max-width: 790px;
+        color: var(--muted);
+        font-size: 1.08rem;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .panel {
+        padding: 23px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+      .panel.blue {
+        border-color: #cbd7ff;
+        background: var(--blue-soft);
+      }
+      .panel.mint {
+        border-color: #bde8dd;
+        background: var(--mint-soft);
+      }
+      .panel.amber {
+        border-color: #f0d39c;
+        background: var(--amber-soft);
+      }
+      .panel.red {
+        border-color: #efc2ca;
+        background: var(--red-soft);
+      }
+      .panel.violet {
+        border-color: #d7cdfc;
+        background: var(--violet-soft);
+      }
+      .small {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .label {
+        display: inline-flex;
+        padding: 4px 9px;
+        border-radius: 999px;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-size: 0.76rem;
+        font-weight: 850;
+      }
+      .callout {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        margin: 17px 0;
+        padding: 14px 16px;
+        border-left: 4px solid var(--blue);
+        border-radius: 0 11px 11px 0;
+        background: #f0f4ff;
+      }
+      .callout strong {
+        display: block;
+        margin-bottom: 3px;
+      }
+      .callout.mint {
+        border-left-color: var(--mint);
+        background: var(--mint-soft);
+      }
+      .callout.amber {
+        border-left-color: #e4a226;
+        background: var(--amber-soft);
+      }
+      .callout.red {
+        border-left-color: var(--red);
+        background: var(--red-soft);
+      }
+      .muted {
+        color: var(--muted);
+      }
+      code {
+        color: #294fae;
+        font-family: var(--mono);
+        font-size: 0.91em;
+      }
+      pre {
+        margin: 0;
+        overflow: auto;
+        padding: 17px;
+        border-radius: 12px;
+        background: #111d38;
+        color: #e4ebff;
+        font: 0.82rem/1.6 var(--mono);
+      }
+      ul,
+      ol {
+        padding-left: 21px;
+      }
+      li + li {
+        margin-top: 7px;
+      }
+      details {
+        border-top: 1px solid var(--line);
+        padding: 14px 0;
+      }
+      details:last-child {
+        border-bottom: 1px solid var(--line);
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 820;
+      }
+
+      .map {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin-top: 25px;
+      }
+      .map a {
+        min-height: 92px;
+        padding: 13px 12px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: #fff;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .map a:hover {
+        border-color: var(--blue);
+        transform: translateY(-1px);
+      }
+      .map b {
+        display: block;
+        color: var(--blue);
+        font-size: 0.75rem;
+      }
+      .map span {
+        display: block;
+        margin-top: 7px;
+        font-size: 0.88rem;
+        line-height: 1.3;
+      }
+      .term-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 9px;
+      }
+      .term {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: #fbfcff;
+      }
+      .term strong {
+        display: block;
+        color: var(--blue);
+        font-size: 0.84rem;
+      }
+      .term span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.81rem;
+        line-height: 1.38;
+      }
+      .anatomy {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(270px, 0.8fr);
+        gap: 18px;
+        align-items: center;
+      }
+      .anatomy-svg {
+        width: 100%;
+        height: 300px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: #fbfcff;
+      }
+      .anatomy-svg line {
+        stroke: #afbdd6;
+        stroke-width: 2;
+      }
+      .anatomy-svg circle {
+        fill: #fff;
+        stroke: var(--blue);
+        stroke-width: 3;
+      }
+      .anatomy-svg text {
+        fill: var(--navy);
+        font-size: 15px;
+        font-weight: 850;
+        text-anchor: middle;
+      }
+      .anatomy-svg .note {
+        fill: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        text-anchor: start;
+      }
+      .anatomy-list {
+        display: grid;
+        gap: 9px;
+      }
+      .anatomy-item {
+        padding: 11px 12px;
+        border-left: 3px solid var(--blue);
+        background: var(--blue-soft);
+      }
+      .anatomy-item strong {
+        display: block;
+        color: var(--navy);
+      }
+      .anatomy-item span {
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .operation-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .operation-card {
+        padding: 19px;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 7px 18px rgba(20, 36, 71, 0.04);
+      }
+      .operation-card header {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 9px;
+      }
+      .operation-code {
+        color: var(--blue);
+        font: 850 1rem var(--mono);
+      }
+      .complexity {
+        padding: 4px 8px;
+        border-radius: 7px;
+        background: var(--mint-soft);
+        color: var(--mint);
+        font: 800 0.76rem var(--mono);
+        white-space: nowrap;
+      }
+      .operation-card ol {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+      .operation-card li strong {
+        color: var(--ink);
+      }
+      .operation-card details {
+        margin-top: 12px;
+        padding-bottom: 0;
+      }
+      .operation-card summary {
+        color: var(--blue);
+        font-size: 0.88rem;
+      }
+      .operation-card details p {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .lab-header {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      .lab-controls {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: end;
+      }
+      .field {
+        display: grid;
+        gap: 5px;
+      }
+      .field label {
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+      .field input {
+        width: 112px;
+        padding: 9px 10px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        color: var(--ink);
+      }
+      .mini-button {
+        border: 1px solid #c4cee1;
+        border-radius: 9px;
+        padding: 9px 11px;
+        background: #fff;
+        color: var(--navy);
+        font-weight: 800;
+      }
+      .mini-button:hover {
+        border-color: var(--blue);
+        background: var(--blue-soft);
+        color: var(--blue);
+      }
+      .mini-button.primary {
+        border-color: var(--blue);
+        background: var(--blue);
+        color: #fff;
+      }
+      .mini-button.primary:hover {
+        background: #4a70dc;
+        color: #fff;
+      }
+      .mini-button.danger {
+        border-color: #ebb8c0;
+        background: var(--red-soft);
+        color: var(--red);
+      }
+      .lab-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(285px, 0.65fr);
+        gap: 18px;
+        margin-top: 20px;
+      }
+      .lab-grid > * {
+        min-width: 0;
+      }
+      .tree-frame {
+        min-width: 0;
+        min-height: 405px;
+        display: grid;
+        place-items: center;
+        overflow: auto;
+        border: 1px dashed #c8d3e7;
+        border-radius: 14px;
+        background: #fbfcff;
+      }
+      #tree-svg {
+        display: block;
+        width: 100%;
+        min-width: 650px;
+        height: 405px;
+      }
+      .tree-edge {
+        stroke: #aebbd2;
+        stroke-width: 2;
+      }
+      .tree-node circle {
+        fill: #fff;
+        stroke: var(--blue);
+        stroke-width: 3;
+        transition:
+          fill 0.2s ease,
+          stroke 0.2s ease;
+      }
+      .tree-node text.key {
+        fill: var(--navy);
+        font-size: 15px;
+        font-weight: 900;
+        text-anchor: middle;
+      }
+      .tree-node text.meta {
+        fill: var(--muted);
+        font: 10px var(--mono);
+        text-anchor: middle;
+      }
+      .tree-node.active circle {
+        fill: var(--amber-soft);
+        stroke: #d68a14;
+        stroke-width: 4;
+      }
+      .tree-node.answer circle {
+        fill: var(--mint-soft);
+        stroke: var(--mint);
+        stroke-width: 4;
+      }
+      .tree-node.bad circle {
+        fill: var(--red-soft);
+        stroke: var(--red);
+        stroke-width: 4;
+      }
+      .tree-empty {
+        fill: var(--muted);
+        font-size: 15px;
+        text-anchor: middle;
+      }
+      .status {
+        margin-top: 13px;
+        padding: 11px 13px;
+        border-radius: 10px;
+        background: var(--blue-soft);
+        color: #29488f;
+        font-size: 0.9rem;
+      }
+      .status.success {
+        background: var(--mint-soft);
+        color: #086b59;
+      }
+      .status.warn {
+        background: var(--amber-soft);
+        color: #7c5000;
+      }
+      .status.error {
+        background: var(--red-soft);
+        color: #96323e;
+      }
+      .metric-list {
+        display: grid;
+        gap: 9px;
+      }
+      .metric {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--line);
+      }
+      .metric:last-child {
+        border-bottom: 0;
+      }
+      .metric span {
+        color: var(--muted);
+      }
+      .metric strong {
+        font-family: var(--mono);
+      }
+      .trace-log {
+        min-height: 175px;
+        max-height: 230px;
+        overflow: auto;
+        margin-top: 14px;
+        padding: 12px;
+        border-radius: 11px;
+        background: #111d38;
+        color: #dbe5ff;
+        font: 0.77rem/1.55 var(--mono);
+      }
+      .trace-log div + div {
+        margin-top: 5px;
+      }
+      .query-box {
+        margin-top: 16px;
+        padding-top: 15px;
+        border-top: 1px solid var(--line);
+      }
+      .query-box h4 {
+        color: var(--navy);
+      }
+      .query-row {
+        display: flex;
+        gap: 7px;
+        align-items: end;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .query-row .field {
+        flex: 1;
+        min-width: 88px;
+      }
+      .query-row .field input {
+        width: 100%;
+      }
+      .node-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+        font-size: 0.8rem;
+      }
+      .node-table th,
+      .node-table td {
+        padding: 8px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+      }
+      .node-table th {
+        color: var(--muted);
+        font-size: 0.7rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .demo-box {
+        margin-top: 18px;
+        padding: 15px;
+        border: 1px solid #d7cdfc;
+        border-radius: 13px;
+        background: var(--violet-soft);
+      }
+      .demo-box .button-row {
+        margin-top: 10px;
+      }
+
+      .step-list {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin-top: 20px;
+      }
+      .step {
+        padding: 13px 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+      }
+      .step b {
+        display: block;
+        color: var(--blue);
+        font-size: 0.75rem;
+      }
+      .step strong {
+        display: block;
+        margin-top: 6px;
+        font-size: 0.9rem;
+      }
+      .step span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        line-height: 1.35;
+      }
+      .complexity-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      .complexity-table th,
+      .complexity-table td {
+        padding: 12px 13px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+      .complexity-table th {
+        color: var(--muted);
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .complexity-table td:nth-child(2) {
+        color: var(--blue);
+        font-family: var(--mono);
+        white-space: nowrap;
+      }
+      .checklist {
+        display: grid;
+        gap: 9px;
+      }
+      .check-item {
+        display: flex;
+        gap: 9px;
+        align-items: flex-start;
+        padding: 11px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+      }
+      .check-item input {
+        margin-top: 4px;
+        accent-color: var(--mint);
+      }
+      .check-item.done {
+        border-color: #bce6dc;
+        background: var(--mint-soft);
+      }
+      .quiz {
+        display: grid;
+        gap: 13px;
+      }
+      .quiz-question {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+      }
+      .quiz-question legend {
+        padding: 0 5px;
+        font-weight: 820;
+      }
+      .quiz-question label {
+        display: block;
+        margin-top: 6px;
+        padding: 7px 9px;
+        border-radius: 7px;
+        cursor: pointer;
+        color: var(--muted);
+      }
+      .quiz-question label:hover {
+        background: var(--blue-soft);
+        color: var(--ink);
+      }
+      .quiz-result {
+        display: none;
+        margin-top: 12px;
+        padding: 12px 13px;
+        border-radius: 10px;
+        background: var(--mint-soft);
+        color: #086b59;
+      }
+      .quiz-result.show {
+        display: block;
+      }
+      footer {
+        padding: 28px 0 48px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+      footer p {
+        margin: 5px 0;
+      }
+
+      @media (max-width: 920px) {
+        .hero-grid,
+        .anatomy,
+        .lab-grid {
+          grid-template-columns: 1fr;
+        }
+        .map {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .term-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .step-list {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 680px) {
+        .shell {
+          width: min(100% - 22px, 570px);
+        }
+        .topbar-inner {
+          display: block;
+          padding: 10px 0 7px;
+        }
+        .nav {
+          margin-top: 7px;
+        }
+        .hero {
+          padding: 55px 0 50px;
+        }
+        .grid-2,
+        .grid-3,
+        .operation-grid {
+          grid-template-columns: 1fr;
+        }
+        .map,
+        .term-grid,
+        .step-list {
+          grid-template-columns: 1fr 1fr;
+        }
+        .panel {
+          padding: 18px;
+        }
+        .tree-frame {
+          min-height: 330px;
+        }
+        #tree-svg {
+          height: 330px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <div class="brand">Árvores · Operações</div>
+        <nav class="nav" aria-label="Navegação principal">
+          <a href="#inicio">Começo</a>
+          <a href="#vocabulario">Vocabulário</a>
+          <a href="#operacoes">Operações</a>
+          <a href="#laboratorio">Laboratório</a>
+          <a href="#grupo5">Grupo 5</a>
+          <a href="#revisao">Revisão</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="hero" id="inicio">
+      <div class="shell hero-grid">
+        <div>
+          <div class="eyebrow">Guia interativo · sem conhecimento prévio</div>
+          <h1>Entenda o que uma árvore faz antes de tentar implementá-la.</h1>
+          <p>
+            Uma árvore de busca balanceada pode parecer uma coleção de nós e
+            rotações. Aqui, cada operação vira uma pergunta concreta, um caminho
+            visível e uma regra que precisa continuar verdadeira.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="#vocabulario">Começar pelo vocabulário</a>
+            <a class="button secondary" href="#laboratorio"
+              >Abrir o laboratório</a
+            >
+          </div>
+        </div>
+        <div class="hero-note">
+          <strong>O contrato do grupo 5</strong>
+          A estrutura recebe chaves inteiras e oferece seis operações. A busca e
+          a atualização usam a ordenação da árvore.
+          <code style="color: #b8c8ff">rank</code>,
+          <code style="color: #b8c8ff">select</code> e
+          <code style="color: #b8c8ff">range_agg</code> usam informações extras
+          guardadas nos nós.
+          <pre
+            class="hero-code"
+          ><span class="code-comment"># chamadas que o grupo precisa dominar</span>
+insert(k)
+delete(k)
+search(k)
+rank(k)
+select(i)
+range_agg(a, b)  <span class="code-comment"># máximo no grupo 5</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <main class="shell">
+      <section aria-labelledby="mapa-title">
+        <div class="section-kicker">Como usar</div>
+        <h2 id="mapa-title">Siga a sequência e teste tudo no caminho.</h2>
+        <p class="lead">
+          Se este é seu primeiro contato com árvores, leia as seções na ordem.
+          Se você já conhece BST e AVL, vá ao laboratório e use os cartões para
+          revisar os detalhes que costumam causar erros silenciosos.
+        </p>
+        <div class="map" aria-label="Mapa de aprendizagem">
+          <a href="#vocabulario"
+            ><b>01 · linguagem</b
+            ><span>Nó, raiz, folha, subárvore e chave</span></a
+          >
+          <a href="#ideia"
+            ><b>02 · ideia</b
+            ><span>Por que a ordenação reduz o caminho</span></a
+          >
+          <a href="#operacoes"
+            ><b>03 · ações</b><span>As seis operações, passo a passo</span></a
+          >
+          <a href="#laboratorio"
+            ><b>04 · prática</b><span>Observe a árvore mudar ao vivo</span></a
+          >
+          <a href="#grupo5"
+            ><b>05 · recorte</b
+            ><span>Onde o grupo 5 aparece na história</span></a
+          >
+        </div>
+      </section>
+
+      <section id="vocabulario" aria-labelledby="vocab-title">
+        <div class="section-kicker">01 · vocabulário</div>
+        <h2 id="vocab-title">Primeiro, vamos dar nome às peças.</h2>
+        <p class="lead">
+          Uma árvore não é um desenho de círculos. Ela é uma coleção de unidades
+          ligadas. Cada palavra abaixo indica uma posição ou uma relação entre
+          essas unidades.
+        </p>
+        <div class="panel blue">
+          <h3>Uma tradução simples para este projeto</h3>
+          <p>
+            <strong>Chave</strong> é o número que identifica um elemento. Para o
+            grupo 5, imagine que a chave seja o ID de um livro. A árvore compara
+            IDs, não títulos, autores ou o livro inteiro.
+          </p>
+          <div class="term-grid">
+            <div class="term">
+              <strong>nó</strong
+              ><span
+                >Uma unidade que guarda uma chave e referências para outros
+                nós.</span
+              >
+            </div>
+            <div class="term">
+              <strong>raiz</strong
+              ><span
+                >O nó no topo. A partir dele começa qualquer percurso.</span
+              >
+            </div>
+            <div class="term">
+              <strong>filho</strong
+              ><span>Um nó que está diretamente abaixo de outro nó.</span>
+            </div>
+            <div class="term">
+              <strong>pai</strong
+              ><span>O nó imediatamente acima de um filho.</span>
+            </div>
+            <div class="term">
+              <strong>folha</strong
+              ><span>Um nó sem filhos. Ele é uma ponta da árvore.</span>
+            </div>
+            <div class="term">
+              <strong>subárvore</strong
+              ><span
+                >Um nó e tudo que fica abaixo dele, como uma árvore menor.</span
+              >
+            </div>
+            <div class="term">
+              <strong>altura</strong
+              ><span
+                >O número de níveis no caminho mais longo abaixo de um nó.</span
+              >
+            </div>
+            <div class="term">
+              <strong>invariante</strong
+              ><span
+                >Uma regra que deve continuar verdadeira depois de cada
+                operação.</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="anatomy" style="margin-top: 20px">
+          <svg
+            class="anatomy-svg"
+            viewBox="0 0 620 300"
+            role="img"
+            aria-label="Exemplo de árvore com raiz, filhos, folha e subárvore"
+          >
+            <line x1="310" y1="66" x2="180" y2="138"></line>
+            <line x1="310" y1="66" x2="440" y2="138"></line>
+            <line x1="180" y1="154" x2="112" y2="222"></line>
+            <line x1="180" y1="154" x2="250" y2="222"></line>
+            <circle cx="310" cy="58" r="27"></circle>
+            <circle cx="180" cy="146" r="27"></circle>
+            <circle cx="440" cy="146" r="27"></circle>
+            <circle cx="112" cy="230" r="27"></circle>
+            <circle cx="250" cy="230" r="27"></circle>
+            <text x="310" y="64">50</text>
+            <text x="180" y="152">30</text>
+            <text x="440" y="152">70</text>
+            <text x="112" y="236">20</text>
+            <text x="250" y="236">40</text>
+            <text class="note" x="360" y="42">raiz</text>
+            <text class="note" x="70" y="180">folha</text>
+            <text class="note" x="465" y="112">filho</text>
+            <text class="note" x="17" y="278">subárvore de 30</text>
+          </svg>
+          <div class="anatomy-list">
+            <div class="anatomy-item">
+              <strong>A regra da busca</strong
+              ><span
+                >Chaves menores que 50 ficam à esquerda. Chaves maiores ficam à
+                direita.</span
+              >
+            </div>
+            <div class="anatomy-item">
+              <strong>O que é um caminho?</strong
+              ><span
+                >É a sequência de nós visitados. Para procurar 40, seguimos 50 →
+                30 → 40.</span
+              >
+            </div>
+            <div class="anatomy-item">
+              <strong>O que é uma subárvore?</strong
+              ><span
+                >O nó 30, mais 20 e 40, forma uma subárvore. Ela pode ser
+                resumida por metadados.</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="ideia" aria-labelledby="idea-title">
+        <div class="section-kicker">02 · ideia central</div>
+        <h2 id="idea-title">
+          A árvore economiza trabalho descartando caminhos.
+        </h2>
+        <p class="lead">
+          Em uma sequência sem ordem, procurar uma chave pode exigir olhar item
+          por item. Em uma árvore de busca, cada comparação elimina uma parte
+          inteira do espaço de procura.
+        </p>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Exemplo de busca por 40</h3>
+            <ol>
+              <li>
+                Começamos na raiz, 50. Como 40 é menor, ignoramos toda a parte
+                direita.
+              </li>
+              <li>
+                Chegamos a 30. Como 40 é maior, seguimos para o filho direito.
+              </li>
+              <li>Chegamos a 40. Encontramos a chave e paramos.</li>
+            </ol>
+            <div class="callout mint">
+              <div>→</div>
+              <div>
+                <strong>Caminho visitado</strong><code>50 → 30 → 40</code>. Os
+                outros nós não foram necessários para responder.
+              </div>
+            </div>
+          </div>
+          <div class="panel amber">
+            <h3>Mas a árvore pode ficar torta.</h3>
+            <p>
+              Se inserirmos 10, depois 20, depois 30, depois 40, a regra de
+              ordenação continua correta, mas a forma pode virar quase uma
+              lista.
+            </p>
+            <p>
+              Uma árvore AVL evita esse crescimento descontrolado. Depois de uma
+              mudança, ela verifica a diferença de altura entre os lados e faz
+              uma <strong>rotação</strong> quando necessário.
+            </p>
+            <div class="callout amber">
+              <div>!</div>
+              <div>
+                <strong>Invariante de ordenação</strong>Balancear muda a forma.
+                Não muda a ordem: menores continuam à esquerda e maiores
+                continuam à direita.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="step-list"
+          aria-label="Camadas que compõem a árvore do grupo"
+        >
+          <div class="step">
+            <b>camada 1</b><strong>BST</strong
+            ><span>Organiza menores à esquerda e maiores à direita.</span>
+          </div>
+          <div class="step">
+            <b>camada 2</b><strong>AVL</strong
+            ><span>Limita a altura com rotações locais.</span>
+          </div>
+          <div class="step">
+            <b>camada 3</b><strong>size</strong
+            ><span>Conta quantos nós existem em cada subárvore.</span>
+          </div>
+          <div class="step">
+            <b>camada 4</b><strong>subtree_max</strong
+            ><span>Guarda o maior valor de cada subárvore.</span>
+          </div>
+          <div class="step">
+            <b>camada 5</b><strong>consultas</strong
+            ><span
+              >Usa os resumos para responder rank, select e intervalo.</span
+            >
+          </div>
+        </div>
+        <div class="callout red">
+          <div>!</div>
+          <div>
+            <strong>O erro mais traiçoeiro</strong>Uma busca simples pode
+            continuar funcionando mesmo quando <code>size</code> ou
+            <code>subtree_max</code> estão errados. Por isso, toda rotação
+            precisa atualizar os metadados dos nós que mudaram de posição.
+          </div>
+        </div>
+      </section>
+
+      <section id="operacoes" aria-labelledby="ops-title">
+        <div class="section-kicker">03 · contrato</div>
+        <h2 id="ops-title">Seis operações, seis perguntas diferentes.</h2>
+        <p class="lead">
+          Leia o verbo antes do código. A operação define a pergunta; a
+          estrutura de dados define como respondê-la com segurança e eficiência.
+        </p>
+        <div class="operation-grid">
+          <article class="operation-card">
+            <header>
+              <div>
+                <span class="label">mudar o conjunto</span>
+                <h3 class="operation-code">insert(k)</h3>
+              </div>
+              <span class="complexity">O(log n)</span>
+            </header>
+            <p>
+              Coloca a chave <code>k</code> na árvore, caso ela ainda não
+              exista.
+            </p>
+            <ol>
+              <li>
+                <strong>Comece na raiz.</strong> Compare <code>k</code> com a
+                chave do nó.
+              </li>
+              <li>
+                <strong>Escolha um lado.</strong> Menor vai para a esquerda;
+                maior vai para a direita.
+              </li>
+              <li>
+                <strong>Desça recursivamente</strong> até encontrar uma posição
+                vazia.
+              </li>
+              <li>
+                <strong>Crie o novo nó</strong> e volte pelo caminho
+                recalculando <code>height</code>, <code>size</code> e
+                <code>subtree_max</code>.
+              </li>
+              <li>
+                <strong>Rebalanceie.</strong> Se a altura ficou desigual, faça
+                uma rotação.
+              </li>
+            </ol>
+            <details>
+              <summary>
+                Por que precisamos descer até encontrar uma posição vazia?
+              </summary>
+              <p>
+                A chave <code>k</code> pode ficar entre duas outras chaves
+                quando olhamos para a ordem numérica, mas a árvore não possui
+                uma “vaga entre nós” abstrata. Cada nó já ocupa uma posição. As
+                posições disponíveis são os ponteiros vazios à esquerda ou à
+                direita de algum nó.
+              </p>
+              <pre aria-label="Inserção da chave 30 em uma árvore de busca">
+Antes:
+  20
+    └─ direita: 40
+       esquerda: vazio
+
+insert(30):
+  30 &gt; 20 → direita
+  30 &lt; 40 → esquerda
+  esquerda de 40 está vazia
+
+Depois:
+  20
+    └─ direita: 40
+       └─ esquerda: 30</pre
+              >
+              <p>
+                Por isso, <code>insert(30)</code> desce pela direita de 20,
+                depois pela esquerda de 40 e cria o novo nó quando encontra esse
+                ponteiro vazio. O nó recém-criado é uma folha naquele instante.
+                Ele pode ser uma chave intermediária na ordem geral, pois fica
+                entre 20 e 40, mas ainda assim é uma folha estruturalmente,
+                porque não possui filhos.
+              </p>
+              <p>
+                A recursão é apenas uma forma natural de escrever essa descida.
+                Um laço iterativo também poderia seguir os mesmos ponteiros. O
+                ponto indispensável é continuar comparando até encontrar o local
+                vazio. Em uma AVL, a função então retorna pelo mesmo caminho
+                para atualizar <code>height</code>, <code>size</code> e
+                <code>subtree_max</code>, além de verificar se alguma rotação é
+                necessária.
+              </p>
+            </details>
+            <details>
+              <summary>O que fazer com uma chave repetida?</summary>
+              <p>
+                Defina o contrato antes de codificar. Neste guia, uma chave
+                repetida não cria um segundo nó. A operação informa que nada
+                mudou. Isso evita ambiguidade em <code>rank</code> e
+                <code>select</code>.
+              </p>
+            </details>
+          </article>
+          <article class="operation-card">
+            <header>
+              <div>
+                <span class="label">mudar o conjunto</span>
+                <h3 class="operation-code">delete(k)</h3>
+              </div>
+              <span class="complexity">O(log n)</span>
+            </header>
+            <p>Retira a chave <code>k</code>, se ela estiver presente.</p>
+            <ol>
+              <li>
+                <strong>Procure a chave</strong> como em <code>search</code>.
+              </li>
+              <li>
+                <strong>Sem filho:</strong> remova o nó e deixe o pai apontar
+                para vazio.
+              </li>
+              <li>
+                <strong>Com um filho:</strong> o filho ocupa diretamente o lugar
+                do nó.
+              </li>
+              <li>
+                <strong>Com dois filhos:</strong> copie a menor chave da
+                subárvore direita, ou a maior da esquerda, e remova a cópia na
+                posição antiga.
+              </li>
+              <li>
+                <strong>Suba pelo caminho</strong> atualizando metadados e
+                fazendo rotações necessárias.
+              </li>
+            </ol>
+            <details>
+              <summary>E se o sucessor tiver filhos?</summary>
+              <p>
+                O sucessor é a menor chave da subárvore direita. Ele nunca pode
+                ter um filho à esquerda. Se tivesse, esse filho seria ainda
+                menor e o nó escolhido não seria o sucessor. Porém, ele pode ter
+                um filho à direita.
+              </p>
+              <pre aria-label="Remoção do nó 40 usando o sucessor 50">
+Antes:
+  40                         sucessor: 50
+    └─ direita: 60
+       └─ esquerda: 50
+          └─ direita: 55
+
+1. Copiamos 50 para o lugar de 40.
+2. Removemos o 50 antigo.
+3. O filho direito 55 ocupa a posição antiga de 50.
+
+Depois:
+  50
+    └─ direita: 60
+       └─ esquerda: 55</pre
+              >
+              <p>
+                Assim, o sucessor antigo é removido como um nó com zero ou um
+                filho, que é um caso mais simples. Não deixamos duas cópias no
+                resultado. Apenas movemos a chave para preencher o local
+                removido e depois conectamos o possível filho direito ao pai
+                antigo.
+              </p>
+              <p>
+                Depois dessa substituição, a AVL sobe pelo caminho que foi
+                alterado, recalcula os metadados e executa rotações se o
+                equilíbrio tiver sido afetado.
+              </p>
+            </details>
+            <details>
+              <summary>
+                Por que a remoção com dois filhos parece duplicar?
+              </summary>
+              <p>
+                Ela não mantém duas cópias no resultado. Primeiro usamos uma
+                chave vizinha para preencher o buraco. Depois removemos o nó
+                original daquela chave. O conjunto final contém cada chave uma
+                única vez.
+              </p>
+            </details>
+          </article>
+          <article class="operation-card">
+            <header>
+              <div>
+                <span class="label">perguntar presença</span>
+                <h3 class="operation-code">search(k)</h3>
+              </div>
+              <span class="complexity">O(log n)</span>
+            </header>
+            <p>Responde se a chave está no conjunto atual.</p>
+            <ol>
+              <li>Comece na raiz.</li>
+              <li>
+                Se a chave do nó é igual a <code>k</code>, responda
+                <strong>FOUND</strong>.
+              </li>
+              <li>Se <code>k</code> é menor, continue na esquerda.</li>
+              <li>Se <code>k</code> é maior, continue na direita.</li>
+              <li>Se chegar a vazio, responda <strong>NOT_FOUND</strong>.</li>
+            </ol>
+            <details>
+              <summary>O que testar no laboratório?</summary>
+              <p>
+                Busque uma chave existente, uma chave ausente e uma chave que
+                foi removida. A terceira situação é importante porque detecta
+                uma remoção que falhou silenciosamente.
+              </p>
+            </details>
+          </article>
+          <article class="operation-card">
+            <header>
+              <div>
+                <span class="label">contar antes de k</span>
+                <h3 class="operation-code">rank(k)</h3>
+              </div>
+              <span class="complexity">O(log n)</span>
+            </header>
+            <p>
+              Conta quantas chaves são estritamente menores que <code>k</code>.
+            </p>
+            <ol>
+              <li>Comece com contador zero na raiz.</li>
+              <li>
+                Se <code>k</code> é menor ou igual ao nó, vá para a esquerda.
+                Nada à direita pode ser menor.
+              </li>
+              <li>
+                Se <code>k</code> é maior, todas as chaves da esquerda e o
+                próprio nó contam.
+              </li>
+              <li>
+                Some <code>size(esquerda) + 1</code> e avance para a direita.
+              </li>
+              <li>Ao chegar a vazio, o contador é a resposta.</li>
+            </ol>
+            <details>
+              <summary>Exemplo</summary>
+              <p>
+                Em <code>[10, 20, 30, 40]</code>, <code>rank(30) = 2</code>,
+                porque somente 10 e 20 são menores. A própria chave 30 não entra
+                na contagem.
+              </p>
+            </details>
+          </article>
+          <article class="operation-card">
+            <header>
+              <div>
+                <span class="label">encontrar por posição</span>
+                <h3 class="operation-code">select(i)</h3>
+              </div>
+              <span class="complexity">O(log n)</span>
+            </header>
+            <p>
+              Retorna a chave na posição <code>i</code> da ordem crescente. O
+              índice começa em zero.
+            </p>
+            <ol>
+              <li>
+                Olhe para <code>size(esquerda)</code>. Ele informa quantas
+                chaves vêm antes do nó.
+              </li>
+              <li>
+                Se <code>i</code> é igual a esse tamanho, o nó atual é a
+                resposta.
+              </li>
+              <li>Se <code>i</code> é menor, a resposta está na esquerda.</li>
+              <li>
+                Se <code>i</code> é maior, vá para a direita com
+                <code>i - size(esquerda) - 1</code>.
+              </li>
+              <li>
+                Se o índice sair de <code>0</code> até
+                <code>size(raiz)-1</code>, responda erro de índice.
+              </li>
+            </ol>
+            <details>
+              <summary>
+                Como o <code>select(i)</code> encontra a chave sem ordenar tudo?
+              </summary>
+              <p>
+                <code>select(i)</code> usa índice começando em zero. Em uma
+                lista ordenada como <code>[20, 30, 40, 50, 70]</code>, temos
+                <code>select(0) = 20</code>, <code>select(1) = 30</code> e
+                <code>select(2) = 40</code>. A árvore guarda a mesma ordem, mas
+                distribuída em seus caminhos.
+              </p>
+              <pre aria-label="Busca de select 2 em uma árvore de busca">
+              50
+             /  \
+           30    70
+          /  \
+        20    40
+
+select(2):
+1. Em 50, size(esquerda) = 3. Como 2 &lt; 3, descemos para 30.
+2. Em 30, size(esquerda) = 1. Como 2 &gt; 1, pulamos 20, 30 e vamos à direita
+   com índice restante 2 - 1 - 1 = 0.
+3. Em 40, size(esquerda) = 0. Como 0 = 0, a resposta é 40.</pre
+              >
+              <p>
+                O valor <code>size(esquerda)</code> informa quantas chaves estão
+                antes do nó atual na ordem crescente. Se o índice procurado é
+                menor, a resposta está na subárvore esquerda. Se é igual, o nó
+                atual ocupa exatamente aquela posição. Se é maior, descartamos
+                toda a esquerda e o próprio nó, por isso subtraímos
+                <code>size(esquerda) + 1</code> antes de continuar pela direita.
+              </p>
+              <p>
+                Esse metadado é o que permite saltar uma subárvore inteira. Sem
+                <code>size</code>, precisaríamos percorrer e contar os nós para
+                descobrir a posição. Com <code>size</code> e uma árvore
+                balanceada, seguimos apenas um caminho de altura aproximadamente
+                logarítmica.
+              </p>
+            </details>
+            <details>
+              <summary>Por que <code>size</code> é indispensável?</summary>
+              <p>
+                Sem o tamanho de cada subárvore, seria necessário percorrer e
+                contar muitos nós para descobrir a posição. O metadado permite
+                saltar blocos inteiros.
+              </p>
+            </details>
+          </article>
+          <article class="operation-card">
+            <header>
+              <div>
+                <span class="label">resumir um intervalo</span>
+                <h3 class="operation-code">range_agg(a, b)</h3>
+              </div>
+              <span class="complexity">O(log n + k)</span>
+            </header>
+            <p>
+              No grupo 5, retorna o <strong>maior ID</strong> entre as chaves do
+              intervalo fechado <code>[a, b]</code>.
+            </p>
+            <ol>
+              <li>
+                Se <code>a &gt; b</code>, normalize ou rejeite o intervalo
+                conforme o contrato.
+              </li>
+              <li>
+                Use a ordenação para ignorar lados inteiros que ficam fora do
+                intervalo.
+              </li>
+              <li>Considere o nó quando <code>a ≤ chave ≤ b</code>.</li>
+              <li>
+                Se uma subárvore inteira estiver dentro do intervalo, use seu
+                <code>subtree_max</code> diretamente.
+              </li>
+              <li>
+                Se nenhuma chave estiver no intervalo, responda
+                <strong>NOT_FOUND</strong> ou o sentinela definido pelo grupo.
+              </li>
+            </ol>
+            <details>
+              <summary>Por que o intervalo é fechado?</summary>
+              <p>
+                Fechado significa que as duas pontas participam:
+                <code>a</code> e <code>b</code> também podem ser escolhidas como
+                resposta. Esse detalhe precisa aparecer no código e nos testes.
+              </p>
+            </details>
+          </article>
+        </div>
+        <div class="panel blue" style="margin-top: 18px">
+          <h3>Depois de qualquer operação, verifique este ciclo.</h3>
+          <div class="grid-3">
+            <div>
+              <strong>1 · ordenação</strong>
+              <p class="small">
+                Todo nó menor está à esquerda; todo nó maior está à direita.
+              </p>
+            </div>
+            <div>
+              <strong>2 · balanceamento</strong>
+              <p class="small">
+                Em AVL, a diferença de alturas dos filhos fica entre −1 e +1.
+              </p>
+            </div>
+            <div>
+              <strong>3 · metadados</strong>
+              <p class="small">
+                <code>height</code>, <code>size</code> e
+                <code>subtree_max</code> correspondem aos filhos atuais.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="laboratorio" aria-labelledby="lab-title">
+        <div class="section-kicker">04 · laboratório</div>
+        <h2 id="lab-title">Faça as operações e observe o caminho.</h2>
+        <p class="lead">
+          A visualização usa uma AVL pequena para tornar o raciocínio visível.
+          As bolinhas mostram a chave. A linha abaixo de cada chave mostra
+          <code>h</code> (altura), <code>s</code> (tamanho da subárvore) e
+          <code>max</code> (maior chave da subárvore).
+        </p>
+        <div class="panel">
+          <div class="lab-header">
+            <div>
+              <h3>Árvore atual</h3>
+              <p class="small">
+                Insira, remova ou procure uma chave. Depois use as consultas de
+                ordem e intervalo.
+              </p>
+            </div>
+            <div class="lab-controls" aria-label="Operações básicas">
+              <div class="field">
+                <label for="tree-key">chave k</label
+                ><input id="tree-key" type="number" value="25" />
+              </div>
+              <button class="mini-button primary" id="insert-btn" type="button">
+                Inserir
+              </button>
+              <button class="mini-button danger" id="delete-btn" type="button">
+                Remover
+              </button>
+              <button class="mini-button" id="search-btn" type="button">
+                Buscar
+              </button>
+              <button class="mini-button" id="example-btn" type="button">
+                Carregar exemplo
+              </button>
+              <button class="mini-button" id="reset-btn" type="button">
+                Limpar
+              </button>
+            </div>
+          </div>
+          <div class="lab-grid">
+            <div>
+              <div class="tree-frame">
+                <svg
+                  id="tree-svg"
+                  viewBox="0 0 900 405"
+                  role="img"
+                  aria-label="Visualização interativa da árvore AVL"
+                ></svg>
+              </div>
+              <div
+                id="tree-status"
+                class="status"
+                role="status"
+                aria-live="polite"
+              >
+                Carregue o exemplo ou insira uma chave para começar.
+              </div>
+              <div
+                id="trace-log"
+                class="trace-log"
+                aria-label="Explicação da última operação"
+              >
+                <div>&gt; aguardando operação</div>
+              </div>
+            </div>
+            <aside class="panel" style="box-shadow: none">
+              <h3>Invariantes observáveis</h3>
+              <div class="metric-list">
+                <div class="metric">
+                  <span>nós</span><strong id="metric-size">0</strong>
+                </div>
+                <div class="metric">
+                  <span>altura da raiz</span
+                  ><strong id="metric-height">0</strong>
+                </div>
+                <div class="metric">
+                  <span>raiz</span><strong id="metric-root">—</strong>
+                </div>
+                <div class="metric">
+                  <span>máximo global</span><strong id="metric-max">—</strong>
+                </div>
+                <div class="metric">
+                  <span>AVL + metadados</span
+                  ><strong id="metric-valid">—</strong>
+                </div>
+              </div>
+              <div class="query-box">
+                <h4>Consultas aumentadas</h4>
+                <div class="query-row">
+                  <div class="field">
+                    <label for="rank-key">rank(k)</label
+                    ><input id="rank-key" type="number" value="35" />
+                  </div>
+                  <button class="mini-button" id="rank-btn" type="button">
+                    Calcular
+                  </button>
+                </div>
+                <div class="query-row">
+                  <div class="field">
+                    <label for="select-index">select(i), índice 0-based</label
+                    ><input id="select-index" type="number" min="0" value="2" />
+                  </div>
+                  <button class="mini-button" id="select-btn" type="button">
+                    Calcular
+                  </button>
+                </div>
+                <div class="query-row">
+                  <div class="field">
+                    <label for="range-a">a</label
+                    ><input id="range-a" type="number" value="15" />
+                  </div>
+                  <div class="field">
+                    <label for="range-b">b</label
+                    ><input id="range-b" type="number" value="45" />
+                  </div>
+                  <button class="mini-button" id="range-btn" type="button">
+                    Máximo
+                  </button>
+                </div>
+                <div
+                  id="query-result"
+                  class="status success"
+                  style="margin-top: 12px"
+                >
+                  As respostas aparecerão aqui.
+                </div>
+              </div>
+            </aside>
+          </div>
+          <div id="node-table-wrap"></div>
+          <div class="demo-box">
+            <h3>Demonstração do caso <code>ordenada</code></h3>
+            <p class="small">
+              Insira 10, 20, 30, 40, 50 e 25 nesta ordem. Uma BST ingênua tende
+              a ficar torta. A AVL faz rotações para manter a altura sob
+              controle.
+            </p>
+            <div class="button-row">
+              <button class="mini-button" id="demo-reset-btn" type="button">
+                Reiniciar demonstração</button
+              ><button class="mini-button" id="demo-next-btn" type="button">
+                Próximo passo</button
+              ><button
+                class="mini-button primary"
+                id="demo-play-btn"
+                type="button"
+              >
+                Executar sequência</button
+              ><span class="small" id="demo-label">0 de 6 passos</span>
+            </div>
+          </div>
+        </div>
+        <div class="callout mint">
+          <div>↗</div>
+          <div>
+            <strong>Como ler o destaque</strong>Amarelo marca o caminho ou os
+            nós examinados. Verde marca uma resposta encontrada. Vermelho marca
+            um erro ou uma chave ausente. O log à esquerda explica a decisão em
+            linguagem comum.
+          </div>
+        </div>
+      </section>
+
+      <section id="grupo5" aria-labelledby="group-title">
+        <div class="section-kicker">05 · conexão com o trabalho</div>
+        <h2 id="group-title">
+          O grupo 5 usa as mesmas operações sob uma carga específica.
+        </h2>
+        <p class="lead">
+          A teoria das operações não muda por causa do dataset. O que muda é a
+          frequência e a ordem com que a estrutura será pressionada. É isso que
+          torna a medição do grupo interessante.
+        </p>
+        <div class="grid-2">
+          <div class="panel blue">
+            <span class="label">Configuração do grupo 5</span>
+            <h3 style="margin-top: 12px">
+              amzn · theta 0.99 · 45:25:30 · máximo · ordenada
+            </h3>
+            <ul>
+              <li>
+                <strong>amzn:</strong> chaves associadas à popularidade de
+                vendas de livros.
+              </li>
+              <li>
+                <strong>theta 0.99:</strong> poucas chaves ficam “quentes” e
+                aparecem muitas vezes.
+              </li>
+              <li>
+                <strong>45:25:30:</strong> proporção de inserções, remoções e
+                buscas.
+              </li>
+              <li>
+                <strong>máximo:</strong> <code>range_agg(a,b)</code> procura o
+                maior ID no intervalo fechado.
+              </li>
+              <li>
+                <strong>ordenada:</strong> a ordem de inserção cria o caso
+                patológico para uma BST ingênua.
+              </li>
+            </ul>
+          </div>
+          <div class="panel amber">
+            <h3>O que cada operação revela na carga</h3>
+            <div class="metric-list">
+              <div class="metric">
+                <span><code>insert</code></span
+                ><strong>crescimento + rotações</strong>
+              </div>
+              <div class="metric">
+                <span><code>delete</code></span
+                ><strong>buracos + rotações</strong>
+              </div>
+              <div class="metric">
+                <span><code>search</code></span
+                ><strong>hits e misses</strong>
+              </div>
+              <div class="metric">
+                <span><code>rank/select</code></span
+                ><strong>ordem + size</strong>
+              </div>
+              <div class="metric">
+                <span><code>range_agg</code></span
+                ><strong>intervalo + max</strong>
+              </div>
+            </div>
+            <div class="callout amber">
+              <div>?</div>
+              <div>
+                <strong>Conexão leve</strong>Chaves quentes podem melhorar
+                localidade de cache, mas não mudam a definição da operação.
+                Explique isso como hipótese de medição, não como resultado
+                garantido.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 18px">
+          <h3>O trace transforma a teoria em uma história reproduzível.</h3>
+          <div class="grid-3">
+            <div>
+              <strong>1 · entrada</strong>
+              <p class="small">
+                Uma linha como <code>I 8473625</code>, <code>D 8473625</code> ou
+                <code>S 8473625</code>.
+              </p>
+            </div>
+            <div>
+              <strong>2 · estado</strong>
+              <p class="small">
+                A árvore processa a linha e altera o conjunto vivo quando
+                necessário.
+              </p>
+            </div>
+            <div>
+              <strong>3 · conferência</strong>
+              <p class="small">
+                As buscas são comparadas ao gabarito <code>.expected</code>; uma
+                remoção errada aparece depois como busca divergente.
+              </p>
+            </div>
+          </div>
+          <pre style="margin-top: 15px"><code>I 8473625
+D 8473625
+S 8473625       # esperado: 8473625 NOT_FOUND</code></pre>
+        </div>
+      </section>
+
+      <section id="revisao" aria-labelledby="review-title">
+        <div class="section-kicker">06 · consolidar</div>
+        <h2 id="review-title">Antes de implementar, consiga responder.</h2>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Complexidade esperada na AVL</h3>
+            <table class="complexity-table">
+              <thead>
+                <tr>
+                  <th>Operação</th>
+                  <th>Custo</th>
+                  <th>Por quê</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>search</code></td>
+                  <td>O(log n)</td>
+                  <td>Segue um caminho de altura limitada.</td>
+                </tr>
+                <tr>
+                  <td><code>insert</code> / <code>delete</code></td>
+                  <td>O(log n)</td>
+                  <td>Segue um caminho e pode fazer rotações locais.</td>
+                </tr>
+                <tr>
+                  <td><code>rank</code> / <code>select</code></td>
+                  <td>O(log n)</td>
+                  <td><code>size</code> permite saltar subárvores inteiras.</td>
+                </tr>
+                <tr>
+                  <td><code>range_agg</code></td>
+                  <td>O(log n + k)</td>
+                  <td>
+                    Visita fronteiras e valores relevantes;
+                    <code>subtree_max</code> pode resumir uma subárvore inteira.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="small" style="margin-top: 12px">
+              A notação descreve como o custo cresce. Ela não é uma promessa de
+              nanosegundos nem substitui a medição na máquina do grupo.
+            </p>
+          </div>
+          <div class="panel mint">
+            <h3>Checklist de corretude</h3>
+            <div class="checklist" id="checklist">
+              <label class="check-item"
+                ><input type="checkbox" />
+                <span
+                  >Consigo explicar a diferença entre raiz, folha e
+                  subárvore.</span
+                ></label
+              >
+              <label class="check-item"
+                ><input type="checkbox" />
+                <span
+                  >Sei por que a AVL faz rotações depois de inserir ou
+                  remover.</span
+                ></label
+              >
+              <label class="check-item"
+                ><input type="checkbox" />
+                <span
+                  >Consigo calcular <code>rank</code> e <code>select</code> em
+                  um exemplo pequeno.</span
+                ></label
+              >
+              <label class="check-item"
+                ><input type="checkbox" />
+                <span
+                  >Sei por que uma rotação também precisa atualizar
+                  <code>size</code> e <code>subtree_max</code>.</span
+                ></label
+              >
+              <label class="check-item"
+                ><input type="checkbox" />
+                <span
+                  >Consigo explicar por que a ordem <code>ordenada</code> é
+                  importante para o grupo 5.</span
+                ></label
+              >
+            </div>
+          </div>
+        </div>
+        <div class="panel violet" style="margin-top: 18px">
+          <h3>Quiz rápido</h3>
+          <form class="quiz" id="quiz-form">
+            <fieldset class="quiz-question">
+              <legend>
+                1. Em uma BST, onde fica uma chave menor que a chave atual?
+              </legend>
+              <label
+                ><input type="radio" name="q1" value="a" /> Em qualquer lugar,
+                sem regra.</label
+              ><label
+                ><input type="radio" name="q1" value="b" /> Na subárvore
+                esquerda.</label
+              ><label
+                ><input type="radio" name="q1" value="c" /> Sempre na
+                raiz.</label
+              >
+            </fieldset>
+            <fieldset class="quiz-question">
+              <legend>2. O que <code>rank(30)</code> conta?</legend>
+              <label
+                ><input type="radio" name="q2" value="a" /> Chaves menores que
+                30.</label
+              ><label
+                ><input type="radio" name="q2" value="b" /> Chaves menores ou
+                iguais a 30.</label
+              ><label
+                ><input type="radio" name="q2" value="c" /> A altura do nó
+                30.</label
+              >
+            </fieldset>
+            <fieldset class="quiz-question">
+              <legend>3. Para que serve <code>size</code> em um nó?</legend>
+              <label
+                ><input type="radio" name="q3" value="a" /> Para colorir o
+                nó.</label
+              ><label
+                ><input type="radio" name="q3" value="b" /> Para saber quantos
+                nós existem na subárvore.</label
+              ><label
+                ><input type="radio" name="q3" value="c" /> Para escolher a
+                seed.</label
+              >
+            </fieldset>
+            <button class="mini-button primary" type="submit">
+              Corrigir quiz
+            </button>
+          </form>
+          <div
+            class="quiz-result"
+            id="quiz-result"
+            role="status"
+            aria-live="polite"
+          ></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell">
+        <p>
+          <strong>Material de estudo do grupo 5.</strong> A visualização é uma
+          demonstração pequena e determinística, não uma medição de desempenho.
+        </p>
+        <p>
+          Fontes locais usadas para o recorte:
+          <code>docs/project-instructions.pdf</code>,
+          <code>docs/grupo-5-arvore-aumentada.html</code> e
+          <code>workload_generator.py</code>.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      "use strict";
+
+      class TreeNode {
+        constructor(key) {
+          this.key = key;
+          this.left = null;
+          this.right = null;
+          this.height = 1;
+          this.size = 1;
+          this.subtreeMax = key;
+        }
+      }
+
+      const treeState = {
+        root: null,
+        highlights: [],
+        answers: [],
+        bad: [],
+        demoIndex: 0,
+        demoTimer: null,
+      };
+      const demoKeys = [10, 20, 30, 40, 50, 25];
+
+      function height(node) {
+        return node ? node.height : 0;
+      }
+      function size(node) {
+        return node ? node.size : 0;
+      }
+      function subtreeMax(node) {
+        return node ? node.subtreeMax : -Infinity;
+      }
+
+      function update(node) {
+        if (!node) return null;
+        node.height = 1 + Math.max(height(node.left), height(node.right));
+        node.size = 1 + size(node.left) + size(node.right);
+        node.subtreeMax = Math.max(
+          node.key,
+          subtreeMax(node.left),
+          subtreeMax(node.right),
+        );
+        return node;
+      }
+
+      function balanceFactor(node) {
+        return node ? height(node.left) - height(node.right) : 0;
+      }
+
+      function rotateRight(node, trace) {
+        const pivot = node.left;
+        const moved = pivot.right;
+        trace.push(
+          "Rotação à direita: o filho esquerdo sobe e o nó desequilibrado desce.",
+        );
+        pivot.right = node;
+        node.left = moved;
+        update(node);
+        update(pivot);
+        trace.push(
+          "Metadados atualizados primeiro no nó que desceu e depois no nó que subiu.",
+        );
+        return pivot;
+      }
+
+      function rotateLeft(node, trace) {
+        const pivot = node.right;
+        const moved = pivot.left;
+        trace.push(
+          "Rotação à esquerda: o filho direito sobe e o nó desequilibrado desce.",
+        );
+        pivot.left = node;
+        node.right = moved;
+        update(node);
+        update(pivot);
+        trace.push(
+          "A ordem da atualização preserva os resumos das duas subárvores.",
+        );
+        return pivot;
+      }
+
+      function rebalance(node, trace) {
+        if (!node) return null;
+        update(node);
+        const factor = balanceFactor(node);
+        if (factor > 1) {
+          trace.push(
+            `O nó ${node.key} ficou pesado à esquerda (fator ${factor}).`,
+          );
+          if (balanceFactor(node.left) < 0) {
+            trace.push(
+              "O filho esquerdo está pesado à direita: fazemos uma rotação dupla.",
+            );
+            node.left = rotateLeft(node.left, trace);
+          }
+          return rotateRight(node, trace);
+        }
+        if (factor < -1) {
+          trace.push(
+            `O nó ${node.key} ficou pesado à direita (fator ${factor}).`,
+          );
+          if (balanceFactor(node.right) > 0) {
+            trace.push(
+              "O filho direito está pesado à esquerda: fazemos uma rotação dupla.",
+            );
+            node.right = rotateRight(node.right, trace);
+          }
+          return rotateLeft(node, trace);
+        }
+        return node;
+      }
+
+      function insert(node, key, trace) {
+        if (!node) {
+          trace.push(`Encontramos uma posição vazia. Criamos o nó ${key}.`);
+          return new TreeNode(key);
+        }
+        if (key === node.key) {
+          trace.push(`A chave ${key} já existe. Nada foi duplicado.`);
+          return node;
+        }
+        if (key < node.key) {
+          trace.push(`${key} é menor que ${node.key}: descemos pela esquerda.`);
+          node.left = insert(node.left, key, trace);
+        } else {
+          trace.push(`${key} é maior que ${node.key}: descemos pela direita.`);
+          node.right = insert(node.right, key, trace);
+        }
+        return rebalance(node, trace);
+      }
+
+      function smallest(node) {
+        let current = node;
+        while (current && current.left) current = current.left;
+        return current;
+      }
+
+      function remove(node, key, trace) {
+        if (!node) {
+          trace.push(`Chegamos a vazio. A chave ${key} não estava na árvore.`);
+          return null;
+        }
+        if (key < node.key) {
+          trace.push(`${key} é menor que ${node.key}: procuramos na esquerda.`);
+          node.left = remove(node.left, key, trace);
+        } else if (key > node.key) {
+          trace.push(`${key} é maior que ${node.key}: procuramos na direita.`);
+          node.right = remove(node.right, key, trace);
+        } else {
+          trace.push(`Encontramos ${key}. Agora tratamos os filhos desse nó.`);
+          if (!node.left && !node.right) {
+            trace.push("O nó é uma folha: removemos diretamente.");
+            return null;
+          }
+          if (!node.left || !node.right) {
+            trace.push("O nó tem um filho: o filho ocupa o lugar dele.");
+            return node.left || node.right;
+          }
+          const successor = smallest(node.right);
+          trace.push(
+            `O nó tem dois filhos. Usamos o sucessor ${successor.key}, o menor da subárvore direita.`,
+          );
+          node.key = successor.key;
+          node.right = remove(node.right, successor.key, trace);
+        }
+        return rebalance(node, trace);
+      }
+
+      function search(root, key) {
+        const path = [];
+        let node = root;
+        while (node) {
+          path.push(node.key);
+          if (node.key === key) return { found: true, path };
+          node = key < node.key ? node.left : node.right;
+        }
+        return { found: false, path };
+      }
+
+      function calculateRank(root, key) {
+        let node = root;
+        let result = 0;
+        const path = [];
+        while (node) {
+          path.push(node.key);
+          if (key <= node.key) {
+            node = node.left;
+          } else {
+            result += size(node.left) + 1;
+            node = node.right;
+          }
+        }
+        return { result, path };
+      }
+
+      function calculateSelect(root, index) {
+        let node = root;
+        let target = index;
+        const path = [];
+        while (node) {
+          path.push(node.key);
+          const leftSize = size(node.left);
+          if (target === leftSize) return { found: true, key: node.key, path };
+          if (target < leftSize) node = node.left;
+          else {
+            target -= leftSize + 1;
+            node = node.right;
+          }
+        }
+        return { found: false, path };
+      }
+
+      function rangeMaximum(
+        node,
+        lower,
+        upper,
+        allowedLower,
+        allowedUpper,
+        trace,
+        visited,
+      ) {
+        if (!node) return null;
+        if (node.subtreeMax < lower) {
+          trace.push(
+            `Podamos a subárvore de ${node.key}: seu maior valor (${node.subtreeMax}) ainda é menor que ${lower}.`,
+          );
+          return null;
+        }
+        if (upper < allowedLower || allowedUpper < lower) {
+          trace.push(
+            `Ignoramos a subárvore de ${node.key}: os limites possíveis estão fora de [${lower}, ${upper}].`,
+          );
+          return null;
+        }
+        if (lower <= allowedLower && allowedUpper <= upper) {
+          trace.push(
+            `A subárvore de ${node.key} está inteira dentro do intervalo. Usamos subtree_max = ${node.subtreeMax}.`,
+          );
+          return node.subtreeMax;
+        }
+        visited.push(node.key);
+        trace.push(
+          `Examinamos ${node.key}: ${node.key >= lower && node.key <= upper ? "está dentro" : "está fora"} do intervalo.`,
+        );
+        const values = [];
+        if (node.key >= lower && node.key <= upper) values.push(node.key);
+        const left = rangeMaximum(
+          node.left,
+          lower,
+          upper,
+          allowedLower,
+          node.key,
+          trace,
+          visited,
+        );
+        const right = rangeMaximum(
+          node.right,
+          lower,
+          upper,
+          node.key,
+          allowedUpper,
+          trace,
+          visited,
+        );
+        if (left !== null) values.push(left);
+        if (right !== null) values.push(right);
+        return values.length ? Math.max(...values) : null;
+      }
+
+      function allNodes(root) {
+        const result = [];
+        function visit(node, depth) {
+          if (!node) return;
+          visit(node.left, depth + 1);
+          result.push({ node, depth });
+          visit(node.right, depth + 1);
+        }
+        visit(root, 0);
+        return result;
+      }
+
+      function validate(root) {
+        let valid = true;
+        function check(node, lower, upper) {
+          if (!node) return { height: 0, size: 0, max: -Infinity };
+          if (!(lower < node.key && node.key < upper)) valid = false;
+          const left = check(node.left, lower, node.key);
+          const right = check(node.right, node.key, upper);
+          const expectedHeight = 1 + Math.max(left.height, right.height);
+          const expectedSize = 1 + left.size + right.size;
+          const expectedMax = Math.max(node.key, left.max, right.max);
+          if (Math.abs(left.height - right.height) > 1) valid = false;
+          if (
+            node.height !== expectedHeight ||
+            node.size !== expectedSize ||
+            node.subtreeMax !== expectedMax
+          )
+            valid = false;
+          return {
+            height: expectedHeight,
+            size: expectedSize,
+            max: expectedMax,
+          };
+        }
+        check(root, -Infinity, Infinity);
+        return valid;
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(
+          /[&<>"']/g,
+          (character) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#039;",
+            })[character],
+        );
+      }
+
+      function renderTree() {
+        const svg = document.querySelector("#tree-svg");
+        const nodes = allNodes(treeState.root);
+        svg.innerHTML = "";
+        if (!nodes.length) {
+          svg.innerHTML =
+            '<text class="tree-empty" x="450" y="202">árvore vazia · insira uma chave</text>';
+          updateMetrics();
+          return;
+        }
+        const width = 900;
+        const levelGap = 90;
+        const heightValue = Math.max(1, height(treeState.root));
+        const positions = new Map();
+        nodes.forEach((entry, index) => {
+          positions.set(entry.node, {
+            x: ((index + 1) * width) / (nodes.length + 1),
+            y: 52 + entry.depth * levelGap,
+          });
+        });
+        const edgeLayer = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "g",
+        );
+        const nodeLayer = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "g",
+        );
+        nodes.forEach((entry) => {
+          const node = entry.node;
+          const start = positions.get(node);
+          [node.left, node.right].forEach((child) => {
+            if (!child) return;
+            const end = positions.get(child);
+            const line = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "line",
+            );
+            line.setAttribute("class", "tree-edge");
+            line.setAttribute("x1", start.x);
+            line.setAttribute("y1", start.y + 25);
+            line.setAttribute("x2", end.x);
+            line.setAttribute("y2", end.y - 25);
+            edgeLayer.appendChild(line);
+          });
+        });
+        nodes.forEach((entry) => {
+          const node = entry.node;
+          const position = positions.get(node);
+          const group = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "g",
+          );
+          const classes = ["tree-node"];
+          if (treeState.answers.includes(node.key)) classes.push("answer");
+          else if (treeState.bad.includes(node.key)) classes.push("bad");
+          else if (treeState.highlights.includes(node.key))
+            classes.push("active");
+          group.setAttribute("class", classes.join(" "));
+          const circle = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "circle",
+          );
+          circle.setAttribute("cx", position.x);
+          circle.setAttribute("cy", position.y);
+          circle.setAttribute("r", 25);
+          const keyText = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text",
+          );
+          keyText.setAttribute("class", "key");
+          keyText.setAttribute("x", position.x);
+          keyText.setAttribute("y", position.y + 5);
+          keyText.textContent = node.key;
+          const metaText = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text",
+          );
+          metaText.setAttribute("class", "meta");
+          metaText.setAttribute("x", position.x);
+          metaText.setAttribute("y", position.y + 42);
+          metaText.textContent = `h${node.height} · s${node.size} · max${node.subtreeMax}`;
+          group.append(circle, keyText, metaText);
+          nodeLayer.appendChild(group);
+        });
+        svg.append(edgeLayer, nodeLayer);
+        svg.setAttribute(
+          "viewBox",
+          `0 0 ${width} ${Math.max(330, 95 + heightValue * levelGap)}`,
+        );
+        updateMetrics();
+        renderNodeTable(nodes);
+      }
+
+      function renderNodeTable(nodes) {
+        const wrap = document.querySelector("#node-table-wrap");
+        if (!nodes.length) {
+          wrap.innerHTML = "";
+          return;
+        }
+        const rows = nodes
+          .map(
+            (entry) =>
+              `<tr><td>${entry.node.key}</td><td>${entry.node.left ? entry.node.left.key : "—"}</td><td>${entry.node.right ? entry.node.right.key : "—"}</td><td>${entry.node.height}</td><td>${entry.node.size}</td><td>${entry.node.subtreeMax}</td></tr>`,
+          )
+          .join("");
+        wrap.innerHTML = `<table class="node-table"><caption style="text-align:left;margin-top:16px;color:var(--muted)">Tabela de auditoria dos metadados atuais</caption><thead><tr><th>chave</th><th>esq.</th><th>dir.</th><th>altura</th><th>size</th><th>subtree_max</th></tr></thead><tbody>${rows}</tbody></table>`;
+      }
+
+      function updateMetrics() {
+        const root = treeState.root;
+        document.querySelector("#metric-size").textContent = size(root);
+        document.querySelector("#metric-height").textContent = height(root);
+        document.querySelector("#metric-root").textContent = root
+          ? root.key
+          : "—";
+        document.querySelector("#metric-max").textContent = root
+          ? root.subtreeMax
+          : "—";
+        const valid = validate(root);
+        const metric = document.querySelector("#metric-valid");
+        metric.textContent = valid ? "OK" : "ERRO";
+        metric.style.color = valid ? "var(--mint)" : "var(--red)";
+      }
+
+      function showTrace(lines, status, kind = "") {
+        const log = document.querySelector("#trace-log");
+        log.innerHTML =
+          lines.map((line) => `<div>› ${escapeHtml(line)}</div>`).join("") ||
+          "<div>› nenhuma decisão registrada</div>";
+        const box = document.querySelector("#tree-status");
+        box.textContent = status;
+        box.className = `status ${kind}`.trim();
+      }
+
+      function readNumber(id) {
+        const value = Number(document.querySelector(`#${id}`).value);
+        return Number.isFinite(value) ? value : null;
+      }
+
+      function performInsert() {
+        const key = readNumber("tree-key");
+        if (key === null)
+          return showTrace(
+            ["Digite uma chave inteira."],
+            "A chave precisa ser um número.",
+            "error",
+          );
+        const trace = [`Operação insert(${key}) iniciada.`];
+        treeState.highlights = [];
+        treeState.answers = [];
+        treeState.bad = [];
+        treeState.root = insert(treeState.root, key, trace);
+        treeState.highlights = search(treeState.root, key).path;
+        renderTree();
+        showTrace(
+          trace,
+          `insert(${key}) concluído. Recalculamos os metadados no caminho de volta.`,
+          "success",
+        );
+      }
+
+      function performDelete() {
+        const key = readNumber("tree-key");
+        if (key === null)
+          return showTrace(
+            ["Digite uma chave inteira."],
+            "A chave precisa ser um número.",
+            "error",
+          );
+        const trace = [`Operação delete(${key}) iniciada.`];
+        treeState.highlights = search(treeState.root, key).path;
+        treeState.answers = [];
+        treeState.bad = [];
+        treeState.root = remove(treeState.root, key, trace);
+        renderTree();
+        const found = trace.some((line) =>
+          line.startsWith(`Encontramos ${key}.`),
+        );
+        showTrace(
+          trace,
+          found
+            ? `delete(${key}) concluído e a árvore foi rebalanceada.`
+            : `delete(${key}) não alterou a árvore porque a chave não existe.`,
+          found ? "success" : "warn",
+        );
+      }
+
+      function performSearch() {
+        const key = readNumber("tree-key");
+        if (key === null)
+          return showTrace(
+            ["Digite uma chave inteira."],
+            "A chave precisa ser um número.",
+            "error",
+          );
+        const result = search(treeState.root, key);
+        treeState.highlights = result.path;
+        treeState.answers = result.found ? [key] : [];
+        treeState.bad = result.found
+          ? []
+          : result.path.length
+            ? [result.path[result.path.length - 1]]
+            : [];
+        renderTree();
+        const trace = [
+          `Operação search(${key}) iniciada.`,
+          ...result.path.map((nodeKey) =>
+            nodeKey === key
+              ? `Comparamos com ${nodeKey}: igualdade. Encontramos a chave.`
+              : `${key} foi comparada com ${nodeKey}: ${key < nodeKey ? "seguimos à esquerda" : "seguimos à direita"}.`,
+          ),
+          result.found
+            ? "Resposta: FOUND."
+            : "Chegamos a vazio. Resposta: NOT_FOUND.",
+        ];
+        showTrace(
+          trace,
+          result.found
+            ? `search(${key}) respondeu FOUND.`
+            : `search(${key}) respondeu NOT_FOUND.`,
+          result.found ? "success" : "warn",
+        );
+      }
+
+      function performRank() {
+        const key = readNumber("rank-key");
+        if (key === null)
+          return showTrace(
+            ["Digite uma chave para rank."],
+            "O valor de rank precisa ser numérico.",
+            "error",
+          );
+        const result = calculateRank(treeState.root, key);
+        treeState.highlights = result.path;
+        treeState.answers = [];
+        treeState.bad = [];
+        renderTree();
+        const trace = [
+          `Operação rank(${key}) iniciada.`,
+          ...result.path.map((nodeKey) =>
+            nodeKey < key
+              ? `Como ${nodeKey} < ${key}, somamos size(esquerda) + 1 e descemos à direita.`
+              : `Como ${key} ≤ ${nodeKey}, descemos à esquerda sem somar.`,
+          ),
+          `Resposta: ${result.result} chave(s) são estritamente menores que ${key}.`,
+        ];
+        showTrace(trace, `rank(${key}) = ${result.result}.`, "success");
+        document.querySelector("#query-result").textContent =
+          `rank(${key}) = ${result.result}`;
+      }
+
+      function performSelect() {
+        const index = readNumber("select-index");
+        if (index === null || !Number.isInteger(index))
+          return showTrace(
+            ["Use um índice inteiro começando em zero."],
+            "O índice precisa ser inteiro.",
+            "error",
+          );
+        if (index < 0 || index >= size(treeState.root)) {
+          treeState.highlights = [];
+          treeState.answers = [];
+          treeState.bad = [];
+          renderTree();
+          showTrace(
+            [
+              `O índice ${index} está fora do intervalo válido 0..${Math.max(0, size(treeState.root) - 1)}.`,
+            ],
+            `select(${index}) não existe nesta árvore.`,
+            "error",
+          );
+          document.querySelector("#query-result").textContent =
+            `select(${index}) = índice inválido`;
+          return;
+        }
+        const result = calculateSelect(treeState.root, index);
+        treeState.highlights = result.path;
+        treeState.answers = [result.key];
+        treeState.bad = [];
+        renderTree();
+        const trace = [
+          `Operação select(${index}) iniciada.`,
+          ...result.path.map(
+            (nodeKey) =>
+              `No nó ${nodeKey}, comparamos o índice restante com size(esquerda).`,
+          ),
+          `A posição ${index} corresponde à chave ${result.key}.`,
+        ];
+        showTrace(trace, `select(${index}) = ${result.key}.`, "success");
+        document.querySelector("#query-result").textContent =
+          `select(${index}) = ${result.key}`;
+      }
+
+      function performRange() {
+        let lower = readNumber("range-a");
+        let upper = readNumber("range-b");
+        if (lower === null || upper === null)
+          return showTrace(
+            ["Digite as duas pontas do intervalo."],
+            "Os limites precisam ser numéricos.",
+            "error",
+          );
+        if (lower > upper) [lower, upper] = [upper, lower];
+        const trace = [
+          `Operação range_agg(${lower}, ${upper}) iniciada.`,
+          "O intervalo é fechado: as duas pontas podem participar.",
+        ];
+        const visited = [];
+        const result = rangeMaximum(
+          treeState.root,
+          lower,
+          upper,
+          -Infinity,
+          Infinity,
+          trace,
+          visited,
+        );
+        treeState.highlights = visited;
+        treeState.answers = result === null ? [] : [result];
+        treeState.bad = [];
+        renderTree();
+        const message =
+          result === null
+            ? `Não há chave no intervalo [${lower}, ${upper}].`
+            : `range_agg(${lower}, ${upper}) = ${result}, o maior ID encontrado.`;
+        showTrace(
+          [
+            ...trace,
+            result === null
+              ? "Resposta: NOT_FOUND."
+              : `Resposta: máximo = ${result}.`,
+          ],
+          message,
+          result === null ? "warn" : "success",
+        );
+        document.querySelector("#query-result").textContent =
+          result === null
+            ? "intervalo vazio"
+            : `máximo em [${lower}, ${upper}] = ${result}`;
+      }
+
+      function loadExample() {
+        treeState.root = null;
+        treeState.highlights = [];
+        treeState.answers = [];
+        treeState.bad = [];
+        [50, 30, 70, 20, 40, 60, 80].forEach((key) => {
+          treeState.root = insert(treeState.root, key, []);
+        });
+        renderTree();
+        showTrace(
+          [
+            "Carregamos 50, 30, 70, 20, 40, 60 e 80.",
+            "A árvore está pronta para as consultas.",
+          ],
+          "Exemplo carregado. Tente search(40), rank(60), select(3) e range_agg(25, 75).",
+          "success",
+        );
+      }
+
+      function clearTree() {
+        treeState.root = null;
+        treeState.highlights = [];
+        treeState.answers = [];
+        treeState.bad = [];
+        renderTree();
+        showTrace(
+          ["A árvore foi esvaziada."],
+          "Árvore vazia. Insira uma chave para começar.",
+        );
+        document.querySelector("#query-result").textContent =
+          "As respostas aparecerão aqui.";
+      }
+
+      function resetDemo() {
+        if (treeState.demoTimer) {
+          clearInterval(treeState.demoTimer);
+          treeState.demoTimer = null;
+        }
+        treeState.demoIndex = 0;
+        clearTree();
+        document.querySelector("#demo-label").textContent = "0 de 6 passos";
+      }
+
+      function nextDemoStep() {
+        if (treeState.demoIndex >= demoKeys.length)
+          return showTrace(
+            [
+              "A sequência terminou.",
+              "Observe a altura e as rotações registradas nos passos anteriores.",
+            ],
+            "Demonstração concluída.",
+            "success",
+          );
+        const key = demoKeys[treeState.demoIndex];
+        document.querySelector("#tree-key").value = key;
+        performInsert();
+        treeState.demoIndex += 1;
+        document.querySelector("#demo-label").textContent =
+          `${treeState.demoIndex} de 6 passos`;
+      }
+
+      function playDemo() {
+        if (treeState.demoIndex >= demoKeys.length) resetDemo();
+        if (treeState.demoTimer) return;
+        treeState.demoTimer = setInterval(() => {
+          nextDemoStep();
+          if (treeState.demoIndex >= demoKeys.length) {
+            clearInterval(treeState.demoTimer);
+            treeState.demoTimer = null;
+          }
+        }, 1250);
+      }
+
+      document
+        .querySelector("#insert-btn")
+        .addEventListener("click", performInsert);
+      document
+        .querySelector("#delete-btn")
+        .addEventListener("click", performDelete);
+      document
+        .querySelector("#search-btn")
+        .addEventListener("click", performSearch);
+      document
+        .querySelector("#rank-btn")
+        .addEventListener("click", performRank);
+      document
+        .querySelector("#select-btn")
+        .addEventListener("click", performSelect);
+      document
+        .querySelector("#range-btn")
+        .addEventListener("click", performRange);
+      document
+        .querySelector("#example-btn")
+        .addEventListener("click", loadExample);
+      document.querySelector("#reset-btn").addEventListener("click", clearTree);
+      document
+        .querySelector("#demo-reset-btn")
+        .addEventListener("click", resetDemo);
+      document
+        .querySelector("#demo-next-btn")
+        .addEventListener("click", nextDemoStep);
+      document
+        .querySelector("#demo-play-btn")
+        .addEventListener("click", playDemo);
+      document
+        .querySelector("#tree-key")
+        .addEventListener("keydown", (event) => {
+          if (event.key === "Enter") performSearch();
+        });
+
+      document
+        .querySelectorAll("#checklist input")
+        .forEach((input) =>
+          input.addEventListener("change", (event) =>
+            event.target
+              .closest(".check-item")
+              .classList.toggle("done", event.target.checked),
+          ),
+        );
+      document
+        .querySelector("#quiz-form")
+        .addEventListener("submit", (event) => {
+          event.preventDefault();
+          const answers = { q1: "b", q2: "a", q3: "b" };
+          const form = new FormData(event.currentTarget);
+          const score = Object.entries(answers).reduce(
+            (total, [name, answer]) =>
+              total + (form.get(name) === answer ? 1 : 0),
+            0,
+          );
+          const result = document.querySelector("#quiz-result");
+          result.textContent =
+            score === 3
+              ? "3/3. Você já consegue explicar a ideia central."
+              : `${score}/3. Revise os cartões de operação e tente novamente. As respostas corretas são BST à esquerda, rank conta menores e size conta nós da subárvore.`;
+          result.classList.add("show");
+        });
+
+      renderTree();
+    </script>
+  </body>
+</html>

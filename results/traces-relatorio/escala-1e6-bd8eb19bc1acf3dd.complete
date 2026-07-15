@@ -1,0 +1,1 @@
+{"acertos": 0.7, "arquivo_chaves": "../SOSD/data/books_200M_uint32", "buscas_em_removidas": 0.5, "bytes_chave": 4, "carga_maxima": 1000000, "conjunto_dados": "amzn", "formato": "sosd", "mistura": "45:25:30", "nome": "escala-1e6", "operacoes": 1000000, "ordem_insercao": "embaralhada", "remocoes_ausentes": 0.05, "reserva": 0.1, "semente": 5, "theta": 0.99, "universo": 1000000}

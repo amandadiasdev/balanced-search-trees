@@ -1,0 +1,3159 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Guia didático e interativo da carga de trabalho e do plano de implementação do grupo 5."
+    />
+    <title>Grupo 5 · Carga de trabalho e implementação</title>
+    <style>
+      :root {
+        --ink: #18253c;
+        --muted: #59677d;
+        --paper: #f5f7fb;
+        --panel: #ffffff;
+        --line: #dce3ee;
+        --navy: #13264d;
+        --blue: #315bd6;
+        --blue-soft: #eaf0ff;
+        --mint: #087f6b;
+        --mint-soft: #e4f7f2;
+        --amber: #a76600;
+        --amber-soft: #fff3d9;
+        --red: #ad3949;
+        --red-soft: #fff0f2;
+        --shadow: 0 14px 34px rgba(19, 38, 77, 0.08);
+        --radius: 17px;
+        --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        --sans:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--sans);
+        line-height: 1.58;
+      }
+      a {
+        color: var(--blue);
+      }
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible,
+      a:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid #e5a621;
+        outline-offset: 3px;
+      }
+      .shell {
+        width: min(1160px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(245, 247, 251, 0.94);
+        border-bottom: 1px solid rgba(220, 227, 238, 0.95);
+        backdrop-filter: blur(12px);
+      }
+      .topbar-inner {
+        min-height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+      .brand {
+        color: var(--navy);
+        font-size: 0.79rem;
+        font-weight: 850;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .language-note {
+        padding: 5px 9px;
+        color: #2a418d;
+        background: var(--blue-soft);
+        border: 1px solid #cad6ff;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .nav {
+        display: flex;
+        gap: 4px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .nav::-webkit-scrollbar {
+        display: none;
+      }
+      .nav a {
+        padding: 8px 9px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        text-decoration: none;
+        white-space: nowrap;
+        border-radius: 8px;
+      }
+      .nav a:hover {
+        color: var(--blue);
+        background: var(--blue-soft);
+      }
+      .hero {
+        padding: 76px 0 68px;
+        color: #fff;
+        background: var(--navy);
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+        gap: 48px;
+        align-items: end;
+      }
+      .eyebrow,
+      .section-kicker {
+        font-size: 0.75rem;
+        font-weight: 850;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .eyebrow {
+        color: #b9caff;
+      }
+      h1,
+      h2,
+      h3 {
+        line-height: 1.12;
+        letter-spacing: -0.035em;
+      }
+      h1 {
+        max-width: 820px;
+        margin: 17px 0 20px;
+        font-size: clamp(2.7rem, 6vw, 5.4rem);
+      }
+      .hero p {
+        max-width: 700px;
+        margin: 0;
+        color: #d7e0f4;
+        font-size: 1.12rem;
+      }
+      .hero-card {
+        padding: 22px;
+        border: 1px solid #3b5289;
+        border-radius: var(--radius);
+        background: #0c1b3a;
+        box-shadow: var(--shadow);
+      }
+      .hero-card strong {
+        display: block;
+        margin-bottom: 10px;
+        color: #fff;
+        font-size: 1.15rem;
+      }
+      .hero-card p {
+        font-size: 0.95rem;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 27px;
+      }
+      .button {
+        display: inline-block;
+        padding: 10px 14px;
+        color: #fff;
+        background: var(--blue);
+        border: 1px solid transparent;
+        border-radius: 10px;
+        font-weight: 800;
+        text-decoration: none;
+      }
+      .button.secondary {
+        color: #fff;
+        background: transparent;
+        border-color: #7084bd;
+      }
+      .button:hover {
+        background: #4a6fe0;
+      }
+      .button.secondary:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .hero-code {
+        margin: 17px 0 0;
+        padding: 14px;
+        overflow-x: auto;
+        color: #dbe5ff;
+        background: #07122a;
+        border-radius: 11px;
+        font: 0.8rem/1.6 var(--mono);
+        white-space: pre-wrap;
+      }
+      .hero-code .comment {
+        color: #8ea9ed;
+      }
+      main {
+        padding: 52px 0 90px;
+      }
+      section {
+        margin: 0 0 78px;
+        scroll-margin-top: 82px;
+      }
+      .section-kicker {
+        color: var(--blue);
+      }
+      h2 {
+        margin: 8px 0 13px;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+      }
+      h3 {
+        margin: 0 0 10px;
+        font-size: 1.25rem;
+      }
+      .lead {
+        max-width: 820px;
+        color: var(--muted);
+        font-size: 1.08rem;
+      }
+      .small {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .panel {
+        padding: 23px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .panel.soft-blue {
+        background: var(--blue-soft);
+        border-color: #cad6ff;
+      }
+      .panel.soft-mint {
+        background: var(--mint-soft);
+        border-color: #bde7dd;
+      }
+      .panel.soft-amber {
+        background: var(--amber-soft);
+        border-color: #f0d49f;
+      }
+      .panel.soft-red {
+        background: var(--red-soft);
+        border-color: #edc3ca;
+      }
+      .label {
+        display: inline-flex;
+        padding: 4px 9px;
+        color: var(--blue);
+        background: var(--blue-soft);
+        border-radius: 999px;
+        font-size: 0.74rem;
+        font-weight: 850;
+      }
+      .callout {
+        margin: 16px 0;
+        padding: 14px 16px;
+        color: #293d83;
+        background: #f0f4ff;
+        border-left: 4px solid var(--blue);
+        border-radius: 0 11px 11px 0;
+      }
+      .callout strong {
+        display: block;
+        margin-bottom: 3px;
+      }
+      .callout.warn {
+        color: #774b00;
+        background: var(--amber-soft);
+        border-color: #e5a621;
+      }
+      .callout.success {
+        color: #086d5b;
+        background: var(--mint-soft);
+        border-color: var(--mint);
+      }
+      .term-guide {
+        margin: 20px 0;
+        padding: 20px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .term-guide h3 {
+        margin-bottom: 5px;
+      }
+      .term-guide-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 9px;
+        margin-top: 14px;
+      }
+      .term-guide-item {
+        padding: 11px;
+        background: #fbfcff;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      .term-guide-item strong {
+        display: block;
+        color: var(--blue);
+        font-size: 0.82rem;
+      }
+      .term-guide-item span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.35;
+      }
+      code {
+        font-family: var(--mono);
+      }
+      .path {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        margin: 28px 0 20px;
+      }
+      .path a {
+        min-height: 96px;
+        padding: 12px;
+        color: var(--ink);
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        text-decoration: none;
+      }
+      .path a:hover {
+        border-color: var(--blue);
+        transform: translateY(-2px);
+      }
+      .path b {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--blue);
+        font-size: 0.75rem;
+      }
+      .path span {
+        display: block;
+        font-size: 0.84rem;
+        line-height: 1.3;
+      }
+      .dataset-map {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 9px;
+        margin: 19px 0;
+      }
+      .dataset-step {
+        position: relative;
+        min-height: 122px;
+        padding: 14px 12px;
+        background: #fff;
+        border: 1px solid #cbd7f8;
+        border-radius: 12px;
+      }
+      .dataset-step:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        right: -17px;
+        top: 39%;
+        z-index: 1;
+        color: var(--blue);
+        font-size: 1.35rem;
+      }
+      .dataset-step b {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--blue);
+        font-size: 0.74rem;
+      }
+      .dataset-step strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--navy);
+        font-size: 0.91rem;
+      }
+      .dataset-step span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.8rem;
+        line-height: 1.35;
+      }
+      .dataset-example {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #cad6ff;
+      }
+      .dataset-example[hidden] {
+        display: none;
+      }
+      .term-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+      details.term {
+        padding: 14px 15px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      details.term[open] {
+        border-color: #b7c7fb;
+        background: #fbfcff;
+      }
+      details.term summary {
+        color: var(--navy);
+        font-weight: 820;
+        cursor: pointer;
+      }
+      details.term p {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+      .definition {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 4px 8px;
+        color: var(--blue);
+        background: var(--blue-soft);
+        border-radius: 7px;
+        font: 0.74rem var(--mono);
+      }
+      .group-specs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 9px;
+        margin-top: 16px;
+      }
+      .spec {
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.75);
+        border: 1px solid rgba(49, 91, 214, 0.18);
+        border-radius: 10px;
+      }
+      .spec small {
+        display: block;
+        color: var(--muted);
+        font-size: 0.69rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+      .spec strong {
+        display: block;
+        margin-top: 4px;
+        color: var(--navy);
+        font: 800 1rem var(--mono);
+      }
+      .spec span {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+      .param-buttons,
+      .trace-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 17px 0 11px;
+      }
+      .param-button,
+      .mini-button {
+        padding: 9px 11px;
+        color: var(--navy);
+        background: #fff;
+        border: 1px solid #c7d1e3;
+        border-radius: 9px;
+        font-weight: 760;
+      }
+      .param-button:hover,
+      .param-button.active,
+      .mini-button:hover {
+        color: var(--blue);
+        background: var(--blue-soft);
+        border-color: var(--blue);
+      }
+      .mini-button.primary {
+        color: #fff;
+        background: var(--blue);
+        border-color: var(--blue);
+      }
+      .param-explanation {
+        min-height: 92px;
+        padding: 14px;
+        color: #2a418d;
+        background: #f0f4ff;
+        border-radius: 11px;
+      }
+      .param-explanation strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .theta-lab {
+        display: grid;
+        grid-template-columns: minmax(230px, 0.6fr) minmax(0, 1.4fr);
+        gap: 18px;
+        align-items: center;
+        margin-top: 16px;
+      }
+      .theta-control {
+        padding: 14px;
+        background: #fff;
+        border: 1px solid #cbd7f8;
+        border-radius: 11px;
+      }
+      .theta-control input {
+        width: 100%;
+        accent-color: var(--blue);
+      }
+      .theta-value {
+        display: inline-block;
+        margin-top: 7px;
+        color: var(--blue);
+        font: 800 1.15rem var(--mono);
+      }
+      .theta-bars {
+        display: grid;
+        gap: 7px;
+      }
+      .theta-row {
+        display: grid;
+        grid-template-columns: 80px 1fr 58px;
+        gap: 8px;
+        align-items: center;
+        font-size: 0.78rem;
+      }
+      .theta-row .bar {
+        height: 17px;
+      }
+      .theta-row .bar span {
+        background: var(--blue);
+      }
+      .theta-row:first-child .bar span {
+        background: var(--red);
+      }
+      .theta-row strong {
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.73rem;
+      }
+      .command-builder {
+        display: grid;
+        grid-template-columns: minmax(230px, 0.52fr) minmax(0, 1.48fr);
+        gap: 18px;
+        align-items: start;
+      }
+      .scale-buttons {
+        display: grid;
+        gap: 8px;
+      }
+      .scale-button {
+        padding: 13px;
+        text-align: left;
+        color: var(--ink);
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+      }
+      .scale-button strong {
+        display: block;
+        margin-bottom: 3px;
+      }
+      .scale-button span {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+      .scale-button.active {
+        background: var(--blue-soft);
+        border-color: var(--blue);
+      }
+      .command-output {
+        position: relative;
+      }
+      pre {
+        margin: 0;
+        overflow-x: auto;
+        padding: 17px;
+        color: #e6edff;
+        background: #101c38;
+        border-radius: 12px;
+        font: 0.82rem/1.6 var(--mono);
+        white-space: pre-wrap;
+      }
+      .command-output pre {
+        min-height: 116px;
+        padding-right: 92px;
+      }
+      .copy-button {
+        position: absolute;
+        top: 9px;
+        right: 9px;
+        padding: 5px 8px;
+        color: #fff;
+        background: #2a3e6b;
+        border: 1px solid #6176aa;
+        border-radius: 7px;
+        font-size: 0.74rem;
+      }
+      .copy-button:hover {
+        background: #38538d;
+      }
+      .flag-table,
+      .trace-table,
+      .measure-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.87rem;
+      }
+      .flag-table th,
+      .flag-table td,
+      .trace-table th,
+      .trace-table td,
+      .measure-table th,
+      .measure-table td {
+        padding: 10px 11px;
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      .flag-table th,
+      .trace-table th,
+      .measure-table th {
+        color: var(--muted);
+        font-size: 0.71rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+      .flag-table tr:last-child td,
+      .trace-table tr:last-child td,
+      .measure-table tr:last-child td {
+        border-bottom: 0;
+      }
+      .flag-table code {
+        color: var(--blue);
+        font-weight: 800;
+      }
+      .default-chip {
+        display: inline-block;
+        margin-top: 4px;
+        padding: 3px 6px;
+        color: #815000;
+        background: #ffe5ad;
+        border-radius: 6px;
+        font: 0.71rem var(--mono);
+      }
+      .trace-layout {
+        display: grid;
+        grid-template-columns: minmax(260px, 0.7fr) minmax(0, 1.3fr);
+        gap: 18px;
+        align-items: start;
+      }
+      textarea {
+        width: 100%;
+        min-height: 240px;
+        resize: vertical;
+        padding: 14px;
+        color: var(--ink);
+        background: #fbfcff;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        font: 0.82rem/1.55 var(--mono);
+      }
+      .trace-state {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        min-height: 45px;
+        margin: 12px 0;
+        padding: 9px;
+        background: #fbfcff;
+        border: 1px dashed #cbd5eb;
+        border-radius: 10px;
+      }
+      .state-key {
+        padding: 4px 8px;
+        color: var(--navy);
+        background: var(--blue-soft);
+        border: 1px solid #c1d0ff;
+        border-radius: 7px;
+        font: 800 0.77rem var(--mono);
+      }
+      .trace-table-wrap {
+        max-height: 390px;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+      }
+      .trace-table {
+        background: #fff;
+      }
+      .trace-table .found {
+        color: var(--mint);
+        font-weight: 800;
+      }
+      .trace-table .not-found {
+        color: var(--red);
+        font-weight: 800;
+      }
+      .trace-table .current {
+        background: var(--blue-soft);
+      }
+      .candidate-output {
+        margin-top: 12px;
+      }
+      .candidate-output pre {
+        min-height: 85px;
+      }
+      .implementation-stepper {
+        display: grid;
+        grid-template-columns: 235px minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+      }
+      .step-list {
+        display: grid;
+        gap: 7px;
+      }
+      .step-button {
+        display: grid;
+        grid-template-columns: 30px 1fr;
+        gap: 9px;
+        align-items: center;
+        padding: 11px;
+        text-align: left;
+        color: var(--ink);
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      .step-button b {
+        display: grid;
+        place-items: center;
+        width: 25px;
+        height: 25px;
+        color: var(--blue);
+        background: var(--blue-soft);
+        border-radius: 50%;
+        font-size: 0.75rem;
+      }
+      .step-button span {
+        font-size: 0.84rem;
+        font-weight: 780;
+      }
+      .step-button.active {
+        color: #fff;
+        background: var(--navy);
+        border-color: var(--navy);
+      }
+      .step-button.active b {
+        color: #fff;
+        background: var(--blue);
+      }
+      .step-content {
+        min-height: 380px;
+      }
+      .step-content h3 {
+        margin-bottom: 5px;
+      }
+      .step-content .goal {
+        color: var(--muted);
+      }
+      .step-content .success-criteria {
+        margin: 15px 0;
+        padding: 11px 13px;
+        color: #086d5b;
+        background: var(--mint-soft);
+        border-radius: 9px;
+        font-size: 0.88rem;
+      }
+      .step-content pre {
+        min-height: 185px;
+      }
+      .file-tree {
+        display: grid;
+        gap: 6px;
+        margin: 15px 0;
+        padding: 14px;
+        color: #dbe5ff;
+        background: #101c38;
+        border-radius: 11px;
+        font: 0.8rem/1.55 var(--mono);
+      }
+      .file-tree .provided {
+        color: #9cb2ef;
+      }
+      .file-tree .you {
+        color: #8ce0cc;
+      }
+      .experiment-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 13px;
+      }
+      .experiment-card {
+        padding: 16px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .experiment-card h3 {
+        font-size: 1.05rem;
+      }
+      .experiment-card p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+      .checklist {
+        display: grid;
+        gap: 9px;
+      }
+      .check-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 11px 12px;
+        color: var(--ink);
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      .check-item input {
+        margin-top: 5px;
+        accent-color: var(--mint);
+      }
+      .check-item.done {
+        background: var(--mint-soft);
+        border-color: #bde7dd;
+      }
+      .check-summary {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 12px 0 7px;
+        color: var(--muted);
+        font-size: 0.83rem;
+      }
+      .bar {
+        height: 9px;
+        overflow: hidden;
+        background: #e7ebf3;
+        border-radius: 999px;
+      }
+      .bar span {
+        display: block;
+        height: 100%;
+        background: var(--mint);
+        border-radius: inherit;
+        transition: width 0.2s ease;
+      }
+      .measure-table input {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid transparent;
+        background: transparent;
+      }
+      .measure-table input:focus {
+        border-color: var(--blue);
+        outline: 2px solid var(--blue-soft);
+      }
+      footer {
+        padding: 30px 0 52px;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        font-size: 0.85rem;
+      }
+      footer p {
+        margin: 5px 0;
+      }
+      @media (max-width: 930px) {
+        .hero-grid,
+        .command-builder,
+        .trace-layout,
+        .implementation-stepper {
+          grid-template-columns: 1fr;
+        }
+        .path {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .dataset-map {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .dataset-step:not(:last-child)::after {
+          display: none;
+        }
+        .theta-lab {
+          grid-template-columns: 1fr;
+        }
+        .term-guide-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .step-list {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      @media (max-width: 680px) {
+        .shell {
+          width: min(100% - 22px, 560px);
+        }
+        .topbar-inner {
+          display: block;
+          padding: 9px 0 6px;
+        }
+        .nav {
+          margin-top: 7px;
+        }
+        .hero {
+          padding: 54px 0 50px;
+        }
+        .grid-2,
+        .grid-3,
+        .term-grid,
+        .experiment-grid {
+          grid-template-columns: 1fr;
+        }
+        .path {
+          grid-template-columns: 1fr 1fr;
+        }
+        .dataset-map {
+          grid-template-columns: 1fr 1fr;
+        }
+        .group-specs {
+          grid-template-columns: 1fr 1fr;
+        }
+        .step-list {
+          grid-template-columns: 1fr 1fr;
+        }
+        .term-guide-grid {
+          grid-template-columns: 1fr;
+        }
+        .panel {
+          padding: 18px;
+        }
+        h1 {
+          font-size: 2.7rem;
+        }
+        .flag-table,
+        .trace-table,
+        .measure-table {
+          font-size: 0.79rem;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <div class="brand">Carga de trabalho · grupo 5</div>
+        <div class="language-note">chave = ID de livro · rank = posição</div>
+        <nav class="nav" aria-label="Navegação principal">
+          <a href="#começo">Começo</a>
+          <a href="#vocabulario">Vocabulário</a>
+          <a href="#parametros">Parâmetros</a>
+          <a href="#gerar">Gerar</a>
+          <a href="#trace">Trace</a>
+          <a href="#implementar">Implementar</a>
+          <a href="#medir">Medir</a>
+          <a href="#checklist">Checklist</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <div class="eyebrow">Segundo guia · do arquivo real ao benchmark</div>
+          <h1>A carga de trabalho sem termos soltos.</h1>
+          <p>
+            Um passo a passo para entender o que o script gera, o que sua
+            estrutura precisa fazer, como provar corretude e como transformar o
+            trace em medições defendíveis.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="#começo">Começar pelo começo</a>
+            <a class="button secondary" href="#implementar"
+              >Ir ao plano de implementação</a
+            >
+          </div>
+        </div>
+        <div class="hero-card">
+          <strong>A pergunta que guia a página</strong>
+          <p>
+            Como saímos de um arquivo com chaves reais e chegamos a uma resposta
+            que o professor consegue verificar?
+          </p>
+          <pre class="hero-code"><span class="comment"># fluxo completo</span>
+dados reais -&gt; gerador
+              -&gt; trace + expected
+              -&gt; sua árvore
+              -&gt; candidate.out
+              -&gt; verificar + medições</pre>
+        </div>
+      </div>
+    </div>
+
+    <main class="shell">
+      <section id="começo">
+        <div class="section-kicker">01 · a ideia antes dos comandos</div>
+        <h2>O que é uma carga de trabalho?</h2>
+        <p class="lead">
+          Uma carga de trabalho é uma sequência de ações que representa como uma
+          estrutura será usada. Neste projeto, a sequência contém inserções,
+          remoções e buscas. O objetivo não é apenas medir uma árvore em
+          abstrato, mas observar como ela se comporta sob uma história
+          reproduzível de operações.
+        </p>
+        <div class="path" aria-label="Caminho da carga de trabalho">
+          <a href="#dados"
+            ><b>01 · entrada</b
+            ><span>Arquivo de chaves reais ou conjunto sintético</span></a
+          >
+          <a href="#gerar"
+            ><b>02 · geração</b
+            ><span>O script escolhe chaves e cria operações</span></a
+          >
+          <a href="#trace"
+            ><b>03 · trace</b
+            ><span>Uma linha com I, D ou S e uma chave</span></a
+          >
+          <a href="#implementar"
+            ><b>04 · execução</b><span>Sua árvore processa cada linha</span></a
+          >
+          <a href="#oraculo"
+            ><b>05 · oráculo</b
+            ><span>Respostas esperadas para as buscas</span></a
+          >
+          <a href="#medir"
+            ><b>06 · estudo</b><span>Tempo, percentis e interpretação</span></a
+          >
+        </div>
+        <div class="grid-2">
+          <div class="panel soft-blue">
+            <h3>Quatro coisas diferentes</h3>
+            <ol>
+              <li>
+                <strong>Dados</strong> são os valores possíveis, como as chaves
+                de livros.
+              </li>
+              <li>
+                <strong>Carga</strong> é a sequência de ações sobre esses
+                valores.
+              </li>
+              <li>
+                <strong>Oráculo</strong> é a resposta de referência para
+                conferir corretude.
+              </li>
+              <li>
+                <strong>Benchmark</strong> é o experimento que mede o
+                comportamento sob condições registradas.
+              </li>
+            </ol>
+          </div>
+          <div class="panel soft-amber">
+            <h3>O que vocês realmente precisam entregar</h3>
+            <p>
+              O grupo não precisa inventar um novo gerador de cargas. O script
+              <code>src/workload_generator.py</code> já está no projeto. Vocês
+              precisam compreender seus parâmetros, gerar o rastro do grupo 5,
+              implementar a estrutura que o consome, conferir as respostas e
+              medir com metodologia explícita.
+            </p>
+            <div class="callout warn">
+              <strong>Não pule a carga pequena.</strong>Antes de usar milhões de
+              operações, faça um trace de poucas linhas que permita acompanhar o
+              estado da árvore à mão.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="vocabulario">
+        <div class="section-kicker">02 · vocabulário sem mistério</div>
+        <h2>Abra cada termo antes de usar.</h2>
+        <p class="lead">
+          Os termos abaixo aparecem no PDF, no comando e no código. Clique para
+          ver o que significam e qual pergunta do grupo eles respondem.
+        </p>
+        <div class="term-guide">
+          <h3>Dicionário de bolso para este material</h3>
+          <p class="small">
+            A regra é traduzir o termo imediatamente, sem exigir que você o
+            memorize sozinho.
+          </p>
+          <div class="term-guide-grid">
+            <div class="term-guide-item">
+              <strong>chave / key</strong
+              ><span
+                >O ID numérico de um livro. A árvore guarda o ID, não o livro
+                completo.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>rank(k)</strong
+              ><span
+                >Quantidade de IDs de livros menores que k. É uma posição
+                contada a partir do início.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>select(i)</strong
+              ><span
+                >ID que ocupa a posição i na ordem, usando índice começando em
+                zero.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>range_agg</strong
+              ><span
+                >Resumo de um intervalo. Para o grupo 5, retorna o maior ID
+                entre a e b.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>quente</strong
+              ><span
+                >ID escolhido muitas vezes pela carga. Não significa
+                automaticamente livro mais vendido.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>frio</strong
+              ><span
+                >ID escolhido poucas vezes. A diferença vem da distribuição
+                controlada por theta.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>estado vivo</strong
+              ><span>IDs que já entraram e ainda não foram removidos.</span>
+            </div>
+            <div class="term-guide-item">
+              <strong>benchmark</strong
+              ><span
+                >Experimento medido com condições registradas, não apenas uma
+                execução que terminou.</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="panel soft-blue" style="margin: 20px 0">
+          <h3>O dataset é a matéria-prima, não a história completa</h3>
+          <p>
+            O arquivo <code>books_200M_uint32</code> não é um registro de
+            acessos dos usuários e ainda não contém operações I, D ou S. Ele é
+            uma grande coleção de <strong>chaves possíveis</strong>. O gerador
+            pega essa matéria-prima e cria uma história artificial, mas
+            reproduzível, de uso da estrutura.
+          </p>
+          <div
+            class="dataset-map"
+            aria-label="Como o dataset vira uma carga de trabalho"
+          >
+            <div class="dataset-step">
+              <b>1 · dataset</b><strong>IDs de livros possíveis</strong
+              ><span
+                >Inteiros que representam identificadores do conjunto
+                amzn.</span
+              >
+            </div>
+            <div class="dataset-step">
+              <b>2 · seleção</b><strong>Universo e reserve</strong
+              ><span
+                >Escolhe chaves e separa algumas que nunca serão
+                inseridas.</span
+              >
+            </div>
+            <div class="dataset-step">
+              <b>3 · distribuição</b><strong>Quem é escolhido</strong
+              ><span>theta concentra escolhas em ranks quentes.</span>
+            </div>
+            <div class="dataset-step">
+              <b>4 · operações</b><strong>I, D e S</strong
+              ><span
+                >O gerador monta uma sequência que altera o conjunto vivo.</span
+              >
+            </div>
+            <div class="dataset-step">
+              <b>5 · arquivos</b><strong>Trace + expected</strong
+              ><span
+                >Sua árvore consome o trace e o oráculo confere as buscas.</span
+              >
+            </div>
+          </div>
+          <div class="callout success">
+            <strong>A conexão em uma frase</strong>O dataset diz quais
+            identificadores de livros podem aparecer. O gerador decide quando
+            cada identificador entra, sai ou é pesquisado. O trace registra essa
+            história para a sua árvore repetir.
+          </div>
+          <p class="small">
+            <strong>Dois significados diferentes de “popularidade”:</strong> a
+            origem amzn vem de popularidade de vendas de livros. Já
+            <code>theta = 0.99</code> é uma escolha do gerador para concentrar
+            acessos. O arquivo não é um log de acessos, e o theta não deve ser
+            tratado automaticamente como a popularidade original de cada livro.
+          </p>
+          <button
+            class="mini-button"
+            id="dataset-example-button"
+            type="button"
+            aria-expanded="false"
+          >
+            Mostrar exemplo com cinco chaves
+          </button>
+          <div id="dataset-example" class="dataset-example" hidden>
+            <div class="grid-2">
+              <div>
+                <h3>Exemplo didático, reduzido</h3>
+                <p class="small">
+                  Suponha que a seleção tenha produzido as chaves
+                  <code>[10, 20, 30, 40, 50]</code>. Com uma reserva
+                  simplificada de 20%, a chave 10 nunca será inserida. As demais
+                  podem entrar em ordem <code>ordenada</code>.
+                </p>
+                <pre><code>reservadas = [10]
+insertiveis = [20, 30, 40, 50]
+ordem_de_insercao = sorted(insertiveis)</code></pre>
+              </div>
+              <div>
+                <h3>A história resultante</h3>
+                <table class="flag-table">
+                  <thead>
+                    <tr>
+                      <th>operação</th>
+                      <th>conjunto vivo depois</th>
+                      <th>resposta</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>I 20</code></td>
+                      <td><code>{20}</code></td>
+                      <td>-</td>
+                    </tr>
+                    <tr>
+                      <td><code>I 30</code></td>
+                      <td><code>{20, 30}</code></td>
+                      <td>-</td>
+                    </tr>
+                    <tr>
+                      <td><code>S 20</code></td>
+                      <td><code>{20, 30}</code></td>
+                      <td><strong style="color: var(--mint)">FOUND</strong></td>
+                    </tr>
+                    <tr>
+                      <td><code>D 20</code></td>
+                      <td><code>{30}</code></td>
+                      <td>-</td>
+                    </tr>
+                    <tr>
+                      <td><code>S 20</code></td>
+                      <td><code>{30}</code></td>
+                      <td>
+                        <strong style="color: var(--red)">NOT_FOUND</strong>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <p class="small">
+              Este exemplo não reproduz a aleatoriedade exata do arquivo real.
+              Ele mostra a função geral: as chaves viram estado, o estado muda
+              com I e D e S observa esse estado.
+            </p>
+          </div>
+          <div class="callout warn">
+            <strong>Onde entram as outras operações?</strong>O trace fornecido
+            exercita diretamente <code>insert</code>, <code>delete</code> e
+            <code>search</code>. <code>rank</code>, <code>select</code> e
+            <code>range_agg</code> continuam obrigatórias na árvore e devem
+            receber testes e medições próprios, mesmo que não apareçam como
+            letras no arquivo <code>.trace</code>.
+          </div>
+        </div>
+        <div class="panel" style="margin-bottom: 20px">
+          <h3>A moral do dataset, sem a analogia esconder o contrato</h3>
+          <div class="grid-2">
+            <div>
+              <p>
+                <strong>O dataset amzn não simula uma loja.</strong> Sua origem
+                é um conjunto real relacionado à popularidade de vendas de
+                livros. Isso dá ao experimento identificadores reais, em grande
+                escala e com uma história de origem interessante. Mas o arquivo
+                não contém registros completos de livros, estoque, usuários ou
+                compras.
+              </p>
+              <p>
+                <strong
+                  >Para a estrutura, cada identificador de livro é somente um
+                  inteiro.</strong
+                >
+                Podemos imaginá-lo como o ID de um livro no catálogo, mas a
+                árvore não sabe título, preço ou quantidade vendida. Ela só
+                responde se aquele identificador está presente e mantém os
+                resumos pedidos.
+              </p>
+              <div class="callout warn">
+                <strong>Correção importante sobre o formato.</strong>Na carga
+                fornecida, o dataset amzn não é um JSON de referência. Ele é um
+                arquivo binário SOSD. O JSON ou a analogia de marketplace podem
+                ajudar a imaginar, mas não fazem parte do contrato da árvore.
+              </div>
+            </div>
+            <div>
+              <p>
+                <strong>O universo é o catálogo de IDs do teste.</strong> Depois
+                de ler e tornar os identificadores distintos, o gerador escolhe
+                até <code>--universo</code> identificadores. Esses são todos os
+                IDs possíveis considerados naquela execução, não necessariamente
+                todos os livros do arquivo de 200 milhões.
+              </p>
+              <p>
+                <strong
+                  >A reserva é um conjunto possível, mas mantido fora do
+                  catálogo vivo.</strong
+                >
+                O gerador separa
+                <code>int(universe * reserve)</code> identificadores para nunca
+                inseri-los. Eles continuam disponíveis como alvos de miss. Não
+                são livros criados depois nem linhas adicionadas ao dataset.
+              </p>
+              <pre><code>chaves_distintas = np.unique(chaves_lidas)
+U = min(universe, len(chaves_distintas))
+chosen = chaves_distintas[idx[:U]]
+R = int(U * reserve)
+reservadas = chosen[:R]
+insertiveis = chosen[R:]</code></pre>
+            </div>
+          </div>
+          <div class="callout success">
+            <strong>O que theta faz, exatamente?</strong>Ele não altera o
+            dataset, o universo ou a quantidade de livros. Ele define a
+            concentração com que o gerador escolhe ranks de chaves para acessos
+            e misses. Com theta igual a 0, a escolha é mais uniforme. Com theta
+            igual a 0.99, poucos ranks ficam muito quentes. Com valores ainda
+            maiores, a concentração fica mais forte. No grupo 5, essa
+            concentração é uma propriedade da carga, não uma afirmação de que
+            aqueles inteiros são comprovadamente os livros mais vendidos.
+          </div>
+          <h3>Contrato operacional das três letras</h3>
+          <table class="flag-table">
+            <thead>
+              <tr>
+                <th>linha</th>
+                <th>analogia opcional</th>
+                <th>o que a árvore realmente faz</th>
+                <th>saída</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>I k</code></td>
+                <td>Colocar o livro k no catálogo do teste.</td>
+                <td>
+                  Inserir o inteiro k, se ainda não estiver presente. Atualizar
+                  balanceamento e metadados.
+                </td>
+                <td>Nada no arquivo candidate ou expected.</td>
+              </tr>
+              <tr>
+                <td><code>D k</code></td>
+                <td>Retirar o livro k do catálogo do teste.</td>
+                <td>
+                  Remover o inteiro k, se estiver presente. Se estiver ausente,
+                  deixar o estado inalterado.
+                </td>
+                <td>Nada no arquivo candidate ou expected.</td>
+              </tr>
+              <tr>
+                <td><code>S k</code></td>
+                <td>
+                  Procurar o livro k no catálogo, não realizar uma compra.
+                </td>
+                <td>
+                  Consultar se o inteiro k está presente. A busca não muda o
+                  estado.
+                </td>
+                <td>
+                  <code>k FOUND</code> se presente, ou
+                  <code>k NOT_FOUND</code> se ausente.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="small">
+            <strong>Ser uma busca bem-sucedida</strong> significa apenas que a
+            chave está presente na árvore no momento da consulta.
+            <code>FOUND</code> não significa que uma compra ocorreu.
+            <code>NOT_FOUND</code> não significa que o livro nunca existiu no
+            dataset. Significa que ele não está presente no estado atual.
+          </p>
+        </div>
+        <div class="panel soft-mint" style="margin-bottom: 20px">
+          <h3>Trace, expected e candidate em um exemplo completo</h3>
+          <div class="grid-2">
+            <div>
+              <p>
+                <strong>Trace é a entrada da sua estrutura.</strong> Ele
+                registra a história, uma operação por linha. A árvore deve
+                processar todas as linhas, mesmo quando não haverá texto de
+                saída.
+              </p>
+              <pre><code>I 42
+I 7
+S 42
+D 42
+S 42
+D 999
+S 999</code></pre>
+            </div>
+            <div>
+              <p>
+                <strong>Expected é o gabarito somente das buscas.</strong> Ele
+                não repete I e D porque essas operações não escrevem respostas.
+                As linhas aparecem na ordem em que as operações S surgem no
+                trace.
+              </p>
+              <pre><code>42 FOUND
+42 NOT_FOUND
+999 NOT_FOUND</code></pre>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>Candidate é a sua resposta.</strong> Seu programa deve
+            produzir exatamente o mesmo texto do expected. Assim, I 42 e D 42
+            não geram linha, mas são essenciais porque mudam o estado que
+            determina as respostas das buscas posteriores.
+          </div>
+        </div>
+        <div class="panel soft-amber" style="margin-bottom: 20px">
+          <h3>Calculadora de universo e reserva</h3>
+          <p>
+            Use esta conta para separar as três quantidades. O arquivo carregado
+            fornece as chaves disponíveis, <strong>U</strong> define quantas
+            entram no universo desta execução, <strong>R</strong> define quantas
+            ficam reservadas e <strong>U - R</strong> é o máximo de chaves que o
+            gerador pode inserir.
+          </p>
+          <div class="grid-2">
+            <div>
+              <label style="display: grid; gap: 5px; margin-bottom: 12px"
+                ><strong>U, tamanho do universo</strong
+                ><input
+                  id="universe-explain"
+                  type="number"
+                  min="1"
+                  value="10000000"
+                  style="
+                    width: 100%;
+                    padding: 9px;
+                    border: 1px solid var(--line);
+                    border-radius: 8px;
+                  "
+                /><span class="small"
+                  >Exemplo do PDF: dez milhões de chaves escolhidas do arquivo
+                  carregado.</span
+                ></label
+              >
+              <label style="display: grid; gap: 5px"
+                ><strong>reserve, fração que nunca será inserida</strong
+                ><input
+                  id="reserve-explain"
+                  type="range"
+                  min="0"
+                  max="0.5"
+                  step="0.01"
+                  value="0.10"
+                /><span class="small"
+                  ><strong id="reserve-percent">10%</strong> do universo</span
+                ></label
+              >
+            </div>
+            <div class="group-specs" style="margin-top: 0">
+              <div class="spec">
+                <small>universo U</small
+                ><strong id="calc-universe">10.000.000</strong
+                ><span>chaves possíveis na execução</span>
+              </div>
+              <div class="spec">
+                <small>reservadas R</small
+                ><strong id="calc-reserved">1.000.000</strong
+                ><span>misses garantidos</span>
+              </div>
+              <div class="spec">
+                <small>insertíveis</small
+                ><strong id="calc-insertable">9.000.000</strong
+                ><span>U - R</span>
+              </div>
+            </div>
+          </div>
+          <div
+            id="reserve-calculation"
+            class="callout"
+            style="margin-bottom: 0"
+          >
+            <strong>Conta atual</strong>R = int(10.000.000 × 0,10) = 1.000.000.
+            Portanto, 9.000.000 chaves podem entrar na estrutura. Isso não
+            significa que todas estarão vivas ao mesmo tempo, porque remoções
+            também acontecem.
+          </div>
+          <p class="small" style="margin-bottom: 0">
+            <strong>Não misture os limites:</strong>
+            <code>max-load</code> controla quantos identificadores são lidos do
+            arquivo antes da seleção. <code>universe</code> controla quantos
+            identificadores distintos são escolhidos. <code>ops</code> controla
+            quantas operações tentam ser geradas.
+          </p>
+        </div>
+        <div class="panel" style="margin-bottom: 20px">
+          <h3>Theta em uma imagem mental</h3>
+          <p>
+            Imagine que o universo já esteja fixado com oito identificadores de
+            livros. Eles continuam sendo os mesmos oito IDs em todos os casos
+            abaixo. O theta só muda a probabilidade de escolher cada
+            <strong>rank</strong>. Rank 1 é a posição mais quente, rank 8 é a
+            mais fria.
+          </p>
+          <div class="theta-lab">
+            <div class="theta-control">
+              <label for="theta-explain"
+                ><strong>Escolha um theta</strong></label
+              >
+              <input
+                id="theta-explain"
+                type="range"
+                min="0"
+                max="1.2"
+                step="0.01"
+                value="0.99"
+              />
+              <span id="theta-explain-value" class="theta-value">0,99</span>
+              <p id="theta-explain-text" class="small">
+                Poucos ranks concentram muitos acessos.
+              </p>
+            </div>
+            <div
+              id="theta-bars"
+              class="theta-bars"
+              role="img"
+              aria-label="Concentração didática de acessos por rank"
+            ></div>
+          </div>
+          <div class="callout success">
+            <strong>Como ler a visualização</strong>Com theta igual a 0, as
+            barras ficam parecidas e qualquer rank tem chance semelhante. Com
+            theta igual a 0.99, rank 1 e os ranks iniciais são escolhidos com
+            muito mais frequência. A quantidade de IDs não muda. A árvore recebe
+            os mesmos identificadores possíveis, mas em uma história de acessos
+            diferente.
+          </div>
+          <p class="small" style="margin-bottom: 0">
+            <strong>Nota de precisão:</strong> as barras são uma ilustração
+            normalizada por rank para explicar a ideia. Elas não são os
+            resultados medidos do grupo nem substituem a execução real do
+            <code>gen_workload.py</code>. Além disso, rank 1 é uma posição
+            quente criada pelo gerador, não uma prova de que aquele
+            identificador representa o livro mais vendido.
+          </p>
+        </div>
+        <div class="term-grid">
+          <details class="term" open>
+            <summary>Chave = identificador de livro</summary>
+            <p>
+              <strong>Chave</strong> é o nome técnico que aparece no código.
+              Neste material, leia sempre como o ID numérico de um livro. A
+              árvore recebe esse número, não o título, o preço ou o registro
+              completo do livro.
+            </p>
+            <span class="definition">key = book_id</span>
+          </details>
+          <details class="term" id="dados">
+            <summary>SOSD</summary>
+            <p>
+              <strong>SOSD</strong> significa <em>Search On Sorted Data</em>.
+              Aqui, ele é o benchmark/repositório que fornece arquivos grandes
+              de chaves reais para testar estruturas de pesquisa. O arquivo é
+              uma entrada estática, não uma árvore pronta nem um log de
+              operações.
+            </p>
+            <span class="definition">Pergunta: de onde vêm as chaves?</span>
+          </details>
+          <details class="term">
+            <summary>amzn</summary>
+            <p>
+              <strong>amzn</strong> é o nome da instância do grupo 5. Ela
+              representa popularidade de vendas de livros e corresponde ao
+              arquivo <code>books_200M_uint32</code>, com inteiros de 32 bits.
+            </p>
+            <span class="definition">Grupo 5: data = amzn</span>
+          </details>
+          <details class="term">
+            <summary>Arquivo binário</summary>
+            <p>
+              Não é um arquivo de texto com uma chave por linha. Os primeiros 8
+              bytes guardam a quantidade de chaves em
+              <code>uint64</code> little-endian. Depois vêm os inteiros, em
+              <code>uint32</code> ou <code>uint64</code>.
+            </p>
+            <span class="definition">Por isso: --formato sosd</span>
+          </details>
+          <details class="term">
+            <summary>Trace</summary>
+            <p>
+              É a entrada da estrutura, com uma operação por linha.
+              <code>I</code> insere, <code>D</code> remove e
+              <code>S</code> pesquisa. Todas as linhas são executadas, mas
+              somente S gera texto de resposta.
+            </p>
+            <span class="definition">Ex.: S 5512837</span>
+          </details>
+          <details class="term">
+            <summary>Oráculo</summary>
+            <p>
+              É o gabarito de referência criado pelo gerador. Para cada linha S,
+              na mesma ordem, ele registra <code>FOUND</code> se a chave está
+              presente ou <code>NOT_FOUND</code> se está ausente.
+            </p>
+            <span class="definition">Arquivo: g5.expected</span>
+          </details>
+          <details class="term">
+            <summary>Candidate</summary>
+            <p>
+              É a saída produzida pela implementação do grupo. Ela não deve
+              registrar respostas para I ou D. Deve conter uma linha para cada
+              S, no mesmo formato e na mesma ordem do expected.
+            </p>
+            <span class="definition">Arquivo: minha_saida.out</span>
+          </details>
+          <details class="term">
+            <summary>Universo</summary>
+            <p>
+              É o conjunto de chaves distintas que o gerador considera possíveis
+              naquela execução. Ele é uma seleção do arquivo carregado, não
+              necessariamente todos os livros do conjunto de dados e não é o
+              número de operações.
+            </p>
+            <span class="definition">Ex.: --universo 10000000</span>
+          </details>
+          <details class="term">
+            <summary>Reserve</summary>
+            <p>
+              É a parte do universo que permanece possível como identificador,
+              mas é deliberadamente nunca inserida. Serve para produzir misses
+              de chaves que não estão no estado vivo. O padrão é 10% do
+              universo.
+            </p>
+            <span class="definition">Padrão: --reserva 0.10</span>
+          </details>
+          <details class="term">
+            <summary>Conjunto vivo</summary>
+            <p>
+              É o conjunto de chaves que já foram inseridas e ainda não foram
+              removidas. O gerador escolhe buscas de sucesso a partir dele e
+              também guarda chaves removidas para testar misses.
+            </p>
+            <span class="definition">Estado depois de I e D</span>
+          </details>
+          <details class="term">
+            <summary>Hit e miss</summary>
+            <p>
+              <strong>Hit</strong> é uma busca que encontra a chave.
+              <strong>Miss</strong> é uma busca que não encontra. O script cria
+              misses de chaves nunca inseridas e de chaves que foram inseridas e
+              depois removidas.
+            </p>
+            <span class="definition">FOUND vs NOT_FOUND</span>
+          </details>
+          <details class="term">
+            <summary>Mix I:D:S</summary>
+            <p>
+              É a proporção de inserções, remoções e buscas. Para o grupo 5,
+              <code>45:25:30</code> significa aproximadamente 45% I, 25% D e 30%
+              S. A sequência real pode variar por aleatoriedade e regras do
+              gerador.
+            </p>
+            <span class="definition">Grupo 5: 45:25:30</span>
+          </details>
+          <details class="term">
+            <summary>theta</summary>
+            <p>
+              <code>theta</code> controla o quanto os acessos se concentram. Em
+              0, a distribuição é quase uniforme. Quanto maior, mais acessos
+              ficam concentrados em poucas chaves quentes. O grupo 5 usa
+              <code>0.99</code>, próximo ao padrão YCSB.
+            </p>
+            <span class="definition">Grupo 5: theta = 0.99</span>
+          </details>
+          <details class="term">
+            <summary>YCSB</summary>
+            <p>
+              YCSB é um benchmark conhecido de sistemas de serving. O script usa
+              a ideia de acesso Zipfiano popularizada nesse tipo de carga:
+              poucas chaves recebem muitas operações e muitas chaves recebem
+              poucas.
+            </p>
+            <span class="definition">Modelo de acesso, não estrutura</span>
+          </details>
+          <details class="term">
+            <summary>Zipfiano</summary>
+            <p>
+              É a distribuição de probabilidade usada para escolher ranks. Rank
+              baixo significa chave quente. O gerador usa um objeto Zipfiano
+              separado para chaves vivas e para misses reservados.
+            </p>
+            <span class="definition">Acesso concentrado</span>
+          </details>
+          <details class="term">
+            <summary>ordem-insercao</summary>
+            <p>
+              É a ordem em que as chaves inseríveis entram.
+              <code>ordenada</code> significa crescente. Em uma BST sem
+              balanceamento, inserir crescente pode formar uma cadeia. O grupo 5
+              recebe deliberadamente esse caso.
+            </p>
+            <span class="definition">Grupo 5: ordenada</span>
+          </details>
+          <details class="term">
+            <summary>Semente</summary>
+            <p>
+              É a semente do gerador pseudoaleatório. Usar sempre
+              <code>5</code> torna a geração reproduzível pelo docente e pelo
+              próprio grupo, desde que os demais parâmetros sejam iguais.
+            </p>
+            <span class="definition">Grupo 5: --semente 5</span>
+          </details>
+          <details class="term">
+            <summary>max-load</summary>
+            <p>
+              Limita quantas chaves o script lê do início do arquivo. É uma
+              forma de controlar memória durante um piloto. Não é o mesmo que
+              limitar o número de operações.
+            </p>
+            <span class="definition">Memória da entrada</span>
+          </details>
+          <details class="term">
+            <summary>p50 e p99</summary>
+            <p>
+              <strong>p50</strong> é o tempo abaixo do qual está metade das
+              operações, uma medida de caso típico. <strong>p99</strong> é o
+              tempo abaixo do qual estão 99%, revelando a cauda lenta.
+            </p>
+            <span class="definition">Percentis de tempo</span>
+          </details>
+        </div>
+      </section>
+
+      <section id="parametros">
+        <div class="section-kicker">03 · a instância do grupo 5</div>
+        <h2>Seis escolhas que não podem desaparecer do relatório.</h2>
+        <div class="panel soft-blue">
+          <div class="group-specs">
+            <div class="spec">
+              <small>arquivo</small><strong>amzn</strong
+              ><span>data/books_200M_uint32</span>
+            </div>
+            <div class="spec">
+              <small>theta</small><strong>0.99</strong
+              ><span>acesso concentrado</span>
+            </div>
+            <div class="spec">
+              <small>mix I:D:S</small><strong>45:25:30</strong
+              ><span>inserir, remover, buscar</span>
+            </div>
+            <div class="spec">
+              <small>range_agg</small><strong>máximo</strong
+              ><span>intervalo fechado [a, b]</span>
+            </div>
+            <div class="spec">
+              <small>ordem-insercao</small><strong>ordenada</strong
+              ><span>caso patológico</span>
+            </div>
+            <div class="spec">
+              <small>seed</small><strong>5</strong
+              ><span>reprodutibilidade</span>
+            </div>
+          </div>
+          <div
+            class="param-buttons"
+            role="tablist"
+            aria-label="Parâmetros do grupo 5"
+          >
+            <button class="param-button active" data-param="amzn">amzn</button>
+            <button class="param-button" data-param="theta">theta</button>
+            <button class="param-button" data-param="mix">mix</button>
+            <button class="param-button" data-param="aggregate">máximo</button>
+            <button class="param-button" data-param="order">ordenada</button>
+            <button class="param-button" data-param="seed">seed 5</button>
+          </div>
+          <div id="param-explanation" class="param-explanation">
+            <strong>amzn · a entrada</strong>O grupo 5 usa popularidade de
+            vendas de livros. O arquivo é grande e binário. A estrutura não
+            recebe a descrição amzn; recebe inteiros lidos do arquivo.
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 18px">
+          <div class="panel">
+            <h3>O que é fixo e o que vocês podem investigar?</h3>
+            <table class="flag-table">
+              <thead>
+                <tr>
+                  <th>Fixo nas comparações oficiais</th>
+                  <th>Pode variar no estudo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <code>amzn</code>, <code>45:25:30</code>, <code>0.99</code>,
+                    <code>máximo</code>, <code>ordenada</code>, semente 5
+                  </td>
+                  <td>
+                    n, número de operações, repetições, aquecimento e
+                    implementação da referência
+                  </td>
+                </tr>
+                <tr>
+                  <td>A semântica de I, D e S</td>
+                  <td>
+                    theta em {0.0, 0.6, 0.99, 1.2} para o experimento exigido
+                  </td>
+                </tr>
+                <tr>
+                  <td>Formato de resposta do oráculo</td>
+                  <td>
+                    <code>ordenada</code> contra <code>embaralhada</code> para o
+                    caso patológico
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel soft-amber">
+            <h3>Uma variável por vez</h3>
+            <p>
+              Se vocês alterarem o conjunto, o theta, o mix e a ordem ao mesmo
+              tempo, não saberão qual mudança causou a diferença. Primeiro fixem
+              a instância do grupo 5. Depois criem comparações controladas.
+            </p>
+            <div class="callout warn">
+              <strong>Registre desvios.</strong>Um piloto com
+              <code>--carga-maxima 20000000</code> é válido para
+              desenvolvimento, mas não deve ser apresentado como execução do
+              conjunto completo.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="gerar">
+        <div class="section-kicker">04 · gerar a carga</div>
+        <h2>Primeiro execute pequeno. Depois escale.</h2>
+        <p class="lead">
+          A mesma lógica deve funcionar em três tamanhos. O modo smoke testa o
+          encadeamento. O piloto testa o arquivo real com limite de memória. A
+          execução oficial produz os dados do relatório, dentro do limite da
+          máquina do grupo.
+        </p>
+        <div class="panel">
+          <div class="command-builder">
+            <div>
+              <h3>Escolha a fase</h3>
+              <div
+                class="scale-buttons"
+                role="tablist"
+                aria-label="Fase da geração"
+              >
+                <button class="scale-button active" data-scale="smoke">
+                  <strong>1 · smoke test</strong
+                  ><span>chaves sintéticas, rápido e controlável</span>
+                </button>
+                <button class="scale-button" data-scale="pilot">
+                  <strong>2 · piloto real</strong
+                  ><span>arquivo amzn, 20 milhões de chaves lidas</span>
+                </button>
+                <button class="scale-button" data-scale="official">
+                  <strong>3 · execução oficial</strong
+                  ><span>carga grande, sem esconder o limite usado</span>
+                </button>
+              </div>
+              <div class="trace-controls">
+                <div class="field">
+                  <label for="ops-input">operações</label
+                  ><input
+                    id="ops-input"
+                    type="number"
+                    min="1"
+                    value="50000"
+                    style="
+                      width: 130px;
+                      padding: 8px;
+                      border: 1px solid var(--line);
+                      border-radius: 8px;
+                    "
+                  />
+                </div>
+                <div class="field">
+                  <label for="universe-input">universe</label
+                  ><input
+                    id="universe-input"
+                    type="number"
+                    min="1"
+                    value="10000"
+                    style="
+                      width: 130px;
+                      padding: 8px;
+                      border: 1px solid var(--line);
+                      border-radius: 8px;
+                    "
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="command-output">
+              <button class="copy-button" data-copy="generated-command">
+                Copiar comando
+              </button>
+              <pre id="generated-command">
+python src/workload_generator.py gerar --sintetico 10000 --operacoes 50000 --universo 10000 --mistura 45:25:30 --theta 0.99 --ordem-insercao ordenada --semente 5 --saida g5-smoke</pre
+              >
+              <div id="command-note" class="callout" style="margin-bottom: 0">
+                <strong>O que este comando faz</strong>Gera
+                <code>g5-smoke.trace</code> e <code>g5-smoke.expected</code> sem
+                depender ainda do arquivo amzn.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 18px">
+          <div class="panel">
+            <h3>Comando de preparação do arquivo real</h3>
+            <p class="small">
+              A suíte SOSD assume Linux baseado em apt. O download completo
+              ocupa bastante espaço. Se o script de download falhar, use o
+              espelho isolado indicado no PDF e confira o hash.
+            </p>
+            <pre><code>sudo apt -y update
+sudo apt -y install zstd python3-pip m4 cmake clang libboost-all-dev
+pip3 install --user numpy scipy
+git clone https://github.com/learnedsystems/SOSD.git
+cd SOSD
+./scripts/download.sh
+ls -lh data/</code></pre>
+          </div>
+          <div class="panel soft-mint">
+            <h3>O que aparece no diretório de saída</h3>
+            <div class="file-tree">
+              <span>g5-smoke.trace <span class="you">← operações</span></span>
+              <span
+                >g5-smoke.expected
+                <span class="you">← gabarito das buscas</span></span
+              >
+              <span>g5-pilot.trace</span>
+              <span>g5-pilot.expected</span>
+            </div>
+            <p class="small">
+              Não confunda <code>.trace</code> com <code>.expected</code>. O
+              primeiro é entrada para a sua estrutura. O segundo é a resposta
+              com a qual a saída será comparada.
+            </p>
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 18px">
+          <h3>Parâmetros do gerador, em linguagem comum</h3>
+          <table class="flag-table">
+            <thead>
+              <tr>
+                <th>Parâmetro</th>
+                <th>Função</th>
+                <th>Grupo 5</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>--chaves</code></td>
+                <td>Caminho do arquivo real.</td>
+                <td><code>data/books_200M_uint32</code></td>
+              </tr>
+              <tr>
+                <td><code>--formato sosd</code></td>
+                <td>
+                  Interpreta o preâmbulo binário e as chaves em sequência.
+                </td>
+                <td>fixo</td>
+              </tr>
+              <tr>
+                <td><code>--bytes-chave 4</code></td>
+                <td>Informa que as chaves são <code>uint32</code>.</td>
+                <td>fixo</td>
+              </tr>
+              <tr>
+                <td><code>--operacoes</code></td>
+                <td>Quantidade de linhas de operações a tentar gerar.</td>
+                <td>50 milhões na referência do PDF</td>
+              </tr>
+              <tr>
+                <td><code>--universo</code></td>
+                <td>Quantidade máxima de chaves distintas escolhidas.</td>
+                <td>10 milhões na referência do PDF</td>
+              </tr>
+              <tr>
+                <td><code>--mistura</code></td>
+                <td>Proporção I:D:S.</td>
+                <td><code>45:25:30</code></td>
+              </tr>
+              <tr>
+                <td><code>--theta</code></td>
+                <td>Concentração da escolha das chaves.</td>
+                <td><code>0.99</code></td>
+              </tr>
+              <tr>
+                <td><code>--ordem-insercao</code></td>
+                <td>Ordem inicial de inserção.</td>
+                <td><code>ordenada</code></td>
+              </tr>
+              <tr>
+                <td><code>--semente</code></td>
+                <td>Semente pseudoaleatória.</td>
+                <td><code>5</code></td>
+              </tr>
+              <tr>
+                <td>defaults do script</td>
+                <td>
+                  Reserva, proporção de hits, remoções ausentes e misses de
+                  removidas.
+                </td>
+                <td>
+                  <span class="default-chip"
+                    >reserve .10 · hit .70 · absent .05 · deleted-miss .50</span
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="trace">
+        <div class="section-kicker">05 · ler e executar o trace</div>
+        <h2>Uma linha muda o estado da estrutura.</h2>
+        <p class="lead">
+          O arquivo real pode ter milhões de linhas, mas o contrato é simples.
+          Use o laboratório com poucas operações para acompanhar o conjunto
+          vivo, a resposta esperada e o texto que sua implementação deve
+          produzir.
+        </p>
+        <div class="trace-layout">
+          <div class="panel">
+            <h3>Trace de treinamento</h3>
+            <textarea id="trace-input" aria-label="Trace de treinamento">
+I 10
+I 4
+S 10
+D 10
+S 10
+S 99
+D 99
+I 10
+S 10</textarea
+            >
+            <div class="trace-controls">
+              <button class="mini-button" id="trace-reset">Recomeçar</button>
+              <button class="mini-button" id="trace-next">
+                Executar próxima
+              </button>
+              <button class="mini-button primary" id="trace-run">
+                Executar tudo
+              </button>
+            </div>
+            <div id="trace-message" class="callout" style="margin-bottom: 0">
+              O cursor está no início. Execute uma linha para ver a transição.
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Estado do conjunto vivo</h3>
+            <div id="trace-state" class="trace-state" aria-live="polite">
+              <span class="small">vazio</span>
+            </div>
+            <div class="trace-table-wrap">
+              <table class="trace-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>linha</th>
+                    <th>antes</th>
+                    <th>depois</th>
+                    <th>resposta</th>
+                  </tr>
+                </thead>
+                <tbody id="trace-body">
+                  <tr>
+                    <td colspan="5" class="small">Nenhuma linha executada.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="candidate-output">
+              <h3>Saída candidate, somente para S</h3>
+              <pre id="candidate-output">Ainda não há respostas de busca.</pre>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 18px">
+          <div class="panel soft-blue">
+            <h3>Como interpretar cada operação</h3>
+            <table class="flag-table">
+              <thead>
+                <tr>
+                  <th>linha</th>
+                  <th>o que sua estrutura faz</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>I 10</code></td>
+                  <td>
+                    Insere a chave 10. Atualiza altura, tamanho e agregado no
+                    caminho.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>D 10</code></td>
+                  <td>
+                    Remove a chave 10. Se ela não existe, a operação não pode
+                    corromper o estado.
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>S 10</code></td>
+                  <td>
+                    Pesquisa. Escreve <code>10 FOUND</code> ou
+                    <code>10 NOT_FOUND</code> somente na saída.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <h3>O driver Python do grupo</h3>
+            <pre><code>with open("g5.trace") as trace_file, open("candidate.out", "w") as output_file:
+    for line in trace_file:
+        if line.startswith("#") or not line.strip():
+            continue
+        operation, raw_key = line.split()
+        key = int(raw_key)
+
+        if operation == "I":
+            tree.insert(key)
+        elif operation == "D":
+            tree.delete(key)
+        elif operation == "S":
+            result = "FOUND" if tree.search(key) else "NOT_FOUND"
+            print(key, result, file=output_file)</code></pre>
+            <p class="small">
+              Esse programa não deve recalcular a resposta do oráculo. Ele deve
+              executar a sua estrutura e escrever apenas as buscas.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="oraculo">
+        <div class="section-kicker">06 · corretude transitiva</div>
+        <h2>O oráculo encontra erros que uma busca isolada não encontra.</h2>
+        <div class="grid-2">
+          <div class="panel soft-mint">
+            <h3>Por que transitiva?</h3>
+            <p>
+              O gabarito de uma busca depende de todas as inserções e remoções
+              anteriores. Se <code>delete</code> falhar, uma busca posterior em
+              uma chave removida responderá <code>FOUND</code> quando deveria
+              responder <code>NOT_FOUND</code>.
+            </p>
+            <pre><code>I 42
+D 42
+S 42
+
+# esperado
+42 NOT_FOUND</code></pre>
+          </div>
+          <div class="panel soft-red">
+            <h3>Os três tipos de miss</h3>
+            <ol>
+              <li>
+                <strong>Reservada:</strong> a chave foi escolhida, mas nunca
+                será inserida.
+              </li>
+              <li>
+                <strong>Removida:</strong> a chave entrou, saiu e vira teste de
+                <code>delete</code>.
+              </li>
+              <li>
+                <strong>Ausente em D:</strong> o gerador pode pedir uma remoção
+                de chave que não está viva.
+              </li>
+            </ol>
+            <p class="small">
+              Uma implementação correta precisa tratar os três casos sem alterar
+              o estado de forma indevida.
+            </p>
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 18px">
+          <h3>Comando de verificação</h3>
+          <div class="command-output">
+            <button class="copy-button" data-copy="verify-code">Copiar</button>
+            <pre id="verify-code">
+python src/workload_generator.py verificar --esperado g5.expected --candidato candidate.out</pre
+            >
+          </div>
+          <div class="callout success">
+            <strong>O que significa [SUCESSO]?</strong>Que as linhas comparadas
+            coincidem. Se houver divergência, o verificador informa a primeira
+            linha problemática. Investigue o rastro antes de medir desempenho.
+          </div>
+        </div>
+      </section>
+
+      <section id="implementar">
+        <div class="section-kicker">07 · plano de implementação</div>
+        <h2>Implemente em fatias pequenas e verificáveis.</h2>
+        <p class="lead">
+          O melhor caminho não é escrever o benchmark primeiro. É construir um
+          contrato mínimo, testar a estrutura com poucos valores, conectar o
+          driver ao trace e só depois ampliar a carga.
+        </p>
+        <div class="implementation-stepper panel">
+          <div
+            id="step-list"
+            class="step-list"
+            role="tablist"
+            aria-label="Etapas de implementação"
+          ></div>
+          <div id="step-content" class="step-content" role="tabpanel"></div>
+        </div>
+        <div class="panel" style="margin-top: 18px">
+          <h3>Organização mínima de arquivos</h3>
+          <div class="file-tree">
+            <span
+              >docs/project-instructions.pdf
+              <span class="provided">← contrato do trabalho</span></span
+            >
+            <span
+              >gen_workload.py
+              <span class="provided"
+                >← gerador e verificador fornecidos</span
+              ></span
+            >
+            <span
+              >balanced_tree.py
+              <span class="you"
+                >← sua estrutura balanceada aumentada</span
+              ></span
+            >
+            <span
+              >run_trace.py
+              <span class="you">← leitor do trace e saída candidate</span></span
+            >
+            <span
+              >benchmark.py
+              <span class="you">← tempo, percentis e metadados</span></span
+            >
+            <span
+              >results/
+              <span class="you"
+                >← traces, logs e tabelas identificadas</span
+              ></span
+            >
+          </div>
+          <p class="small">
+            Os nomes são uma sugestão operacional. O importante é separar
+            estrutura, execução do trace e medição para que um erro de uma
+            camada não fique escondido em outra.
+          </p>
+        </div>
+      </section>
+
+      <section id="medir">
+        <div class="section-kicker">08 · medir sem fabricar números</div>
+        <h2>O trace é o mesmo tipo de entrada, mas a pergunta muda.</h2>
+        <div class="experiment-grid">
+          <div class="experiment-card">
+            <h3>A. Escala</h3>
+            <p>
+              Use pelo menos quatro ordens de grandeza de n e registre o tempo
+              médio por operação, p50 e p99.
+            </p>
+          </div>
+          <div class="experiment-card">
+            <h3>B. theta</h3>
+            <p>
+              Repita com <code>0.0, 0.6, 0.99, 1.2</code>. Explique
+              concentração, localidade de cache e cauda de tempo.
+            </p>
+          </div>
+          <div class="experiment-card">
+            <h3>C. ordenada contra embaralhada</h3>
+            <p>
+              Compare a ordem crescente com uma ordem embaralhada. Mostre o
+              efeito na altura e no custo de uma BST ingênua.
+            </p>
+          </div>
+          <div class="experiment-card">
+            <h3>D. baseline</h3>
+            <p>
+              Compare com lista ordenada ou BST sem balanceamento. Encontre o
+              ponto em que o custo extra da AVL passa a compensar.
+            </p>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 18px">
+          <div class="panel soft-blue">
+            <h3>Metadados de cada medição</h3>
+            <ul>
+              <li>máquina, sistema operacional e versão do Python;</li>
+              <li>
+                arquivo, número de chaves carregadas e número de operações;
+              </li>
+              <li>mix, theta, ordem, seed e parâmetros defaults alterados;</li>
+              <li>tempo total, tempo por operação, p50 e p99;</li>
+              <li>
+                quantidade de hits, misses, rotações e falhas de corretude;
+              </li>
+              <li>metodologia de warm-up e número de repetições.</li>
+            </ul>
+          </div>
+          <div class="panel soft-amber">
+            <h3>Como escrever a interpretação</h3>
+            <p>
+              Comece pelo que foi observado, não pela teoria. Depois compare com
+              o limite esperado e explique divergências por constantes, cache,
+              alocação, coleta de lixo, custo de rotação ou tamanho da entrada.
+            </p>
+            <div class="callout warn">
+              <strong>Frase fraca:</strong> "A AVL foi melhor porque é O(log
+              n)."<br /><strong>Frase defendível:</strong> "Nesta máquina, o p99
+              da busca caiu após n = ..., enquanto a lista cresceu ...; a
+              diferença residual pode vir de ..."
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 18px">
+          <h3>Planilha para preencher com dados reais</h3>
+          <p class="small">
+            As células abaixo são um espaço de planejamento. Elas não
+            representam resultados e não devem ser preenchidas com números
+            inventados.
+          </p>
+          <table class="measure-table">
+            <thead>
+              <tr>
+                <th>execução</th>
+                <th>n</th>
+                <th>operação</th>
+                <th>média (ns)</th>
+                <th>p50 (ns)</th>
+                <th>p99 (ns)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>G5 · ordenada · theta .99</td>
+                <td>
+                  <input aria-label="n da execução 1" placeholder="preencher" />
+                </td>
+                <td>inserção</td>
+                <td>
+                  <input
+                    aria-label="média da execução 1"
+                    placeholder="preencher"
+                  />
+                </td>
+                <td>
+                  <input
+                    aria-label="p50 da execução 1"
+                    placeholder="preencher"
+                  />
+                </td>
+                <td>
+                  <input
+                    aria-label="p99 da execução 1"
+                    placeholder="preencher"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>G5 · ordenada · theta .99</td>
+                <td>
+                  <input aria-label="n da execução 2" placeholder="preencher" />
+                </td>
+                <td>busca</td>
+                <td>
+                  <input
+                    aria-label="média da execução 2"
+                    placeholder="preencher"
+                  />
+                </td>
+                <td>
+                  <input
+                    aria-label="p50 da execução 2"
+                    placeholder="preencher"
+                  />
+                </td>
+                <td>
+                  <input
+                    aria-label="p99 da execução 2"
+                    placeholder="preencher"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>baseline · lista</td>
+                <td>
+                  <input aria-label="n da execução 3" placeholder="preencher" />
+                </td>
+                <td>search</td>
+                <td>
+                  <input
+                    aria-label="média da execução 3"
+                    placeholder="preencher"
+                  />
+                </td>
+                <td>
+                  <input
+                    aria-label="p50 da execução 3"
+                    placeholder="preencher"
+                  />
+                </td>
+                <td>
+                  <input
+                    aria-label="p99 da execução 3"
+                    placeholder="preencher"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="checklist">
+        <div class="section-kicker">09 · pronto para executar</div>
+        <h2>Checklist do grupo 5.</h2>
+        <div class="panel soft-blue">
+          <div class="check-summary">
+            <span>Progresso salvo localmente quando o navegador permitir</span
+            ><strong id="check-count">0/12</strong>
+          </div>
+          <div class="bar"><span id="check-bar" style="width: 0%"></span></div>
+          <div class="checklist" style="margin-top: 14px">
+            <label class="check-item"
+              ><input type="checkbox" data-check="1" /><span
+                >Consigo explicar SOSD, amzn, arquivo binário e por que o
+                arquivo é somente leitura.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="2" /><span
+                >Sei explicar I, D, S, trace, expected e candidate.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="3" /><span
+                >Sei explicar universe, reserve, conjunto vivo, hit e
+                miss.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="4" /><span
+                >Sei explicar theta, Zipfiano, YCSB e o motivo do 0.99.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="5" /><span
+                >Gerei um smoke test com seed 5 e li o trace manualmente.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="6" /><span
+                >Implementei Node, height, size, subtree_max e update.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="7" /><span
+                >Testei rotações, inserção, remoção e buscas em valores
+                pequenos.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="8" /><span
+                >Implementei rank, select e range_agg com intervalo
+                fechado.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="9" /><span
+                >Escrevi o driver que consome o trace e produz somente as
+                buscas.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="10" /><span
+                >Verifiquei candidate contra expected antes de medir.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="11" /><span
+                >Planejei escala, theta, ordem ordenada/embaralhada, referência
+                e percentis.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="12" /><span
+                >Consigo defender cada número e cada decisão sem inventar
+                resultados.</span
+              ></label
+            >
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 18px">
+          <h3>Sequência recomendada para a próxima sessão</h3>
+          <ol>
+            <li>Executar o smoke test.</li>
+            <li>
+              Abrir as primeiras 20 linhas de <code>g5-smoke.trace</code> e
+              <code>g5-smoke.expected</code>.
+            </li>
+            <li>
+              Implementar e testar a estrutura com a sequência manual do
+              laboratório.
+            </li>
+            <li>Conectar o driver e obter uma saída candidate.</li>
+            <li>Rodar <code>verificar</code>.</li>
+            <li>Só depois aumentar n e instrumentar o benchmark.</li>
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell">
+        <p>
+          <strong>Fontes locais:</strong>
+          <a href="project-instructions.pdf">project-instructions.pdf</a> e
+          <a href="../workload_generator.py">workload_generator.py</a>.
+        </p>
+        <p>
+          Os exemplos práticos e o driver são Python. O JavaScript deste arquivo
+          existe apenas para tornar o estudo interativo e funcionar offline.
+        </p>
+        <p>O arquivo é autocontido e não carrega bibliotecas externas.</p>
+      </div>
+    </footer>
+
+    <script>
+      "use strict";
+
+      const parameterDescriptions = {
+        amzn: [
+          "amzn · a entrada",
+          "O grupo 5 usa popularidade de vendas de livros. O arquivo é grande e binário. A estrutura não recebe a descrição amzn; recebe inteiros lidos do arquivo.",
+        ],
+        theta: [
+          "theta = 0.99 · a concentração",
+          "Poucas chaves recebem muitos acessos. O valor afeta a forma como a carga escolhe chaves, não a validade da árvore nem o limite teórico dela.",
+        ],
+        mix: [
+          "mix = 45:25:30 · a composição",
+          "Aproximadamente 45% das operações são inserções, 25% remoções e 30% buscas. A sequência inicial pode forçar inserções quando o conjunto vivo está vazio.",
+        ],
+        aggregate: [
+          "range_agg = máximo · o resumo",
+          "Cada nó deve manter o maior valor da própria subárvore. A consulta usa o intervalo fechado [a, b], incluindo as duas pontas.",
+        ],
+        order: [
+          "ordem-insercao = ordenada · o caso patológico",
+          "As chaves inseríveis entram em ordem crescente. Uma BST sem balanceamento pode virar uma cadeia; AVL, rubro-negra ou treap deve evitar essa degradação.",
+        ],
+        seed: [
+          "seed = 5 · a repetição",
+          "O número 5 é a semente oficial do grupo. Se a seed ou qualquer outro parâmetro mudar, a carga pode mudar e a comparação deixa de ser a mesma.",
+        ],
+      };
+
+      document.querySelectorAll("[data-param]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          document.querySelectorAll("[data-param]").forEach(function (item) {
+            item.classList.toggle("active", item === button);
+          });
+          var description = parameterDescriptions[button.dataset.param];
+          document.querySelector("#param-explanation").innerHTML =
+            "<strong>" + description[0] + "</strong>" + description[1];
+        });
+      });
+
+      document
+        .querySelector("#dataset-example-button")
+        .addEventListener("click", function () {
+          var example = document.querySelector("#dataset-example");
+          var isHidden = example.hasAttribute("hidden");
+          if (isHidden) example.removeAttribute("hidden");
+          else example.setAttribute("hidden", "");
+          this.setAttribute("aria-expanded", String(isHidden));
+          this.textContent = isHidden
+            ? "Ocultar exemplo"
+            : "Mostrar exemplo com cinco chaves";
+        });
+
+      function formatInteger(value) {
+        return value.toLocaleString("pt-BR");
+      }
+
+      function updateUniverseReserveExplanation() {
+        var universe = Math.max(
+          1,
+          Math.floor(
+            Number(document.querySelector("#universe-explain").value) || 1,
+          ),
+        );
+        var reserve = Number(document.querySelector("#reserve-explain").value);
+        var reserved = Math.floor(universe * reserve);
+        var insertable = universe - reserved;
+        document.querySelector("#reserve-percent").textContent =
+          Math.round(reserve * 100) + "%";
+        document.querySelector("#calc-universe").textContent =
+          formatInteger(universe);
+        document.querySelector("#calc-reserved").textContent =
+          formatInteger(reserved);
+        document.querySelector("#calc-insertable").textContent =
+          formatInteger(insertable);
+        document.querySelector("#reserve-calculation").innerHTML =
+          "<strong>Conta atual</strong>R = int(" +
+          formatInteger(universe) +
+          " × " +
+          reserve.toFixed(2).replace(".", ",") +
+          ") = " +
+          formatInteger(reserved) +
+          ". Portanto, " +
+          formatInteger(insertable) +
+          " chaves podem entrar na estrutura. Isso não significa que todas estarão vivas ao mesmo tempo, porque remoções também acontecem.";
+      }
+
+      document
+        .querySelector("#universe-explain")
+        .addEventListener("input", updateUniverseReserveExplanation);
+      document
+        .querySelector("#reserve-explain")
+        .addEventListener("input", updateUniverseReserveExplanation);
+      updateUniverseReserveExplanation();
+
+      function updateThetaExplanation() {
+        var theta = Number(document.querySelector("#theta-explain").value);
+        var weights = [];
+        var total = 0;
+        for (var rank = 1; rank <= 8; rank += 1) {
+          var weight = 1 / Math.pow(rank, theta);
+          weights.push(weight);
+          total += weight;
+        }
+        var maximum = Math.max.apply(null, weights);
+        document.querySelector("#theta-explain-value").textContent = theta
+          .toFixed(2)
+          .replace(".", ",");
+        document.querySelector("#theta-bars").innerHTML = weights
+          .map(function (weight, index) {
+            var share = (weight / total) * 100;
+            return (
+              '<div class="theta-row"><strong>rank ' +
+              (index + 1) +
+              '</strong><div class="bar"><span style="width:' +
+              (weight / maximum) * 100 +
+              '%"></span></div><span>' +
+              share.toFixed(1).replace(".", ",") +
+              "%</span></div>"
+            );
+          })
+          .join("");
+        var explanation =
+          theta < 0.15
+            ? "Quase uniforme: as oito posições recebem frequências parecidas."
+            : theta < 0.8
+              ? "Concentração moderada: os primeiros ranks começam a ficar quentes."
+              : theta < 1.05
+                ? "Concentração forte: poucos ranks recebem grande parte das escolhas. É o caso do grupo 5."
+                : "Concentração muito forte: a carga favorece intensamente os ranks iniciais.";
+        document.querySelector("#theta-explain-text").textContent = explanation;
+      }
+
+      document
+        .querySelector("#theta-explain")
+        .addEventListener("input", updateThetaExplanation);
+      updateThetaExplanation();
+
+      var scaleConfig = {
+        smoke: {
+          args: [
+            "--sintetico 10000",
+            "--operacoes 50000",
+            "--universo 10000",
+            "--mistura 45:25:30",
+            "--theta 0.99",
+            "--ordem-insercao ordenada",
+            "--semente 5",
+            "--saida g5-smoke",
+          ],
+          note: "Gera g5-smoke.trace e g5-smoke.expected com chaves sintéticas. Use esta fase para depurar a implementação.",
+          ops: 50000,
+          universe: 10000,
+        },
+        pilot: {
+          args: [
+            "--chaves data/books_200M_uint32",
+            "--formato sosd",
+            "--bytes-chave 4",
+            "--carga-maxima 20000000",
+            "--operacoes 1000000",
+            "--universo 10000000",
+            "--mistura 45:25:30",
+            "--theta 0.99",
+            "--ordem-insercao ordenada",
+            "--semente 5",
+            "--saida g5-pilot",
+          ],
+          note: "Lê no máximo 20 milhões de chaves reais. Declare esse limite no relatório; ele é um piloto, não o conjunto completo.",
+          ops: 1000000,
+          universe: 10000000,
+        },
+        official: {
+          args: [
+            "--chaves data/books_200M_uint32",
+            "--formato sosd",
+            "--bytes-chave 4",
+            "--operacoes 50000000",
+            "--universo 10000000",
+            "--mistura 45:25:30",
+            "--theta 0.99",
+            "--ordem-insercao ordenada",
+            "--semente 5",
+            "--saida g5-official",
+          ],
+          note: "Representa a execução de referência do PDF. Se a máquina exigir max-load, mantenha-o e descreva exatamente a escolha.",
+          ops: 50000000,
+          universe: 10000000,
+        },
+      };
+      var selectedScale = "smoke";
+
+      function renderCommand() {
+        var config = scaleConfig[selectedScale];
+        var args = config.args.slice();
+        if (selectedScale === "smoke") {
+          args[1] =
+            "--operacoes " +
+            (document.querySelector("#ops-input").value || config.ops);
+          args[2] =
+            "--universo " +
+            (document.querySelector("#universe-input").value ||
+              config.universe);
+        }
+        document.querySelector("#generated-command").textContent =
+          "python src/workload_generator.py gerar " + args.join(" ");
+        document.querySelector("#command-note").innerHTML =
+          "<strong>O que este comando faz</strong>" + config.note;
+      }
+
+      document.querySelectorAll("[data-scale]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          selectedScale = button.dataset.scale;
+          document.querySelectorAll("[data-scale]").forEach(function (item) {
+            item.classList.toggle("active", item === button);
+          });
+          document.querySelector("#ops-input").value =
+            scaleConfig[selectedScale].ops;
+          document.querySelector("#universe-input").value =
+            scaleConfig[selectedScale].universe;
+          renderCommand();
+        });
+      });
+      document
+        .querySelectorAll("#ops-input, #universe-input")
+        .forEach(function (input) {
+          input.addEventListener("input", renderCommand);
+        });
+
+      var traceState = { operations: [], cursor: 0, live: new Set(), rows: [] };
+
+      function parseTrace() {
+        return document
+          .querySelector("#trace-input")
+          .value.split(/\r?\n/)
+          .map(function (line, index) {
+            return { line: line, number: index + 1 };
+          })
+          .filter(function (item) {
+            return item.line.trim() && !item.line.trim().startsWith("#");
+          });
+      }
+
+      function formatKeys(values) {
+        var keys = Array.from(values).sort(function (left, right) {
+          return left - right;
+        });
+        return keys.length ? keys.join(", ") : "vazio";
+      }
+
+      function renderTrace() {
+        var keys = Array.from(traceState.live).sort(function (left, right) {
+          return left - right;
+        });
+        document.querySelector("#trace-state").innerHTML = keys.length
+          ? keys
+              .map(function (key) {
+                return '<span class="state-key">' + key + "</span>";
+              })
+              .join("")
+          : '<span class="small">vazio</span>';
+
+        var previous = traceState.operations[traceState.cursor - 1];
+        var body = document.querySelector("#trace-body");
+        body.innerHTML = traceState.rows.length
+          ? traceState.rows
+              .map(function (row) {
+                var current =
+                  previous && row.number === previous.number ? " current" : "";
+                var stateClass =
+                  row.answer === "FOUND"
+                    ? "found"
+                    : row.answer === "NOT_FOUND"
+                      ? "not-found"
+                      : "";
+                return (
+                  '<tr class="' +
+                  current.trim() +
+                  '"><td>' +
+                  row.number +
+                  "</td><td><code>" +
+                  row.operation +
+                  " " +
+                  row.key +
+                  "</code></td><td>" +
+                  row.before +
+                  "</td><td>" +
+                  row.after +
+                  '</td><td class="' +
+                  stateClass +
+                  '">' +
+                  row.answer +
+                  "</td></tr>"
+                );
+              })
+              .join("")
+          : '<tr><td colspan="5" class="small">Nenhuma linha executada.</td></tr>';
+
+        var outputs = traceState.rows
+          .filter(function (row) {
+            return row.operation === "S" && row.valid;
+          })
+          .map(function (row) {
+            return row.key + " " + row.answer;
+          });
+        document.querySelector("#candidate-output").textContent = outputs.length
+          ? outputs.join("\n")
+          : "Ainda não há respostas de busca.";
+      }
+
+      function resetTrace() {
+        traceState.operations = parseTrace();
+        traceState.cursor = 0;
+        traceState.live = new Set();
+        traceState.rows = [];
+        renderTrace();
+        document.querySelector("#trace-message").innerHTML =
+          "<strong>O cursor está no início.</strong> Execute uma linha para ver a transição.";
+      }
+
+      function executeNextTrace() {
+        if (traceState.cursor >= traceState.operations.length) {
+          document.querySelector("#trace-message").innerHTML =
+            "<strong>Fim do trace.</strong> Todas as linhas válidas foram executadas.";
+          return;
+        }
+        var item = traceState.operations[traceState.cursor];
+        var parts = item.line.trim().split(/\s+/);
+        var operation = parts[0];
+        var key = Number(parts[1]);
+        var before = formatKeys(traceState.live);
+        var answer = "-";
+        var valid = true;
+
+        if (!["I", "D", "S"].includes(operation) || !Number.isInteger(key)) {
+          valid = false;
+          answer = "linha inválida";
+        } else if (operation === "I") {
+          traceState.live.add(key);
+        } else if (operation === "D") {
+          traceState.live.delete(key);
+        } else {
+          answer = traceState.live.has(key) ? "FOUND" : "NOT_FOUND";
+        }
+
+        var after = formatKeys(traceState.live);
+        traceState.rows.push({
+          number: item.number,
+          operation: operation,
+          key: key,
+          before: before,
+          after: after,
+          answer: answer,
+          valid: valid,
+        });
+        traceState.cursor += 1;
+        document.querySelector("#trace-message").innerHTML = valid
+          ? "<strong>Linha " +
+            item.number +
+            ": " +
+            operation +
+            " " +
+            key +
+            "</strong>" +
+            (operation === "S"
+              ? " A resposta do oráculo é " + answer + "."
+              : " O conjunto vivo foi atualizado.")
+          : "<strong>Linha " +
+            item.number +
+            " inválida.</strong> Use a forma I chave, D chave ou S chave.";
+        renderTrace();
+      }
+
+      document
+        .querySelector("#trace-reset")
+        .addEventListener("click", resetTrace);
+      document
+        .querySelector("#trace-next")
+        .addEventListener("click", executeNextTrace);
+      document
+        .querySelector("#trace-run")
+        .addEventListener("click", function () {
+          while (traceState.cursor < traceState.operations.length)
+            executeNextTrace();
+        });
+      resetTrace();
+
+      var implementationSteps = [
+        {
+          title: "Contrato mínimo",
+          goal: "Defina a interface antes da otimização. O driver precisa saber apenas quais métodos existem e o que cada um responde.",
+          success:
+            "Você consegue executar I, D e S sem conhecer os ponteiros internos da árvore.",
+          code: "class BalancedTree:\n    def insert(self, key): ...\n    def delete(self, key): ...\n    def search(self, key): ...\n    def rank(self, key): ...\n    def select(self, index): ...\n    def range_agg(self, lower, upper): ...",
+        },
+        {
+          title: "Node e metadados",
+          goal: "Crie o nó com chave, filhos e os resumos que serão mantidos após cada alteração.",
+          success:
+            "Para qualquer nó, height, size e subtree_max podem ser recalculados a partir dos filhos.",
+          code: "class Node:\n    def __init__(self, key):\n        self.key = key\n        self.left = None\n        self.right = None\n        self.height = 1\n        self.size = 1\n        self.subtree_max = key",
+        },
+        {
+          title: "update local",
+          goal: "Centralize o recálculo. Uma rotação ou mudança recursiva que esquece update deixa a árvore silenciosamente errada.",
+          success:
+            "Depois de qualquer update, os campos do nó coincidem com os filhos atuais.",
+          code: "def update(node):\n    node.height = 1 + max(height(node.left), height(node.right))\n    node.size = 1 + size(node.left) + size(node.right)\n    node.subtree_max = max(\n        node.key, subtree_max(node.left), subtree_max(node.right)\n    )",
+        },
+        {
+          title: "Rotações",
+          goal: "Escolha AVL, rubro-negra ou treap. Para AVL, implemente rotações e atualize primeiro o nó que desceu.",
+          success:
+            "Após inserir em ordem crescente, a altura não cresce como uma lista e a validação dos metadados continua verdadeira.",
+          code: "def rotate_left(node):\n    new_root = node.right\n    node.right = new_root.left\n    new_root.left = node\n    update(node)\n    update(new_root)\n    return new_root",
+        },
+        {
+          title: "insert e delete",
+          goal: "Faça a descida recursiva pela propriedade da BST. Ao voltar, atualize e rebalanceie cada nó do caminho.",
+          success:
+            "Duplicatas, chaves ausentes e remoção de nó com dois filhos têm comportamento definido.",
+          code: "def insert(node, key):\n    if node is None:\n        return Node(key)\n    if key < node.key:\n        node.left = insert(node.left, key)\n    elif key > node.key:\n        node.right = insert(node.right, key)\n    else:\n        return node\n    update(node)\n    return rebalance(node)",
+        },
+        {
+          title: "consultas aumentadas",
+          goal: "Use size para rank/select e subtree_max para o máximo em [lower, upper]. Não faça uma contagem completa se o resumo já responde.",
+          success:
+            "rank e select percorrem um caminho e range_agg inclui as duas pontas sem perder a ordenação.",
+          code: "def rank(node, key):\n    if node is None:\n        return 0\n    if key <= node.key:\n        return rank(node.left, key)\n    return size(node.left) + 1 + rank(node.right, key)",
+        },
+        {
+          title: "driver do trace",
+          goal: "Leia cada linha, chame o método correspondente e escreva apenas as respostas de S. O estado fica na sua árvore.",
+          success:
+            "A saída candidate tem exatamente uma linha para cada S e nenhum texto de debug misturado.",
+          code: 'for line in trace_file:\n    operation, raw_key = line.split()\n    key = int(raw_key)\n    if operation == "I":\n        tree.insert(key)\n    elif operation == "D":\n        tree.delete(key)\n    elif operation == "S":\n        result = "FOUND" if tree.search(key) else "NOT_FOUND"\n        print(key, result, file=output_file)',
+        },
+        {
+          title: "verificar antes de medir",
+          goal: "Compare candidate e expected. Se falhar, reduza a carga até encontrar a primeira transição que diverge.",
+          success:
+            "O verificador retorna OK em um smoke test e em uma carga real antes do benchmark.",
+          code: "python src/workload_generator.py verificar \\\n    --esperado g5.expected \\\n    --candidato candidate.out",
+        },
+        {
+          title: "instrumentar e medir",
+          goal: "Só depois da corretude, registre tempo por operação, p50, p99, memória, rotações e metadados do ambiente.",
+          success:
+            "Cada número do relatório aponta para uma execução identificada e reproduzível.",
+          code: "from time import perf_counter_ns\n\nstart = perf_counter_ns()\ntree.insert(key)\nelapsed = perf_counter_ns() - start\ntimes.append(elapsed)",
+        },
+      ];
+      var selectedStep = 0;
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function renderImplementationSteps() {
+        document.querySelector("#step-list").innerHTML = implementationSteps
+          .map(function (step, index) {
+            return (
+              '<button class="step-button ' +
+              (index === selectedStep ? "active" : "") +
+              '" data-step="' +
+              index +
+              '" role="tab" aria-selected="' +
+              (index === selectedStep) +
+              '"><b>' +
+              (index + 1) +
+              "</b><span>" +
+              step.title +
+              "</span></button>"
+            );
+          })
+          .join("");
+        var step = implementationSteps[selectedStep];
+        document.querySelector("#step-content").innerHTML =
+          "<h3>" +
+          (selectedStep + 1) +
+          ". " +
+          step.title +
+          '</h3><p class="goal">' +
+          step.goal +
+          '</p><div class="success-criteria"><strong>Pronto para avançar quando:</strong> ' +
+          step.success +
+          "</div><pre>" +
+          escapeHtml(step.code) +
+          "</pre>";
+        document.querySelectorAll("[data-step]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            selectedStep = Number(button.dataset.step);
+            renderImplementationSteps();
+          });
+        });
+      }
+      renderImplementationSteps();
+
+      var checklistStorage = null;
+      try {
+        var storage = window.localStorage;
+        storage.setItem("g5-workload-probe", "ok");
+        storage.removeItem("g5-workload-probe");
+        checklistStorage = storage;
+      } catch (error) {
+        checklistStorage = null;
+      }
+
+      var checkboxes = document.querySelectorAll("[data-check]");
+      function updateChecklist() {
+        var count = 0;
+        checkboxes.forEach(function (box) {
+          if (box.checked) count += 1;
+          box.closest(".check-item").classList.toggle("done", box.checked);
+          if (checklistStorage)
+            checklistStorage.setItem(
+              "g5-workload-check-" + box.dataset.check,
+              String(box.checked),
+            );
+        });
+        document.querySelector("#check-count").textContent =
+          count + "/" + checkboxes.length;
+        document.querySelector("#check-bar").style.width =
+          (count / checkboxes.length) * 100 + "%";
+      }
+      checkboxes.forEach(function (box) {
+        box.checked = checklistStorage
+          ? checklistStorage.getItem(
+              "g5-workload-check-" + box.dataset.check,
+            ) === "true"
+          : false;
+        box.addEventListener("change", updateChecklist);
+      });
+      updateChecklist();
+
+      document.querySelectorAll(".copy-button").forEach(function (button) {
+        button.addEventListener("click", async function () {
+          var source = document.querySelector("#" + button.dataset.copy);
+          try {
+            await navigator.clipboard.writeText(source.innerText);
+            var previous = button.textContent;
+            button.textContent = "Copiado";
+            window.setTimeout(function () {
+              button.textContent = previous;
+            }, 1300);
+          } catch (error) {
+            button.textContent = "Selecione o texto";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

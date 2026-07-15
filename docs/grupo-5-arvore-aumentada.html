@@ -1,0 +1,3666 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Guia didático e interativo de Estruturas de Dados para o projeto final do grupo 5."
+    />
+    <title>Grupo 5 · Árvores aumentadas em Python</title>
+    <style>
+      :root {
+        --ink: #192438;
+        --muted: #5b687d;
+        --paper: #f7f8fb;
+        --panel: #ffffff;
+        --line: #dce2ec;
+        --navy: #17264a;
+        --blue: #3159d7;
+        --blue-soft: #eaf0ff;
+        --mint: #0a8f78;
+        --mint-soft: #e4f7f2;
+        --amber: #ad6b00;
+        --amber-soft: #fff4dc;
+        --red: #b83b4b;
+        --red-soft: #fff0f2;
+        --shadow: 0 14px 35px rgba(23, 38, 74, 0.08);
+        --radius: 18px;
+        --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        --sans:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: var(--sans);
+        line-height: 1.55;
+      }
+      a {
+        color: var(--blue);
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      a:focus-visible {
+        outline: 3px solid #f0b429;
+        outline-offset: 3px;
+      }
+      .shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(247, 248, 251, 0.93);
+        border-bottom: 1px solid rgba(220, 226, 236, 0.9);
+        backdrop-filter: blur(12px);
+      }
+      .topbar-inner {
+        min-height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+      .brand {
+        font-size: 0.82rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        font-weight: 800;
+        color: var(--navy);
+      }
+      .language-note {
+        padding: 5px 9px;
+        color: #2a418d;
+        background: var(--blue-soft);
+        border: 1px solid #cad6ff;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .nav {
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .nav::-webkit-scrollbar {
+        display: none;
+      }
+      .nav a {
+        padding: 8px 10px;
+        color: var(--muted);
+        font-size: 0.84rem;
+        text-decoration: none;
+        white-space: nowrap;
+        border-radius: 9px;
+      }
+      .nav a:hover {
+        background: var(--blue-soft);
+        color: var(--blue);
+      }
+
+      .hero {
+        color: #fff;
+        background: var(--navy);
+        padding: 80px 0 72px;
+        overflow: hidden;
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+        gap: 52px;
+        align-items: end;
+      }
+      .eyebrow {
+        color: #b9caff;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      h1,
+      h2,
+      h3 {
+        line-height: 1.12;
+        letter-spacing: -0.035em;
+      }
+      h1 {
+        max-width: 780px;
+        margin: 18px 0 20px;
+        font-size: clamp(2.65rem, 6vw, 5.7rem);
+      }
+      .hero p {
+        max-width: 680px;
+        margin: 0;
+        color: #d8e0f2;
+        font-size: 1.14rem;
+      }
+      .hero-note {
+        border-left: 3px solid #7d9aff;
+        padding: 4px 0 4px 20px;
+        color: #d8e0f2;
+      }
+      .hero-note strong {
+        display: block;
+        color: #fff;
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+      }
+      .button {
+        border: 1px solid transparent;
+        border-radius: 10px;
+        padding: 10px 14px;
+        background: var(--blue);
+        color: #fff;
+        font-weight: 750;
+        text-decoration: none;
+        transition:
+          transform 0.15s ease,
+          background 0.15s ease;
+      }
+      .button:hover {
+        transform: translateY(-1px);
+        background: #486ae0;
+      }
+      .button.secondary {
+        background: transparent;
+        border-color: #7184bb;
+        color: #fff;
+      }
+      .button.secondary:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .hero-code {
+        margin: 0;
+        padding: 20px;
+        background: #0f1932;
+        border: 1px solid #34446f;
+        border-radius: var(--radius);
+        color: #dbe4ff;
+        box-shadow: var(--shadow);
+        font-family: var(--mono);
+        font-size: 0.83rem;
+        white-space: pre-wrap;
+      }
+      .hero-code .comment {
+        color: #85a0e9;
+      }
+
+      main {
+        padding: 54px 0 100px;
+      }
+      section {
+        scroll-margin-top: 82px;
+        margin: 0 0 80px;
+      }
+      .section-kicker {
+        color: var(--blue);
+        font-size: 0.76rem;
+        font-weight: 850;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+      h2 {
+        margin: 8px 0 12px;
+        font-size: clamp(2rem, 4vw, 3.3rem);
+      }
+      h3 {
+        margin: 0 0 10px;
+        font-size: 1.25rem;
+      }
+      .lead {
+        max-width: 750px;
+        color: var(--muted);
+        font-size: 1.08rem;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 24px;
+        box-shadow: var(--shadow);
+      }
+      .panel.soft-blue {
+        background: var(--blue-soft);
+        border-color: #cad6ff;
+      }
+      .panel.soft-mint {
+        background: var(--mint-soft);
+        border-color: #bde7dd;
+      }
+      .panel.soft-amber {
+        background: var(--amber-soft);
+        border-color: #f2d49e;
+      }
+      .panel.soft-red {
+        background: var(--red-soft);
+        border-color: #f0c3ca;
+      }
+      .label {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 4px 9px;
+        border-radius: 999px;
+        color: var(--blue);
+        background: var(--blue-soft);
+        font-size: 0.77rem;
+        font-weight: 800;
+      }
+      .small {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .callout {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        padding: 16px 18px;
+        margin: 18px 0;
+        border-left: 4px solid var(--blue);
+        background: #f1f4ff;
+        border-radius: 0 12px 12px 0;
+      }
+      .callout strong {
+        display: block;
+        margin-bottom: 3px;
+      }
+      .term-guide {
+        margin: 20px 0;
+        padding: 20px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .term-guide h3 {
+        margin-bottom: 5px;
+      }
+      .term-guide-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 9px;
+        margin-top: 14px;
+      }
+      .term-guide-item {
+        padding: 11px;
+        background: #fbfcff;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      .term-guide-item strong {
+        display: block;
+        color: var(--blue);
+        font-size: 0.82rem;
+      }
+      .term-guide-item span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.35;
+      }
+
+      .roadmap {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        margin: 30px 0;
+      }
+      .roadmap a {
+        color: var(--ink);
+        text-decoration: none;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        padding: 13px 11px;
+        min-height: 86px;
+      }
+      .roadmap a:hover {
+        border-color: var(--blue);
+        transform: translateY(-2px);
+      }
+      .roadmap b {
+        display: block;
+        color: var(--blue);
+        font-size: 0.77rem;
+        margin-bottom: 5px;
+      }
+      .roadmap span {
+        display: block;
+        font-size: 0.88rem;
+        line-height: 1.25;
+      }
+      .score-row {
+        display: grid;
+        grid-template-columns: 100px 1fr 80px;
+        align-items: center;
+        gap: 12px;
+        margin: 11px 0;
+      }
+      .score-row strong {
+        color: var(--blue);
+      }
+      .bar {
+        height: 9px;
+        background: #e7ebf3;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .bar > span {
+        display: block;
+        height: 100%;
+        background: var(--blue);
+        border-radius: inherit;
+      }
+      .bar > span.mint {
+        background: var(--mint);
+      }
+      .bar > span.amber {
+        background: #e8a92e;
+      }
+      .bar > span.red {
+        background: var(--red);
+      }
+
+      .concept-chain {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        align-items: stretch;
+        margin: 30px 0 20px;
+      }
+      .concept {
+        position: relative;
+        padding: 17px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+      .concept:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        right: -17px;
+        top: 43%;
+        color: var(--blue);
+        font-size: 1.4rem;
+        z-index: 1;
+      }
+      .concept .number {
+        color: var(--blue);
+        font-weight: 900;
+        font-size: 0.78rem;
+      }
+      .concept strong {
+        display: block;
+        margin: 6px 0;
+      }
+      .concept p {
+        margin: 0;
+        font-size: 0.88rem;
+        color: var(--muted);
+        line-height: 1.35;
+      }
+      .tab-row {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        margin: 16px 0;
+      }
+      .tab-button {
+        border: 1px solid #c7d0e2;
+        border-radius: 9px;
+        background: #fff;
+        color: var(--navy);
+        padding: 9px 12px;
+        font-weight: 750;
+      }
+      .tab-button:hover,
+      .tab-button[aria-selected="true"] {
+        border-color: var(--blue);
+        color: var(--blue);
+        background: var(--blue-soft);
+      }
+      .workbench {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(270px, 0.75fr);
+        gap: 18px;
+        align-items: start;
+      }
+      .workbench-visual {
+        min-height: 116px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        padding: 17px;
+        background: #fbfcff;
+        border: 1px dashed #cbd5eb;
+        border-radius: 13px;
+      }
+      .workbench-item {
+        display: inline-grid;
+        place-items: center;
+        min-width: 42px;
+        min-height: 42px;
+        padding: 7px 10px;
+        border-radius: 9px;
+        background: var(--blue-soft);
+        border: 1px solid #c1d0ff;
+        color: var(--navy);
+        font-family: var(--mono);
+        font-weight: 800;
+      }
+      .workbench-item:first-child {
+        border-color: var(--mint);
+      }
+      .dictionary-item {
+        display: grid;
+        grid-template-columns: minmax(80px, 0.8fr) minmax(80px, 1fr);
+        gap: 10px;
+        width: 100%;
+        padding: 9px 11px;
+        border-radius: 9px;
+        background: var(--mint-soft);
+        border: 1px solid #bde7dd;
+        font-family: var(--mono);
+      }
+      .workbench-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 13px 0;
+        align-items: end;
+      }
+      .workbench-controls .field {
+        min-width: 145px;
+        flex: 1;
+      }
+      .workbench-controls input {
+        width: 100%;
+        padding: 9px 10px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+      }
+      .workbench-code {
+        min-height: 210px;
+      }
+      .workbench-output {
+        min-height: 48px;
+        margin-top: 12px;
+        padding: 11px 13px;
+        border-radius: 10px;
+        background: var(--blue-soft);
+        color: #2a418d;
+        font-size: 0.89rem;
+      }
+      .workbench-output.success {
+        background: var(--mint-soft);
+        color: #08745f;
+      }
+      .workbench-output.warn {
+        background: var(--amber-soft);
+        color: #815000;
+      }
+      .comparison {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.94rem;
+      }
+      .comparison th,
+      .comparison td {
+        padding: 12px 13px;
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      .comparison th {
+        color: var(--navy);
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .comparison tr:last-child td {
+        border-bottom: 0;
+      }
+      .complexity {
+        font-family: var(--mono);
+        color: var(--blue);
+        white-space: nowrap;
+      }
+
+      .code-wrap {
+        position: relative;
+        margin: 14px 0 0;
+      }
+      pre {
+        margin: 0;
+        overflow-x: auto;
+        border-radius: 13px;
+        background: #111c35;
+        color: #e5ecff;
+        padding: 18px;
+        font: 0.83rem/1.6 var(--mono);
+        tab-size: 4;
+      }
+      code {
+        font-family: var(--mono);
+      }
+      .copy-code {
+        position: absolute;
+        top: 9px;
+        right: 9px;
+        border: 1px solid #52628c;
+        border-radius: 7px;
+        background: #24345d;
+        color: #fff;
+        padding: 5px 8px;
+        font-size: 0.75rem;
+      }
+      .copy-code:hover {
+        background: #314678;
+      }
+      .syntax-comment {
+        color: #8ca8eb;
+      }
+
+      .lab-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+      .lab-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: end;
+      }
+      .field {
+        display: grid;
+        gap: 5px;
+      }
+      .field label {
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+      .field input {
+        width: 110px;
+        padding: 9px 10px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        color: var(--ink);
+        background: #fff;
+      }
+      .mini-button {
+        border: 1px solid #c7d0e2;
+        border-radius: 9px;
+        background: #fff;
+        color: var(--navy);
+        padding: 9px 11px;
+        font-weight: 750;
+      }
+      .mini-button:hover {
+        border-color: var(--blue);
+        color: var(--blue);
+        background: var(--blue-soft);
+      }
+      .mini-button.primary {
+        border-color: var(--blue);
+        color: #fff;
+        background: var(--blue);
+      }
+      .mini-button.danger {
+        border-color: #e6b7be;
+        color: var(--red);
+        background: var(--red-soft);
+      }
+      .lab-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(270px, 0.55fr);
+        gap: 18px;
+        margin-top: 20px;
+      }
+      .tree-frame {
+        min-height: 355px;
+        display: grid;
+        place-items: center;
+        overflow: auto;
+        background: #fbfcff;
+        border: 1px dashed #cbd5eb;
+        border-radius: 14px;
+      }
+      #tree-svg {
+        display: block;
+        min-width: 620px;
+        width: 100%;
+        height: 355px;
+      }
+      .tree-edge {
+        stroke: #aab7d1;
+        stroke-width: 2;
+      }
+      .tree-node circle {
+        fill: #fff;
+        stroke: var(--blue);
+        stroke-width: 3;
+      }
+      .tree-node text.key {
+        fill: var(--navy);
+        font-weight: 850;
+        font-size: 15px;
+        text-anchor: middle;
+      }
+      .tree-node text.meta {
+        fill: var(--muted);
+        font: 10px var(--mono);
+        text-anchor: middle;
+      }
+      .tree-node.unbalanced circle {
+        stroke: var(--red);
+        fill: var(--red-soft);
+      }
+      .tree-empty {
+        fill: var(--muted);
+        font-size: 15px;
+        text-anchor: middle;
+      }
+      .status {
+        margin: 14px 0 0;
+        padding: 11px 13px;
+        border-radius: 10px;
+        background: var(--blue-soft);
+        color: #2a418d;
+        font-size: 0.91rem;
+      }
+      .status.success {
+        background: var(--mint-soft);
+        color: #08745f;
+      }
+      .status.warn {
+        background: var(--amber-soft);
+        color: #815000;
+      }
+      .status.error {
+        background: var(--red-soft);
+        color: #93303d;
+      }
+      .metric-list {
+        display: grid;
+        gap: 10px;
+      }
+      .metric {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 9px;
+        border-bottom: 1px solid var(--line);
+      }
+      .metric:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+      .metric span {
+        color: var(--muted);
+      }
+      .metric strong {
+        font-family: var(--mono);
+      }
+      .trace-log {
+        max-height: 145px;
+        overflow: auto;
+        margin-top: 14px;
+        padding: 12px;
+        background: #111c35;
+        color: #dbe4ff;
+        border-radius: 11px;
+        font: 0.78rem/1.55 var(--mono);
+      }
+      .trace-log div + div {
+        margin-top: 3px;
+      }
+      .node-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 13px;
+        font-size: 0.82rem;
+      }
+      .node-table th,
+      .node-table td {
+        padding: 8px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+      }
+      .node-table th {
+        color: var(--muted);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+      }
+
+      .operation-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 20px 0;
+      }
+      .operation-card {
+        padding: 16px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 13px;
+      }
+      .operation-card code {
+        display: inline-block;
+        margin-bottom: 8px;
+        color: var(--blue);
+        font-weight: 850;
+      }
+      .operation-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+      .formula {
+        display: inline-block;
+        padding: 11px 14px;
+        border-radius: 10px;
+        background: #111c35;
+        color: #dbe4ff;
+        font: 0.9rem var(--mono);
+      }
+
+      .pipeline {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        margin: 22px 0;
+      }
+      .pipeline-step {
+        padding: 13px 11px;
+        min-height: 105px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 13px;
+      }
+      .pipeline-step b {
+        display: block;
+        color: var(--blue);
+        font-size: 0.78rem;
+        margin-bottom: 7px;
+      }
+      .pipeline-step span {
+        color: var(--muted);
+        font-size: 0.83rem;
+        line-height: 1.32;
+        display: block;
+      }
+      .range-row {
+        display: grid;
+        grid-template-columns: 110px 1fr 75px;
+        gap: 13px;
+        align-items: center;
+        margin: 14px 0;
+      }
+      input[type="range"] {
+        accent-color: var(--blue);
+        width: 100%;
+      }
+      .range-value {
+        font-family: var(--mono);
+        font-weight: 800;
+        color: var(--blue);
+      }
+      .distribution {
+        display: grid;
+        gap: 8px;
+      }
+      .distribution-row {
+        display: grid;
+        grid-template-columns: 80px 1fr 48px;
+        gap: 9px;
+        align-items: center;
+        font-size: 0.82rem;
+      }
+      .distribution-row .bar {
+        height: 15px;
+      }
+      .distribution-row .bar > span {
+        transition: width 0.25s ease;
+      }
+      .mix-bar {
+        display: flex;
+        height: 25px;
+        overflow: hidden;
+        border-radius: 7px;
+        margin: 14px 0 8px;
+      }
+      .mix-bar span {
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font: 700 0.74rem var(--mono);
+        min-width: 2px;
+      }
+      .mix-i {
+        background: #3159d7;
+      }
+      .mix-d {
+        background: #b83b4b;
+      }
+      .mix-s {
+        background: #0a8f78;
+      }
+      .group-focus {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 18px;
+        align-items: stretch;
+      }
+      .group-specs {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 9px;
+      }
+      .spec {
+        padding: 12px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.75);
+        border: 1px solid rgba(49, 89, 215, 0.16);
+      }
+      .spec small {
+        display: block;
+        color: var(--muted);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+      }
+      .spec strong {
+        display: block;
+        margin-top: 4px;
+        color: var(--navy);
+        font-family: var(--mono);
+      }
+      .command {
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
+        margin-top: 12px;
+      }
+      .command pre {
+        flex: 1;
+        min-width: 0;
+      }
+      .command .copy-code {
+        position: static;
+        align-self: flex-start;
+        white-space: nowrap;
+      }
+      .warning-line {
+        padding: 12px 14px;
+        border-left: 4px solid #e8a92e;
+        background: var(--amber-soft);
+        border-radius: 0 10px 10px 0;
+        color: #714900;
+        font-size: 0.91rem;
+      }
+
+      .theory-chart {
+        width: 100%;
+        height: 260px;
+        display: block;
+        margin-top: 14px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: #fbfcff;
+      }
+      .chart-line {
+        fill: none;
+        stroke-width: 3;
+      }
+      .chart-grid {
+        stroke: #e4e9f2;
+        stroke-width: 1;
+      }
+      .chart-label {
+        fill: var(--muted);
+        font-size: 11px;
+      }
+      .editable-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 14px;
+        font-size: 0.86rem;
+      }
+      .editable-table th,
+      .editable-table td {
+        border: 1px solid var(--line);
+        padding: 8px;
+      }
+      .editable-table th {
+        background: #f3f5fa;
+        color: var(--muted);
+        text-align: left;
+      }
+      .editable-table input {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: var(--ink);
+        padding: 4px;
+      }
+      .editable-table input:focus {
+        outline: 2px solid var(--blue);
+        border-radius: 4px;
+      }
+
+      .checklist {
+        display: grid;
+        gap: 10px;
+      }
+      .check-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 12px 13px;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: #fff;
+      }
+      .check-item input {
+        margin-top: 4px;
+        accent-color: var(--mint);
+      }
+      .check-item.done {
+        background: var(--mint-soft);
+        border-color: #bde7dd;
+      }
+      .check-progress {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 12px 0 8px;
+        font-size: 0.83rem;
+        color: var(--muted);
+      }
+      .quiz {
+        display: grid;
+        gap: 16px;
+      }
+      .quiz-question {
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+      }
+      .quiz-question legend {
+        padding: 0 6px;
+        font-weight: 800;
+      }
+      .quiz-question label {
+        display: block;
+        padding: 7px 9px;
+        margin-top: 5px;
+        border-radius: 7px;
+        cursor: pointer;
+      }
+      .quiz-question label:hover {
+        background: var(--blue-soft);
+      }
+      .quiz-result {
+        display: none;
+        margin-top: 12px;
+        padding: 13px;
+        border-radius: 10px;
+        background: var(--mint-soft);
+        color: #08745f;
+      }
+      .quiz-result.show {
+        display: block;
+      }
+      details {
+        border-top: 1px solid var(--line);
+        padding: 14px 0;
+      }
+      details:last-child {
+        border-bottom: 1px solid var(--line);
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 800;
+      }
+      footer {
+        padding: 32px 0 55px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+      footer p {
+        margin: 5px 0;
+      }
+
+      @media (max-width: 900px) {
+        .hero-grid,
+        .lab-layout,
+        .group-focus {
+          grid-template-columns: 1fr;
+        }
+        .roadmap {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .pipeline {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .concept-chain {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .term-guide-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .workbench {
+          grid-template-columns: 1fr;
+        }
+        .concept:not(:last-child)::after {
+          display: none;
+        }
+      }
+      @media (max-width: 680px) {
+        .shell {
+          width: min(100% - 22px, 560px);
+        }
+        .topbar-inner {
+          display: block;
+          padding: 10px 0 7px;
+        }
+        .nav {
+          margin-top: 7px;
+        }
+        .hero {
+          padding: 54px 0 50px;
+        }
+        .grid-2,
+        .grid-3,
+        .operation-grid {
+          grid-template-columns: 1fr;
+        }
+        .roadmap,
+        .pipeline,
+        .concept-chain {
+          grid-template-columns: 1fr 1fr;
+        }
+        .score-row {
+          grid-template-columns: 78px 1fr 55px;
+          font-size: 0.83rem;
+        }
+        .panel {
+          padding: 18px;
+        }
+        .tree-frame {
+          min-height: 310px;
+        }
+        #tree-svg {
+          height: 310px;
+        }
+        .range-row {
+          grid-template-columns: 90px 1fr 55px;
+        }
+        .group-specs {
+          grid-template-columns: 1fr 1fr;
+        }
+        .term-guide-grid {
+          grid-template-columns: 1fr;
+        }
+        .command {
+          display: block;
+        }
+        .command .copy-code {
+          margin-top: 8px;
+        }
+        h1 {
+          font-size: 2.7rem;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <div class="brand">Estruturas de Dados · Guia de estudo</div>
+        <div class="language-note">chave = ID de livro · rank = posição</div>
+        <nav class="nav" aria-label="Navegação principal">
+          <a href="#fundamentos">Fundamentos</a>
+          <a href="#python">Python</a>
+          <a href="#arvore">Árvore</a>
+          <a href="#laboratorio">Laboratório</a>
+          <a href="#carga">Carga</a>
+          <a href="#grupo5">Grupo 5</a>
+          <a href="#defesa">Defesa</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <div class="eyebrow">
+            Projeto final · estruturas balanceadas aumentadas
+          </div>
+          <h1>Da primeira lista à árvore que você consegue defender.</h1>
+          <p>
+            Um percurso visual e interativo para entender as estruturas de
+            dados, construir uma árvore de busca aumentada e chegar preparado ao
+            recorte do grupo 5.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="#fundamentos">Começar o percurso</a>
+            <a class="button secondary" href="#grupo5">Ir direto ao grupo 5</a>
+          </div>
+        </div>
+        <div class="hero-note">
+          <strong>Regra de ouro do projeto</strong>
+          O código é necessário, mas 80% da avaliação depende de medir,
+          interpretar, justificar e explicar o que foi construído.
+          <pre
+            class="hero-code"
+          ><span class="comment"># alvo final do percurso</span>
+class ArvoreAumentada:
+    insert(k)
+    delete(k)
+    search(k)
+    rank(k)
+    select(i)
+    range_agg(a, b)  <span class="comment"># máximo no grupo 5</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <main class="shell">
+      <section id="mapa">
+        <div class="section-kicker">Como usar este guia</div>
+        <h2>Uma trilha, seis paradas.</h2>
+        <p class="lead">
+          Leia na ordem se estruturas de dados ainda são novas para você. Use o
+          laboratório para testar hipóteses e volte aos trechos de Python antes
+          de implementar no projeto.
+        </p>
+        <div class="roadmap" aria-label="Mapa das seções">
+          <a href="#fundamentos"
+            ><b>01</b><span>Abstração e estruturas básicas</span></a
+          >
+          <a href="#arvore"
+            ><b>02</b><span>BST, balanceamento e aumento</span></a
+          >
+          <a href="#laboratorio"><b>03</b><span>Operações em uma AVL</span></a>
+          <a href="#carga"><b>04</b><span>SOSD, trace e oráculo</span></a>
+          <a href="#grupo5"><b>05</b><span>Configuração do grupo 5</span></a>
+          <a href="#defesa"
+            ><b>06</b><span>Medição, relatório e defesa</span></a
+          >
+        </div>
+        <div class="panel soft-blue">
+          <h3>Como a nota se distribui</h3>
+          <div class="score-row">
+            <strong>20%</strong>
+            <div class="bar"><span style="width: 66%"></span></div>
+            <span>Implementação</span>
+          </div>
+          <div class="score-row">
+            <strong>30%</strong>
+            <div class="bar">
+              <span class="mint" style="width: 100%"></span>
+            </div>
+            <span>Estudo empírico</span>
+          </div>
+          <div class="score-row">
+            <strong>20%</strong>
+            <div class="bar">
+              <span class="amber" style="width: 66%"></span>
+            </div>
+            <span>Justificativa</span>
+          </div>
+          <div class="score-row">
+            <strong>20%</strong>
+            <div class="bar"><span class="red" style="width: 66%"></span></div>
+            <span>Prompts</span>
+          </div>
+          <div class="score-row">
+            <strong>10%</strong>
+            <div class="bar"><span style="width: 33%"></span></div>
+            <span>Defesa oral</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="fundamentos">
+        <div class="section-kicker">01 · fundamentos</div>
+        <h2>Antes da árvore, o que é uma estrutura de dados?</h2>
+        <p class="lead">
+          Uma estrutura de dados é uma forma organizada de representar valores e
+          as operações que podemos realizar sobre eles. A mesma informação pode
+          ser armazenada de formas diferentes, com custos diferentes.
+        </p>
+        <div class="callout">
+          <strong>Regra de linguagem deste guia</strong>Quando aparecer a
+          palavra <em>chave</em>, imagine um identificador numérico de livro. A
+          árvore guarda e compara esse ID. Ela não guarda o livro completo.
+        </div>
+        <div class="term-guide">
+          <h3>Dicionário de bolso</h3>
+          <p class="small">
+            Use estas traduções sempre que um termo técnico aparecer. O código
+            mantém os nomes originais porque eles são a interface da
+            implementação.
+          </p>
+          <div class="term-guide-grid">
+            <div class="term-guide-item">
+              <strong>rank(k)</strong
+              ><span
+                >Quantos IDs de livros são menores que k. Exemplo, em [10, 20,
+                30], rank(30) = 2.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>select(i)</strong
+              ><span
+                >Qual ID ocupa a posição i na ordem. O índice usado aqui começa
+                em zero.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>range_agg(a, b)</strong
+              ><span
+                >Um resumo dos IDs entre a e b. No grupo 5, o resumo é o maior
+                ID do intervalo.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>subárvore</strong
+              ><span
+                >Um nó junto com todos os nós abaixo dele, como uma pequena
+                árvore dentro da árvore.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>altura</strong
+              ><span
+                >Quantos níveis existem no caminho mais longo a partir de um
+                nó.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>rotação</strong
+              ><span
+                >Uma reorganização local dos nós para manter a árvore
+                equilibrada.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>quente / frio</strong
+              ><span
+                >Quente significa escolhido muitas vezes. Frio significa
+                escolhido poucas vezes.</span
+              >
+            </div>
+            <div class="term-guide-item">
+              <strong>hit / miss</strong
+              ><span
+                >Hit encontra o ID. Miss não encontra o ID no estado
+                atual.</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="concept-chain" aria-label="Progressão de conceitos">
+          <div class="concept">
+            <div class="number">01</div>
+            <strong>Abstração</strong>
+            <p>O que o usuário pode pedir, sem depender de como é guardado.</p>
+          </div>
+          <div class="concept">
+            <div class="number">02</div>
+            <strong>Representação</strong>
+            <p>Arranjo, lista ligada, mapa, nós e referências.</p>
+          </div>
+          <div class="concept">
+            <div class="number">03</div>
+            <strong>Operação</strong>
+            <p>Inserir, remover, pesquisar, percorrer, agregar.</p>
+          </div>
+          <div class="concept">
+            <div class="number">04</div>
+            <strong>Invariante</strong>
+            <p>Regra que deve continuar verdadeira depois de cada mudança.</p>
+          </div>
+          <div class="concept">
+            <div class="number">05</div>
+            <strong>Medição</strong>
+            <p>Tempo e memória reais, confrontados com a teoria.</p>
+          </div>
+        </div>
+        <div class="panel soft-amber" style="margin-bottom: 20px">
+          <h3>Por que o trabalho combina estrutura, carga e defesa?</h3>
+          <p>
+            Uma AVL ou um heap isolado teria muitas implementações prontas.
+            Aqui, a estrutura é <strong>composta e aumentada</strong>, a carga
+            vem de dados reais e cada grupo recebe uma combinação diferente.
+            Ferramentas de auxílio podem ajudar no código, mas o grupo precisa
+            interpretar seus próprios números, explicar os invariantes e
+            defender as decisões.
+          </p>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <span class="label">Abstração de dados</span>
+            <h3>Contrato antes da implementação</h3>
+            <p>
+              O contrato diz que uma pilha oferece <code>push</code> e
+              <code>pop</code>. Ele não diz se a pilha usa uma lista Python, um
+              arranjo fixo ou outra representação. Essa separação permite
+              comparar alternativas sem mudar quem usa a estrutura.
+            </p>
+            <div class="callout">
+              <div>↳</div>
+              <div>
+                <strong>Pergunta para a defesa</strong>Que decisão pertence à
+                abstração e que decisão pertence à implementação?
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <span class="label">Alternativas de implementação</span>
+            <table class="comparison">
+              <thead>
+                <tr>
+                  <th>Estrutura</th>
+                  <th>Boa quando</th>
+                  <th>Cuidado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Arranjo</strong></td>
+                  <td>Acesso por índice é frequente.</td>
+                  <td>Inserir no meio desloca valores.</td>
+                </tr>
+                <tr>
+                  <td><strong>Lista ligada</strong></td>
+                  <td>Há muitas mudanças locais.</td>
+                  <td>Acesso ao índice pode custar O(n).</td>
+                </tr>
+                <tr>
+                  <td><strong>dict</strong></td>
+                  <td>Busca por uma chave exata.</td>
+                  <td>Não mantém ordem por valor para rank.</td>
+                </tr>
+                <tr>
+                  <td><strong>Árvore</strong></td>
+                  <td>Busca ordenada e intervalos importam.</td>
+                  <td>Sem balanceamento, pode degradar.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 20px">
+          <h3>A mesma ementa em uma frase</h3>
+          <p>
+            <strong>Arranjos</strong> dão acesso direto.
+            <strong>Listas</strong> conectam elementos.
+            <strong>Pilhas</strong> seguem LIFO. <strong>Filas</strong> seguem
+            FIFO. <strong>Mapas e dicionários</strong> ligam chaves a valores.
+            <strong>Árvores</strong> representam hierarquias e ordenação.
+            <strong>Classificação, pesquisa e recursão</strong> são formas de
+            processar esses dados.
+          </p>
+          <details>
+            <summary>Vocabulário mínimo</summary>
+            <p class="small">
+              <strong>Chave</strong> é o nome técnico do identificador numérico
+              usado para identificar ou ordenar um elemento. Neste projeto,
+              pense em chave como ID de livro. <strong>Nó</strong> é uma unidade
+              de uma estrutura ligada. <strong>Subárvore</strong> é um nó junto
+              com todos os seus descendentes.
+              <strong>Complexidade</strong> descreve como o custo cresce quando
+              o tamanho da entrada cresce.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section id="python">
+        <div class="section-kicker">A ementa em Python</div>
+        <h2>Pequenas estruturas, operações concretas.</h2>
+        <p class="lead">
+          Antes de escolher uma árvore, experimente os contratos mais simples. O
+          laboratório abaixo usa as mesmas ideias da disciplina e mostra como
+          uma decisão de implementação muda as operações disponíveis.
+        </p>
+        <div class="panel">
+          <div class="tab-row" role="tablist" aria-label="Estruturas Python">
+            <button
+              class="tab-button"
+              role="tab"
+              aria-selected="true"
+              data-python-mode="array"
+            >
+              Arranjo / lista
+            </button>
+            <button
+              class="tab-button"
+              role="tab"
+              aria-selected="false"
+              data-python-mode="stack"
+            >
+              Pilha
+            </button>
+            <button
+              class="tab-button"
+              role="tab"
+              aria-selected="false"
+              data-python-mode="queue"
+            >
+              Fila
+            </button>
+            <button
+              class="tab-button"
+              role="tab"
+              aria-selected="false"
+              data-python-mode="dict"
+            >
+              Mapa / dict
+            </button>
+            <button
+              class="tab-button"
+              role="tab"
+              aria-selected="false"
+              data-python-mode="sort"
+            >
+              Classificação
+            </button>
+          </div>
+          <div class="workbench">
+            <div>
+              <h3 id="python-mode-title">Arranjo / lista Python</h3>
+              <p id="python-mode-description" class="small">
+                Uma lista Python oferece acesso por índice e cresce conforme
+                novos elementos são adicionados.
+              </p>
+              <div
+                class="workbench-controls"
+                aria-label="Operações da estrutura selecionada"
+              >
+                <div class="field">
+                  <label for="python-value">Valor ou chave=valor</label
+                  ><input
+                    id="python-value"
+                    value="6"
+                    aria-label="Valor ou chave e valor"
+                  />
+                </div>
+                <button class="mini-button primary" id="python-add-btn">
+                  Adicionar
+                </button>
+                <button class="mini-button" id="python-remove-btn">
+                  Remover último
+                </button>
+                <button class="mini-button" id="python-search-btn">
+                  Pesquisar
+                </button>
+                <button class="mini-button" id="python-sort-btn">
+                  Classificar
+                </button>
+              </div>
+              <div
+                id="python-visual"
+                class="workbench-visual"
+                role="region"
+                aria-label="Estado atual da estrutura"
+              ></div>
+              <div
+                id="python-output"
+                class="workbench-output"
+                role="status"
+                aria-live="polite"
+              >
+                Estado inicial carregado.
+              </div>
+            </div>
+            <div>
+              <div class="code-wrap">
+                <button class="copy-code" data-copy="python-code">
+                  Copiar Python
+                </button>
+                <pre class="workbench-code"><code id="python-code"></code></pre>
+              </div>
+              <p class="small">
+                A visualização é JavaScript apenas para funcionar offline. O
+                contrato e os exemplos práticos são Python.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="grid-3" style="margin-top: 20px">
+          <div class="panel soft-blue">
+            <span class="label">Arranjos e listas</span>
+            <h3>Índice ou sequência</h3>
+            <p>
+              <code>values[2]</code> acessa diretamente uma posição.
+              <code>append</code> adiciona ao fim. Inserir no meio pode deslocar
+              vários elementos.
+            </p>
+          </div>
+          <div class="panel soft-amber">
+            <span class="label" style="color: #815000; background: #ffe8b6"
+              >Pilhas e filas</span
+            >
+            <h3>Ordem de atendimento</h3>
+            <p>
+              Uma pilha usa LIFO, como <code>append</code> + <code>pop</code>.
+              Uma fila usa FIFO, preferencialmente <code>deque</code> +
+              <code>popleft</code>.
+            </p>
+          </div>
+          <div class="panel soft-mint">
+            <span class="label" style="color: #08745f; background: #c9eee5"
+              >Mapas e classificação</span
+            >
+            <h3>Chave, valor e ordem</h3>
+            <p>
+              <code>dict</code> resolve chaves exatas.
+              <code>sorted(values)</code> cria uma sequência ordenada. Uma
+              árvore será útil quando ordem e atualização precisarem coexistir.
+            </p>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 20px">
+          <div class="panel">
+            <h3>Pesquisa em Python</h3>
+            <pre><code>def linear_search(values, key):
+    """Retorna o índice de key ou -1 se não encontrar."""
+    for index, value in enumerate(values):
+        if value == key:
+            return index
+    return -1</code></pre>
+            <p class="small">
+              A pesquisa linear examina itens até encontrar a chave. Em uma
+              sequência ordenada, a busca binária reduz o intervalo pela metade.
+              Em uma BST, a propriedade de ordenação guia o caminho.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>Classificação é uma transformação</h3>
+            <pre><code>records = [("Ana", 8), ("Bia", 10), ("Caio", 7)]
+ordered = sorted(records, key=lambda record: record[1])</code></pre>
+            <p class="small">
+              A classificação facilita pesquisa e análise, mas tem custo. No
+              trabalho, a ordem <code>ordenada</code> é usada para provocar o
+              caso patológico de uma BST ingênua antes de comparar com uma
+              estrutura balanceada.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="recursao">
+        <div class="section-kicker">A ponte para árvores</div>
+        <h2>Recursão é pensar no mesmo problema em menor escala.</h2>
+        <div class="grid-2">
+          <div>
+            <p>
+              Uma árvore é naturalmente recursiva: cada filho pode ser visto
+              como a raiz de uma árvore menor. Toda função recursiva precisa de
+              um <strong>caso-base</strong> e de um passo que aproxima a
+              execução desse caso.
+            </p>
+            <div class="formula">
+              buscar(nó, k) = buscar(nó.esquerda, k) ou buscar(nó.direita, k)
+            </div>
+            <p class="small">
+              Na BST, a propriedade de ordenação elimina um dos caminhos em cada
+              decisão. Por isso, a busca visita um caminho, não todos os nós,
+              quando a árvore está balanceada.
+            </p>
+          </div>
+          <div class="panel soft-mint">
+            <h3>Modelo mental da busca</h3>
+            <ol>
+              <li>Se o nó é vazio, a chave não está presente.</li>
+              <li>Se a chave é igual ao nó, encontramos.</li>
+              <li>Se a chave é menor, descemos à esquerda.</li>
+              <li>Se a chave é maior, descemos à direita.</li>
+            </ol>
+            <p class="small">
+              O mesmo padrão aparece em <code>insert</code>,
+              <code>delete</code>, <code>rank</code>, <code>select</code> e
+              <code>range_agg</code>.
+            </p>
+          </div>
+        </div>
+        <div class="code-wrap">
+          <button class="copy-code" data-copy="recursion-code">
+            Copiar Python
+          </button>
+          <pre id="recursion-code"><code>def search(node, key):
+    """Retorna True se key estiver na subárvore enraizada em node."""
+    if node is None:                 # caso-base
+        return False
+    if key == node.key:
+        return True
+    if key &lt; node.key:
+        return search(node.left, key)  # problema menor
+    return search(node.right, key)     # problema menor</code></pre>
+        </div>
+      </section>
+
+      <section id="arvore">
+        <div class="section-kicker">02 · a estrutura obrigatória</div>
+        <h2>BST + balanceamento + metadados</h2>
+        <p class="lead">
+          O projeto pede uma árvore binária de busca balanceada aumentada. São
+          três ideias empilhadas. Cada uma precisa continuar correta para a
+          próxima funcionar.
+        </p>
+        <div class="grid-3">
+          <div class="panel soft-blue">
+            <span class="label">BST</span>
+            <h3>Ordenação local</h3>
+            <p>
+              Na subárvore esquerda ficam chaves menores. Na direita, chaves
+              maiores. Essa regra transforma uma busca em decisões sucessivas.
+            </p>
+          </div>
+          <div class="panel soft-amber">
+            <span class="label" style="color: #815000; background: #ffe8b6"
+              >Balanceamento</span
+            >
+            <h3>Altura sob controle</h3>
+            <p>
+              AVL, rubro-negra ou treap. A escolha é do grupo. O objetivo é
+              evitar que a árvore vire uma lista longa.
+            </p>
+          </div>
+          <div class="panel soft-mint">
+            <span class="label" style="color: #08745f; background: #c9eee5"
+              >Aumento</span
+            >
+            <h3>Resumo na subárvore</h3>
+            <p>
+              Cada nó guarda <code>size</code> e <code>aggregate</code>. No
+              grupo 5, o agregado é o maior valor da subárvore.
+            </p>
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 20px">
+          <h3>O estado de um nó aumentado</h3>
+          <pre><code>class Node:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
+        self.height = 1
+        self.size = 1
+        self.subtree_max = key</code></pre>
+          <p>
+            O ponto decisivo é que <code>height</code>, <code>size</code> e
+            <code>subtree_max</code> não são dados independentes. Eles são
+            resumos calculados a partir dos filhos.
+          </p>
+          <div class="formula">size(n) = 1 + size(n.left) + size(n.right)</div>
+          <div class="formula">
+            max(n) = max(n.key, max(n.left), max(n.right))
+          </div>
+          <div class="formula">
+            balance(n) = height(n.left) − height(n.right)
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 20px">
+          <div class="panel">
+            <h3>Rotação não é mágica</h3>
+            <p>
+              Uma rotação muda poucas referências para restaurar a altura.
+              Depois dela, o nó que desceu deve ser atualizado antes do nó que
+              subiu, porque o resumo do segundo depende do primeiro.
+            </p>
+            <div class="callout">
+              <div>!</div>
+              <div>
+                <strong>Falha silenciosa</strong>Se a rotação esquecer
+                <code>subtree_max</code>, a busca ainda pode funcionar, mas
+                <code>range_agg</code> passa a responder errado.
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Atualização local em Python</h3>
+            <div class="code-wrap">
+              <button class="copy-code" data-copy="update-code">
+                Copiar Python
+              </button>
+              <pre id="update-code"><code>def update(node):
+    """Recalcula todos os resumos de node."""
+    left = node.left
+    right = node.right
+    node.height = 1 + max(height(left), height(right))
+    node.size = 1 + size(left) + size(right)
+    node.subtree_max = max(node.key, subtree_max(left), subtree_max(right))</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="laboratorio">
+        <div class="section-kicker">03 · laboratório interativo</div>
+        <h2>Faça as operações de uma AVL.</h2>
+        <p class="lead">
+          Insira valores, remova, pesquise e consulte estatísticas de ordem. A
+          visualização mostra a chave, a altura e o tamanho da subárvore. O
+          painel lateral verifica se os metadados continuam coerentes.
+        </p>
+        <div class="panel">
+          <div class="lab-header">
+            <div>
+              <span class="label">Estrutura viva no navegador</span>
+              <h3 style="margin-top: 10px">
+                Árvore de busca balanceada aumentada
+              </h3>
+            </div>
+            <div class="lab-controls" aria-label="Controles da árvore">
+              <div class="field">
+                <label for="tree-key">ID do livro</label
+                ><input
+                  id="tree-key"
+                  type="number"
+                  value="30"
+                  aria-label="Identificador numérico do livro"
+                />
+              </div>
+              <button class="mini-button primary" id="insert-btn">
+                Inserir
+              </button>
+              <button class="mini-button danger" id="delete-btn">
+                Remover
+              </button>
+              <button class="mini-button" id="search-btn">Buscar</button>
+              <button class="mini-button" id="reset-btn">Limpar</button>
+            </div>
+          </div>
+          <div class="lab-controls" style="margin-top: 13px">
+            <button class="mini-button" id="sorted-demo-btn">
+              Carregar ordem crescente
+            </button>
+            <button class="mini-button" id="next-demo-btn">
+              Próximo passo crescente
+            </button>
+            <button class="mini-button" id="play-demo-btn">
+              Executar sequência
+            </button>
+            <button class="mini-button" id="pause-demo-btn">Pausar</button>
+            <span class="small" id="demo-label"
+              >Sequência: 10, 20, 30, 40, 50, 25</span
+            >
+          </div>
+          <div class="lab-layout">
+            <div>
+              <div class="tree-frame">
+                <svg
+                  id="tree-svg"
+                  role="img"
+                  aria-label="Visualização da árvore AVL"
+                ></svg>
+              </div>
+              <div
+                id="tree-status"
+                class="status"
+                role="status"
+                aria-live="polite"
+              >
+                Comece inserindo uma chave.
+              </div>
+              <div
+                id="trace-log"
+                class="trace-log"
+                aria-label="Log de operações"
+              >
+                &gt; aguardando operação
+              </div>
+            </div>
+            <aside class="panel soft-blue" style="box-shadow: none">
+              <h3>Invariantes observáveis</h3>
+              <div class="metric-list">
+                <div class="metric">
+                  <span>Nós</span><strong id="metric-size">0</strong>
+                </div>
+                <div class="metric">
+                  <span>Altura</span><strong id="metric-height">0</strong>
+                </div>
+                <div class="metric">
+                  <span>Raiz</span><strong id="metric-root">—</strong>
+                </div>
+                <div class="metric">
+                  <span>Máximo global</span><strong id="metric-max">—</strong>
+                </div>
+                <div class="metric">
+                  <span>Metadados</span><strong id="metric-valid">—</strong>
+                </div>
+              </div>
+              <hr
+                style="border: 0; border-top: 1px solid #cad6ff; margin: 17px 0"
+              />
+              <div class="field">
+                <label for="rank-key"
+                  >rank(k): IDs de livros menores que k</label
+                ><input id="rank-key" type="number" value="35" />
+              </div>
+              <button class="mini-button" style="margin-top: 8px" id="rank-btn">
+                Calcular rank
+              </button>
+              <div class="field" style="margin-top: 14px">
+                <label for="select-index">select(i): índice 0-based</label
+                ><input id="select-index" type="number" min="0" value="2" />
+              </div>
+              <button
+                class="mini-button"
+                style="margin-top: 8px"
+                id="select-btn"
+              >
+                Calcular select
+              </button>
+              <div class="field" style="margin-top: 14px">
+                <label>range_agg(a, b): máximo</label>
+                <div style="display: flex; gap: 7px">
+                  <input id="range-a" type="number" value="15" /><input
+                    id="range-b"
+                    type="number"
+                    value="45"
+                  />
+                </div>
+              </div>
+              <button
+                class="mini-button"
+                style="margin-top: 8px"
+                id="range-btn"
+              >
+                Calcular intervalo
+              </button>
+              <div
+                id="query-result"
+                class="status success"
+                style="margin-top: 12px"
+              >
+                Consultas aparecerão aqui.
+              </div>
+            </aside>
+          </div>
+          <div id="node-table-wrap"></div>
+        </div>
+        <div class="grid-2" style="margin-top: 20px">
+          <div class="panel">
+            <h3>Como ler o laboratório</h3>
+            <p>
+              Após uma inserção, observe a mensagem de rotação. Em uma AVL, o
+              fator de balanceamento fica entre −1 e +1. A árvore pode mudar de
+              forma, mas sua ordenação e seus resumos devem permanecer válidos.
+            </p>
+            <p class="small">
+              A demo usa números pequenos para tornar o mecanismo visível. Ela
+              não representa a execução de centenas de milhões de chaves.
+            </p>
+          </div>
+          <div class="panel soft-amber">
+            <h3>Versão Python da operação de agregado</h3>
+            <div class="code-wrap">
+              <button class="copy-code" data-copy="range-code">
+                Copiar Python
+              </button>
+              <pre id="range-code"><code>def range_max(node, lower, upper):
+    """Retorna o maior valor de [lower, upper]."""
+    if node is None or node.subtree_max &lt; lower:
+        return None
+    if node.key &lt; lower:
+        return range_max(node.right, lower, upper)
+    if node.key &gt; upper:
+        return range_max(node.left, lower, upper)
+    values = [node.key,
+              range_max(node.left, lower, upper),
+              range_max(node.right, lower, upper)]
+    values = [value for value in values if value is not None]
+    return max(values)</code></pre>
+            </div>
+            <p class="small">
+              Esta versão usa <code>subtree_max</code> para podar subárvores que
+              não podem conter uma resposta. Uma implementação mais agressiva
+              também pode retornar o resumo de uma subárvore inteira quando os
+              limites provarem que ela está totalmente dentro do intervalo.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="operacoes">
+        <div class="section-kicker">O núcleo obrigatório</div>
+        <h2>Seis operações, seis perguntas diferentes.</h2>
+        <div class="operation-grid">
+          <div class="operation-card">
+            <code>insert(k)</code>
+            <p>
+              Insere k mantendo a ordenação, o balanceamento e todos os
+              metadados.
+            </p>
+          </div>
+          <div class="operation-card">
+            <code>delete(k)</code>
+            <p>
+              Remove k. Se o nó tem dois filhos, substitui pelo
+              sucessor/predecessor e atualiza o caminho.
+            </p>
+          </div>
+          <div class="operation-card">
+            <code>search(k)</code>
+            <p>Informa se k está presente seguindo a propriedade da BST.</p>
+          </div>
+          <div class="operation-card">
+            <code>rank(k)</code>
+            <p>
+              Conta quantas chaves são menores que k usando
+              <code>size</code> para saltar subárvores.
+            </p>
+          </div>
+          <div class="operation-card">
+            <code>select(i)</code>
+            <p>
+              Encontra a i-ésima menor chave, normalmente com índice 0-based.
+            </p>
+          </div>
+          <div class="operation-card">
+            <code>range_agg(a, b)</code>
+            <p>
+              Para o grupo 5, retorna o máximo entre as chaves do intervalo
+              fechado [a, b].
+            </p>
+          </div>
+        </div>
+        <div class="panel soft-blue">
+          <h3>Complexidade esperada de uma AVL</h3>
+          <table class="comparison">
+            <thead>
+              <tr>
+                <th>Operação</th>
+                <th>Limite teórico</th>
+                <th>Por que</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <code>search</code>, <code>insert</code>, <code>delete</code>
+                </td>
+                <td class="complexity">O(log n)</td>
+                <td>
+                  Visitam um caminho de altura limitada; inserção/remoção podem
+                  fazer rotações.
+                </td>
+              </tr>
+              <tr>
+                <td><code>rank</code>, <code>select</code></td>
+                <td class="complexity">O(log n)</td>
+                <td>
+                  O tamanho das subárvores permite descartar blocos inteiros.
+                </td>
+              </tr>
+              <tr>
+                <td><code>range_agg</code> simples</td>
+                <td class="complexity">O(log n + k)</td>
+                <td>
+                  Visita a fronteira e os k valores relevantes;
+                  <code>subtree_max</code> permite podar partes que não podem
+                  responder.
+                </td>
+              </tr>
+              <tr>
+                <td>Atualizar um nó</td>
+                <td class="complexity">O(1)</td>
+                <td>Combina apenas os resumos dos dois filhos.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="small">
+            Os limites descrevem crescimento assintótico. Não predizem sozinhos
+            o tempo em nanosegundos.
+          </p>
+        </div>
+      </section>
+
+      <section id="carga">
+        <div class="section-kicker">04 · carga de trabalho</div>
+        <h2>De chaves reais a um trace reproduzível.</h2>
+        <p class="lead">
+          O SOSD fornece dados reais em formato binário e somente para leitura.
+          O script local transforma essas chaves em inserções, remoções e
+          buscas. O trace e o oráculo tornam a corretude verificável.
+        </p>
+        <div class="grid-2" style="margin-top: 20px">
+          <div class="panel">
+            <h3>Os quatro conjuntos reais</h3>
+            <table class="comparison">
+              <thead>
+                <tr>
+                  <th>Nome no trabalho</th>
+                  <th>Arquivo SOSD</th>
+                  <th>Característica</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>amzn</strong></td>
+                  <td><code>books_200M_uint32</code></td>
+                  <td>
+                    Popularidade de vendas de livros; distribuição moderadamente
+                    enviesada.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>face</strong></td>
+                  <td><code>fb_200M_uint64</code></td>
+                  <td>
+                    Identificadores de usuários; lacunas grandes e regulares.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>wiki</strong></td>
+                  <td><code>wiki_ts_200M_uint64</code></td>
+                  <td>Timestamps; quase denso, com agrupamentos temporais.</td>
+                </tr>
+                <tr>
+                  <td><strong>osm</strong></td>
+                  <td><code>osm_cellids_800M_uint64</code></td>
+                  <td>Lacunas muito irregulares; o mais difícil.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel soft-amber">
+            <h3>Formato e escala</h3>
+            <p>
+              O arquivo binário começa com 8 bytes contendo a quantidade de
+              chaves em <code>uint64</code> little-endian. Depois vêm as chaves
+              em <code>uint32</code> ou <code>uint64</code>.
+            </p>
+            <p>
+              Os conjuntos reais têm de 200 a 800 milhões de inteiros. O arquivo
+              <code>osm</code> chega a cerca de 6,4 GB, por isso
+              <code>--carga-maxima</code> lê apenas as primeiras N chaves sem
+              carregar tudo na memória.
+            </p>
+            <div class="warning-line">
+              <strong>Importante:</strong> SOSD originalmente é uma carga
+              somente de leitura. Inserções e remoções são decisões do gerador
+              do trabalho.
+            </div>
+          </div>
+        </div>
+        <details style="margin-top: 20px">
+          <summary>Como obter os dados e preparar o ambiente</summary>
+          <div class="grid-2" style="margin-top: 14px">
+            <div>
+              <p class="small">
+                A suíte completa assume Linux baseado em apt, pelo menos 16 GiB
+                de RAM e 50 GiB de disco livre.
+              </p>
+              <pre><code>sudo apt -y update
+sudo apt -y install zstd python3-pip m4 cmake clang libboost-all-dev
+pip3 install --user numpy scipy
+git clone https://github.com/learnedsystems/SOSD.git
+cd SOSD
+./scripts/download.sh
+ls -lh data/</code></pre>
+            </div>
+            <div>
+              <p class="small">
+                O espelho isolado do Zenodo é útil quando o script de download
+                está desatualizado. Baixe o arquivo correspondente ao grupo,
+                confira o hash fornecido e coloque-o em <code>data/</code>. Para
+                o grupo 5, o arquivo esperado é <code>books_200M_uint32</code>.
+              </p>
+              <p class="small">
+                Durante o desenvolvimento, use o modo sintético ou
+                <code>--carga-maxima</code>. No relatório, declare exatamente
+                qual recorte foi usado em cada execução.
+              </p>
+            </div>
+          </div>
+        </details>
+        <div class="pipeline" aria-label="Pipeline de geração da carga">
+          <div class="pipeline-step">
+            <b>1 · SOSD</b
+            ><span
+              >Arquivo binário com preâmbulo uint64 e chaves
+              uint32/uint64.</span
+            >
+          </div>
+          <div class="pipeline-step">
+            <b>2 · Seleção</b
+            ><span
+              ><code>max-load</code>, chaves únicas e universo de
+              trabalho.</span
+            >
+          </div>
+          <div class="pipeline-step">
+            <b>3 · Ordem</b
+            ><span
+              ><code>ordenada</code>, <code>embaralhada</code> ou
+              <code>popularidade</code>.</span
+            >
+          </div>
+          <div class="pipeline-step">
+            <b>4 · Distribuição</b
+            ><span><code>theta</code> define acessos quentes e frios.</span>
+          </div>
+          <div class="pipeline-step">
+            <b>5 · Trace</b
+            ><span
+              >Linhas <code>I</code>, <code>D</code>, <code>S</code> com seed
+              fixa.</span
+            >
+          </div>
+          <div class="pipeline-step">
+            <b>6 · Oráculo</b
+            ><span
+              ><code>.expected</code> verifica buscas transitivamente.</span
+            >
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Por que a verificação é transitiva?</h3>
+            <p>
+              O resultado de uma busca depende do estado produzido pelas
+              operações anteriores. Se uma remoção falha, a chave removida pode
+              reaparecer como <code>FOUND</code> em uma busca posterior.
+            </p>
+            <pre><code>I 8473625
+D 8473625
+S 8473625
+
+<span class="syntax-comment"># esperado: 8473625 NOT_FOUND</span></code></pre>
+            <p class="small">
+              O programa do grupo deve escrever apenas as respostas das
+              operações <code>S</code>, uma por linha, no formato do gabarito.
+            </p>
+          </div>
+          <div class="panel soft-blue">
+            <h3>Explore o theta</h3>
+            <div class="range-row">
+              <label for="theta-slider">theta</label
+              ><input
+                id="theta-slider"
+                type="range"
+                min="0"
+                max="1.2"
+                step="0.01"
+                value="0.99"
+              /><span class="range-value" id="theta-value">0.99</span>
+            </div>
+            <div
+              class="distribution"
+              aria-label="Distribuição conceitual de acessos"
+            >
+              <div class="distribution-row">
+                <span>mais quentes</span>
+                <div class="bar">
+                  <span
+                    id="hot-bar"
+                    style="width: 82%; background: var(--red)"
+                  ></span>
+                </div>
+                <strong id="hot-value">82%</strong>
+              </div>
+              <div class="distribution-row">
+                <span>intermediárias</span>
+                <div class="bar">
+                  <span
+                    id="mid-bar"
+                    style="width: 13%; background: #e8a92e"
+                  ></span>
+                </div>
+                <strong id="mid-value">13%</strong>
+              </div>
+              <div class="distribution-row">
+                <span>mais frias</span>
+                <div class="bar">
+                  <span
+                    id="cold-bar"
+                    style="width: 5%; background: var(--mint)"
+                  ></span>
+                </div>
+                <strong id="cold-value">5%</strong>
+              </div>
+            </div>
+            <p id="theta-explanation" class="small">
+              Em 0,99, poucas chaves concentram muitos acessos. Isso é uma
+              propriedade da carga, não uma medição de desempenho.
+            </p>
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 20px">
+          <h3>Mix do grupo 5: o que será exercitado?</h3>
+          <div
+            class="mix-bar"
+            aria-label="45 por cento inserções, 25 por cento remoções, 30 por cento buscas"
+          >
+            <span class="mix-i" style="width: 45%">I 45%</span
+            ><span class="mix-d" style="width: 25%">D 25%</span
+            ><span class="mix-s" style="width: 30%">S 30%</span>
+          </div>
+          <div class="grid-3">
+            <p class="small">
+              <strong style="color: var(--blue)">I · inserção</strong
+              ><br />Constrói e expande o conjunto vivo.
+            </p>
+            <p class="small">
+              <strong style="color: var(--red)">D · remoção</strong><br />Testa
+              reestruturação e atualização de metadados.
+            </p>
+            <p class="small">
+              <strong style="color: var(--mint)">S · busca</strong><br />Confere
+              presença e expõe erros anteriores.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="grupo5">
+        <div class="section-kicker">05 · seu recorte</div>
+        <h2>Grupo 5: a configuração que guia suas decisões.</h2>
+        <div class="group-focus">
+          <div class="panel soft-blue">
+            <span class="label">Instância atribuída</span>
+            <h3 style="margin-top: 12px">
+              A carga combina dados de vendas, acessos quentes e inserção
+              patológica.
+            </h3>
+            <div class="group-specs">
+              <div class="spec">
+                <small>Conjunto</small><strong>amzn</strong
+                ><span class="small">books_200M_uint32</span>
+              </div>
+              <div class="spec">
+                <small>theta</small><strong>0.99</strong
+                ><span class="small">Zipfiano / YCSB</span>
+              </div>
+              <div class="spec">
+                <small>mix I:D:S</small><strong>45:25:30</strong
+                ><span class="small">operações</span>
+              </div>
+              <div class="spec">
+                <small>agregado</small><strong>máximo</strong
+                ><span class="small">intervalo fechado</span>
+              </div>
+              <div class="spec">
+                <small>inserção</small><strong>ordenada</strong
+                ><span class="small">caso patológico</span>
+              </div>
+              <div class="spec">
+                <small>seed</small><strong>5</strong
+                ><span class="small">reprodutibilidade</span>
+              </div>
+            </div>
+            <p class="small" style="margin-bottom: 0">
+              O enunciado define a semente como o número do grupo. Para esta
+              instância, use sempre <code>--semente 5</code> nas comparações
+              oficiais.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>O que o grupo precisa conseguir explicar</h3>
+            <ul>
+              <li>
+                Por que a ordem <code>ordenada</code> é patológica para uma BST
+                ingênua e como a AVL reage.
+              </li>
+              <li>
+                Como a concentração de acessos em
+                <code>theta = 0.99</code> altera a carga, a localidade e a
+                leitura dos percentis.
+              </li>
+              <li>
+                Por que <code>subtree_max</code> responde ao agregado do
+                intervalo sem varrer tudo em todos os casos.
+              </li>
+              <li>
+                Como a mistura 45:25:30 muda o número de inserções, remoções e
+                buscas observadas.
+              </li>
+              <li>
+                Por que o resultado medido na máquina do grupo é necessário para
+                o relatório.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="warning-line" style="margin-top: 18px">
+          <strong>Atenção ao recorte:</strong> não troque silenciosamente o
+          conjunto, a seed, o theta, o mix, o agregado ou a ordem de inserção.
+          Se fizer uma execução exploratória diferente, identifique-a como tal.
+        </div>
+        <div class="panel" style="margin-top: 20px">
+          <h3>Comandos Python para começar</h3>
+          <p class="small">
+            Ajuste caminhos e o número de operações ao ambiente do grupo. O
+            primeiro comando é um teste pequeno. O segundo é um piloto com
+            limite de memória.
+          </p>
+          <div class="command">
+            <pre
+              id="smoke-command"
+            ><code>python src/workload_generator.py gerar \
+    --sintetico 10000 --operacoes 50000 \
+    --mistura 45:25:30 --theta 0.99 \
+    --ordem-insercao ordenada --semente 5 --saida g5-smoke</code></pre>
+            <button class="copy-code" data-copy="smoke-command">Copiar</button>
+          </div>
+          <div class="command">
+            <pre
+              id="pilot-command"
+            ><code>python src/workload_generator.py gerar \
+    --chaves books_200M_uint32 --formato sosd --bytes-chave 4 \
+    --carga-maxima 20000000 --operacoes 1000000 \
+    --universo 10000000 --mistura 45:25:30 --theta 0.99 \
+    --ordem-insercao ordenada --semente 5 --saida g5-pilot</code></pre>
+            <button class="copy-code" data-copy="pilot-command">Copiar</button>
+          </div>
+          <p class="small">
+            Para o estudo final, documente se o limite
+            <code>--carga-maxima</code> foi usado, qual foi a máquina e como o
+            conjunto completo foi tratado.
+          </p>
+        </div>
+      </section>
+
+      <section id="medicao">
+        <div class="section-kicker">06 · medir e interpretar</div>
+        <h2>Teoria é uma expectativa. Medição é evidência.</h2>
+        <p class="lead">
+          O estudo empírico exigido compara escalas, enviesamento, ordem de
+          inserção, uma linha de base e os limites teóricos. O gráfico abaixo é
+          deliberadamente conceitual. Seus números reais precisam vir da máquina
+          do grupo.
+        </p>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Crescimento esperado</h3>
+            <svg
+              class="theory-chart"
+              viewBox="0 0 620 260"
+              role="img"
+              aria-label="Curvas conceituais de log n e n"
+            >
+              <line class="chart-grid" x1="60" y1="30" x2="60" y2="220"></line>
+              <line
+                class="chart-grid"
+                x1="60"
+                y1="220"
+                x2="590"
+                y2="220"
+              ></line>
+              <line
+                class="chart-grid"
+                x1="60"
+                y1="160"
+                x2="590"
+                y2="160"
+              ></line>
+              <line
+                class="chart-grid"
+                x1="60"
+                y1="100"
+                x2="590"
+                y2="100"
+              ></line>
+              <path
+                class="chart-line"
+                stroke="#3159d7"
+                d="M60 190 C180 160 300 137 420 118 C490 106 540 98 590 93"
+              ></path>
+              <path
+                class="chart-line"
+                stroke="#b83b4b"
+                d="M60 210 C190 208 300 201 405 178 C475 153 535 101 590 35"
+              ></path>
+              <text class="chart-label" x="70" y="244">
+                tamanho da entrada →
+              </text>
+              <text class="chart-label" x="20" y="35">custo</text>
+              <text class="chart-label" x="458" y="110" fill="#3159d7">
+                log n
+              </text>
+              <text class="chart-label" x="530" y="49" fill="#b83b4b">n</text>
+            </svg>
+            <p class="small">
+              A AVL deve se aproximar de O(log n) para as operações de caminho.
+              Uma lista ordenada como baseline evidencia o custo linear.
+            </p>
+          </div>
+          <div class="panel soft-amber">
+            <h3>O que registrar em cada execução</h3>
+            <ul>
+              <li>n, número de operações, proporção real I/D/S e seed.</li>
+              <li>Tempo por operação, com média, p50 e p99.</li>
+              <li>
+                Máquina, sistema, versão do Python/compilador e configuração.
+              </li>
+              <li>Memória, duração total, warm-up e repetições.</li>
+              <li>Erros do oráculo e como foram investigados.</li>
+            </ul>
+            <div class="callout">
+              <div>↗</div>
+              <div>
+                <strong>Percentis não são enfeite</strong>Uma média pode
+                esconder uma cauda longa causada por alocação, cache, coleta de
+                lixo ou rotações. O p99 ajuda a enxergar essa cauda.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 20px">
+          <h3>Planilha mínima para as medições</h3>
+          <p class="small">
+            Preencha com os números da própria máquina. As células não salvam ou
+            inventam resultados.
+          </p>
+          <table class="editable-table">
+            <thead>
+              <tr>
+                <th>Configuração</th>
+                <th>n</th>
+                <th>operação</th>
+                <th>média (ns)</th>
+                <th>p50 (ns)</th>
+                <th>p99 (ns)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>G5 · ordenada · theta 0.99</td>
+                <td>
+                  <input aria-label="n da linha 1" placeholder="ex.: 10000" />
+                </td>
+                <td>inserção</td>
+                <td>
+                  <input
+                    aria-label="média da linha 1"
+                    placeholder="preencher"
+                  />
+                </td>
+                <td>
+                  <input aria-label="p50 da linha 1" placeholder="preencher" />
+                </td>
+                <td>
+                  <input aria-label="p99 da linha 1" placeholder="preencher" />
+                </td>
+              </tr>
+              <tr>
+                <td>G5 · ordenada · theta 0.99</td>
+                <td>
+                  <input aria-label="n da linha 2" placeholder="ex.: 10000" />
+                </td>
+                <td>busca</td>
+                <td>
+                  <input
+                    aria-label="média da linha 2"
+                    placeholder="preencher"
+                  />
+                </td>
+                <td>
+                  <input aria-label="p50 da linha 2" placeholder="preencher" />
+                </td>
+                <td>
+                  <input aria-label="p99 da linha 2" placeholder="preencher" />
+                </td>
+              </tr>
+              <tr>
+                <td>Baseline · lista ordenada</td>
+                <td>
+                  <input aria-label="n da linha 3" placeholder="ex.: 10000" />
+                </td>
+                <td>search</td>
+                <td>
+                  <input
+                    aria-label="média da linha 3"
+                    placeholder="preencher"
+                  />
+                </td>
+                <td>
+                  <input aria-label="p50 da linha 3" placeholder="preencher" />
+                </td>
+                <td>
+                  <input aria-label="p99 da linha 3" placeholder="preencher" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid-2" style="margin-top: 20px">
+          <div class="panel">
+            <h3>Comparações obrigatórias</h3>
+            <ol>
+              <li>Quatro ordens de grandeza de n, até o limite suportado.</li>
+              <li>
+                <code>theta ∈ {0.0, 0.6, 0.99, 1.2}</code>, explicando a
+                concentração.
+              </li>
+              <li>
+                <code>ordenada</code> contra <code>embaralhada</code>, mostrando
+                o caso patológico.
+              </li>
+              <li>AVL contra lista ordenada ou BST sem balanceamento.</li>
+              <li>
+                Teoria contra prática, com constantes, cache, alocação e
+                rotações.
+              </li>
+            </ol>
+          </div>
+          <div class="panel soft-mint">
+            <h3>Oráculo antes do benchmark</h3>
+            <p>
+              Primeiro prove que as respostas estão corretas. Depois meça.
+              Misturar falha de corretude com lentidão torna a interpretação
+              muito mais difícil.
+            </p>
+            <div class="command">
+              <pre
+                id="verify-command"
+              ><code>python src/workload_generator.py verificar \
+    --esperado g5-smoke.expected \
+    --candidato minha_saida.out</code></pre>
+              <button class="copy-code" data-copy="verify-command">
+                Copiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="defesa">
+        <div class="section-kicker">Entrega e defesa</div>
+        <h2>Seu relatório precisa contar uma história verificável.</h2>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Quatro entregáveis</h3>
+            <details open>
+              <summary>1 · Código-fonte</summary>
+              <p class="small">
+                Implementação completa, compilável/executável, com instruções de
+                execução e formato de saída.
+              </p>
+            </details>
+            <details>
+              <summary>2 · Relatório empírico</summary>
+              <p class="small">
+                Gráficos gerados a partir das medições, metodologia, ambiente e
+                interpretação das curvas.
+              </p>
+            </details>
+            <details>
+              <summary>3 · Justificativa de projeto</summary>
+              <p class="small">
+                Escolha da estrutura, alternativas descartadas, custo medido,
+                invariantes e argumento informal sobre rotações.
+              </p>
+            </details>
+            <details>
+              <summary>4 · Apresentação oral</summary>
+              <p class="small">
+                Cerca de 10 minutos, com respostas para perguntas de corretude e
+                comportamento observado.
+              </p>
+            </details>
+          </div>
+          <div class="panel soft-red">
+            <h3>Perguntas que a defesa pode fazer</h3>
+            <ul>
+              <li>O que acontece se removermos esta rotação?</li>
+              <li>Por que o p99 cresce nesta configuração?</li>
+              <li>
+                Como você sabe que <code>range_agg</code> inclui as duas pontas?
+              </li>
+              <li>
+                Qual metadado fica errado se a atualização ocorrer na ordem
+                errada?
+              </li>
+              <li>Por que seu baseline cruza a AVL neste tamanho?</li>
+              <li>O que a seed 5 torna reproduzível?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 20px">
+          <div class="panel soft-amber">
+            <h3>Regras que protegem a avaliação</h3>
+            <ul>
+              <li>
+                Ferramentas de auxílio são permitidas para o código, mas o grupo
+                deve compreender todo o conteúdo entregue.
+              </li>
+              <li>
+                O relatório deve refletir medições reais da máquina do grupo.
+                Números fabricados ou incompatíveis com a metodologia zeram o
+                componente empírico.
+              </li>
+              <li>
+                Envie um dump organizado dos prompts e chats usados. A avaliação
+                observa o raciocínio e a iteração, não o volume.
+              </li>
+              <li>
+                Identifique qualquer parte cuja autoria não seja do grupo.
+              </li>
+              <li>
+                Forneça o passo a passo para outra pessoa reproduzir a solução.
+              </li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Referências do enunciado</h3>
+            <ol class="small">
+              <li>
+                A. Kipf et al. <em>SOSD: A Benchmark for Learned Indexes</em>,
+                arXiv:1911.13014.
+              </li>
+              <li>
+                Repositório SOSD, <code>github.com/learnedsystems/SOSD</code>.
+              </li>
+              <li>
+                B. F. Cooper et al.
+                <em>Benchmarking Cloud Serving Systems with YCSB</em>, SoCC
+                2010.
+              </li>
+              <li>
+                J. Gray et al.
+                <em>Quickly Generating Billion-Record Synthetic Databases</em>,
+                SIGMOD 1994.
+              </li>
+              <li>
+                T. Cormen et al. <em>Introduction to Algorithms</em>, capítulo
+                de árvores de busca aumentadas.
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 20px">
+          <h3>Quiz de saída</h3>
+          <p class="small">
+            Use o resultado como diagnóstico, não como nota. Se errar, volte ao
+            trecho correspondente.
+          </p>
+          <form id="quiz-form" class="quiz">
+            <fieldset class="quiz-question">
+              <legend>1. O que a propriedade de uma BST garante?</legend>
+              <label
+                ><input type="radio" name="q1" value="a" /> Que todos os nós têm
+                dois filhos.</label
+              ><label
+                ><input type="radio" name="q1" value="b" /> Que menores ficam à
+                esquerda e maiores à direita.</label
+              ><label
+                ><input type="radio" name="q1" value="c" /> Que toda busca custa
+                O(1).</label
+              >
+            </fieldset>
+            <fieldset class="quiz-question">
+              <legend>2. Qual é o agregado do grupo 5?</legend>
+              <label><input type="radio" name="q2" value="a" /> Soma.</label
+              ><label
+                ><input type="radio" name="q2" value="b" /> Contagem.</label
+              ><label><input type="radio" name="q2" value="c" /> Máximo.</label>
+            </fieldset>
+            <fieldset class="quiz-question">
+              <legend>3. Por que guardar size em cada nó?</legend>
+              <label
+                ><input type="radio" name="q3" value="a" /> Para calcular
+                rank/select sem contar toda a árvore.</label
+              ><label
+                ><input type="radio" name="q3" value="b" /> Para substituir o
+                balanceamento.</label
+              ><label
+                ><input type="radio" name="q3" value="c" /> Para ordenar o
+                arquivo SOSD.</label
+              >
+            </fieldset>
+            <fieldset class="quiz-question">
+              <legend>4. O que o oráculo confere?</legend>
+              <label
+                ><input type="radio" name="q4" value="a" /> Somente se o
+                programa terminou.</label
+              ><label
+                ><input type="radio" name="q4" value="b" /> As respostas de
+                busca em relação ao estado acumulado.</label
+              ><label
+                ><input type="radio" name="q4" value="c" /> Apenas o tempo
+                médio.</label
+              >
+            </fieldset>
+            <fieldset class="quiz-question">
+              <legend>5. Qual configuração é a do grupo 5?</legend>
+              <label
+                ><input type="radio" name="q5" value="a" /> amzn, 0.99,
+                45:25:30, máximo, ordenada, semente 5.</label
+              ><label
+                ><input type="radio" name="q5" value="b" /> osm, 1.2, 50:25:25,
+                máximo, embaralhada, semente 4.</label
+              ><label
+                ><input type="radio" name="q5" value="c" /> wiki, 0.6, 55:15:30,
+                contagem, ordenada, semente 7.</label
+              >
+            </fieldset>
+            <button class="mini-button primary" type="submit">
+              Corrigir quiz
+            </button>
+          </form>
+          <div
+            id="quiz-result"
+            class="quiz-result"
+            role="status"
+            aria-live="polite"
+          ></div>
+        </div>
+        <div class="panel soft-blue" style="margin-top: 20px">
+          <h3>Checklist do grupo 5</h3>
+          <div class="check-progress">
+            <span>Progresso local</span><strong id="check-count">0/8</strong>
+          </div>
+          <div class="bar"><span id="check-bar" style="width: 0%"></span></div>
+          <div class="checklist" style="margin-top: 14px">
+            <label class="check-item"
+              ><input type="checkbox" data-check="1" /><span
+                >Consigo explicar abstração, representação e invariante.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="2" /><span
+                >Consigo descrever BST, AVL e o motivo de uma rotação.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="3" /><span
+                >Consigo explicar <code>size</code> e
+                <code>subtree_max</code> após uma atualização.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="4" /><span
+                >Consigo executar o smoke test em Python e verificar o
+                oráculo.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="5" /><span
+                >Sei repetir exatamente a configuração do grupo 5.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="6" /><span
+                >Tenho plano de escala, theta, ordem ordenada/embaralhada e
+                referência.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="7" /><span
+                >Registrei máquina, versões, seed, metodologia e
+                percentis.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="8" /><span
+                >Consigo defender uma decisão sem inventar números.</span
+              ></label
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell">
+        <p>
+          <strong>Fontes locais usadas neste guia:</strong>
+          <a href="project-instructions.pdf">instruções do projeto</a> e
+          <a href="../workload_generator.py">workload_generator.py</a>.
+        </p>
+        <p>
+          O laboratório é uma visualização didática em JavaScript. A
+          implementação prática, os traces e as medições do projeto devem ser
+          executados em Python na máquina do grupo.
+        </p>
+        <p>Referências do enunciado: SOSD, YCSB, Gray et al. e Cormen et al.</p>
+      </div>
+    </footer>
+
+    <script>
+      "use strict";
+
+      const pythonLab = {
+        mode: "array",
+        values: [8, 3, 5],
+        dictionary: { Ana: 8, Bia: 10, Caio: 7 },
+      };
+
+      const pythonModes = {
+        array: {
+          title: "Arranjo / lista Python",
+          description:
+            "Uma lista Python oferece acesso por índice e cresce conforme novos elementos são adicionados.",
+          code: `values = [8, 3, 5]\nvalues.append(6)\nthird = values[2]\nremoved = values.pop()`,
+        },
+        stack: {
+          title: "Pilha · LIFO",
+          description:
+            "O último elemento a entrar é o primeiro a sair. Use append para empilhar e pop para desempilhar.",
+          code: `stack = [8, 3, 5]\nstack.append(6)       # push\nremoved = stack.pop()  # pop`,
+        },
+        queue: {
+          title: "Fila · FIFO",
+          description:
+            "O primeiro elemento a entrar é o primeiro a sair. deque evita deslocar toda a lista ao remover da frente.",
+          code: `from collections import deque\nqueue = deque([8, 3, 5])\nqueue.append(6)\nremoved = queue.popleft()`,
+        },
+        dict: {
+          title: "Mapa / dict",
+          description:
+            "Um dicionário liga uma chave a um valor. Ele é adequado para pesquisa exata, não para rank por ordem numérica.",
+          code: `scores = {"Ana": 8, "Bia": 10}\nscores["Caio"] = 7\nscore = scores.get("Bia")\ndel scores["Ana"]`,
+        },
+        sort: {
+          title: "Classificação",
+          description:
+            "Classificar reorganiza os valores. A função sorted cria uma nova lista e preserva a original.",
+          code: `values = [8, 3, 5, 6]\nordered = sorted(values)\nfound = 5 in ordered`,
+        },
+      };
+
+      function setPythonOutput(message, kind = "") {
+        const output = document.querySelector("#python-output");
+        output.className = `workbench-output ${kind}`;
+        output.textContent = message;
+      }
+
+      function renderPythonLab() {
+        const mode = pythonModes[pythonLab.mode];
+        document.querySelector("#python-mode-title").textContent = mode.title;
+        document.querySelector("#python-mode-description").textContent =
+          mode.description;
+        document.querySelector("#python-code").textContent = mode.code;
+        const valueInput = document.querySelector("#python-value");
+        valueInput.placeholder =
+          pythonLab.mode === "dict" ? "ex.: Duda=9" : "ex.: 6";
+        const removeButton = document.querySelector("#python-remove-btn");
+        removeButton.textContent =
+          pythonLab.mode === "queue"
+            ? "Consumir primeiro"
+            : pythonLab.mode === "stack"
+              ? "Desempilhar"
+              : pythonLab.mode === "dict"
+                ? "Remover chave"
+                : "Remover último";
+        document.querySelector("#python-sort-btn").disabled = ![
+          "array",
+          "sort",
+        ].includes(pythonLab.mode);
+        document
+          .querySelectorAll("[data-python-mode]")
+          .forEach((button) =>
+            button.setAttribute(
+              "aria-selected",
+              String(button.dataset.pythonMode === pythonLab.mode),
+            ),
+          );
+
+        const visual = document.querySelector("#python-visual");
+        if (pythonLab.mode === "dict") {
+          const entries = Object.entries(pythonLab.dictionary);
+          visual.innerHTML = entries.length
+            ? entries
+                .map(
+                  ([key, value]) =>
+                    `<div class="dictionary-item"><strong>${key}</strong><span>${value}</span></div>`,
+                )
+                .join("")
+            : `<span class="small">dict vazio</span>`;
+        } else {
+          const values = pythonLab.values;
+          visual.innerHTML = values.length
+            ? values
+                .map((value) => `<span class="workbench-item">${value}</span>`)
+                .join("")
+            : `<span class="small">estrutura vazia</span>`;
+        }
+      }
+
+      function readPythonInput() {
+        return document.querySelector("#python-value").value.trim();
+      }
+
+      document.querySelectorAll("[data-python-mode]").forEach((button) =>
+        button.addEventListener("click", () => {
+          pythonLab.mode = button.dataset.pythonMode;
+          setPythonOutput(
+            `Modo alterado para ${pythonModes[pythonLab.mode].title}.`,
+          );
+          renderPythonLab();
+        }),
+      );
+
+      document
+        .querySelector("#python-add-btn")
+        .addEventListener("click", () => {
+          const raw = readPythonInput();
+          if (pythonLab.mode === "dict") {
+            const [key, value] = raw.split("=").map((part) => part.trim());
+            if (!key || value === undefined || value === "")
+              return setPythonOutput(
+                "Para o dict, use o formato chave=valor.",
+                "warn",
+              );
+            pythonLab.dictionary[key] = value;
+            setPythonOutput(
+              `dict[${key}] = ${value} · associação atualizada.`,
+              "success",
+            );
+          } else {
+            const value = Number(raw);
+            if (!Number.isFinite(value))
+              return setPythonOutput(
+                "Digite um número para esta estrutura.",
+                "warn",
+              );
+            pythonLab.values.push(value);
+            setPythonOutput(
+              `${pythonModes[pythonLab.mode].title}: ${value} foi adicionado ao final.`,
+              "success",
+            );
+          }
+          renderPythonLab();
+        });
+
+      document
+        .querySelector("#python-remove-btn")
+        .addEventListener("click", () => {
+          if (pythonLab.mode === "dict") {
+            const key = readPythonInput();
+            if (
+              !Object.prototype.hasOwnProperty.call(pythonLab.dictionary, key)
+            )
+              return setPythonOutput(
+                `${key || "A chave"} não está no dict.`,
+                "warn",
+              );
+            delete pythonLab.dictionary[key];
+            setPythonOutput(`${key} foi removida do dict.`, "success");
+          } else {
+            if (!pythonLab.values.length)
+              return setPythonOutput("A estrutura já está vazia.", "warn");
+            const removed =
+              pythonLab.mode === "queue"
+                ? pythonLab.values.shift()
+                : pythonLab.values.pop();
+            setPythonOutput(
+              `${removed} saiu da ${pythonLab.mode === "queue" ? "frente da fila" : "estrutura"}.`,
+              "success",
+            );
+          }
+          renderPythonLab();
+        });
+
+      document
+        .querySelector("#python-search-btn")
+        .addEventListener("click", () => {
+          const raw = readPythonInput();
+          const found =
+            pythonLab.mode === "dict"
+              ? Object.prototype.hasOwnProperty.call(pythonLab.dictionary, raw)
+              : pythonLab.values.includes(Number(raw));
+          setPythonOutput(
+            found ? `${raw} foi encontrado.` : `${raw} não foi encontrado.`,
+            found ? "success" : "warn",
+          );
+        });
+
+      document
+        .querySelector("#python-sort-btn")
+        .addEventListener("click", () => {
+          pythonLab.values.sort((left, right) => left - right);
+          setPythonOutput(
+            `sorted(values) → [${pythonLab.values.join(", ")}].`,
+            "success",
+          );
+          renderPythonLab();
+        });
+
+      renderPythonLab();
+
+      class AvlNode {
+        constructor(key) {
+          this.key = key;
+          this.left = null;
+          this.right = null;
+          this.height = 1;
+          this.size = 1;
+          this.max = key;
+        }
+      }
+
+      const treeState = { root: null, log: [], demoIndex: 0, playTimer: null };
+      const sortedDemo = [10, 20, 30, 40, 50, 25];
+      const height = (node) => (node ? node.height : 0);
+      const size = (node) => (node ? node.size : 0);
+      const subtreeMax = (node) => (node ? node.max : -Infinity);
+      const balance = (node) =>
+        node ? height(node.left) - height(node.right) : 0;
+
+      function updateNode(node) {
+        node.height = 1 + Math.max(height(node.left), height(node.right));
+        node.size = 1 + size(node.left) + size(node.right);
+        node.max = Math.max(
+          node.key,
+          subtreeMax(node.left),
+          subtreeMax(node.right),
+        );
+        return node;
+      }
+
+      function rotateRight(y) {
+        const x = y.left;
+        const transfer = x.right;
+        x.right = y;
+        y.left = transfer;
+        updateNode(y);
+        updateNode(x);
+        return x;
+      }
+
+      function rotateLeft(x) {
+        const y = x.right;
+        const transfer = y.left;
+        y.left = x;
+        x.right = transfer;
+        updateNode(x);
+        updateNode(y);
+        return y;
+      }
+
+      function rebalance(node, traces) {
+        updateNode(node);
+        const factor = balance(node);
+        if (factor > 1) {
+          if (balance(node.left) < 0) {
+            traces.push(
+              `rotação dupla: esquerda em ${node.left.key}, direita em ${node.key}`,
+            );
+            node.left = rotateLeft(node.left);
+          } else {
+            traces.push(`rotação direita em ${node.key}`);
+          }
+          return rotateRight(node);
+        }
+        if (factor < -1) {
+          if (balance(node.right) > 0) {
+            traces.push(
+              `rotação dupla: direita em ${node.right.key}, esquerda em ${node.key}`,
+            );
+            node.right = rotateRight(node.right);
+          } else {
+            traces.push(`rotação esquerda em ${node.key}`);
+          }
+          return rotateLeft(node);
+        }
+        return node;
+      }
+
+      function insertNode(node, key, traces) {
+        if (!node) return { node: new AvlNode(key), inserted: true };
+        if (key === node.key) return { node, inserted: false };
+        if (key < node.key) {
+          const result = insertNode(node.left, key, traces);
+          node.left = result.node;
+          return {
+            node: result.inserted ? rebalance(node, traces) : node,
+            inserted: result.inserted,
+          };
+        }
+        const result = insertNode(node.right, key, traces);
+        node.right = result.node;
+        return {
+          node: result.inserted ? rebalance(node, traces) : node,
+          inserted: result.inserted,
+        };
+      }
+
+      function minNode(node) {
+        while (node.left) node = node.left;
+        return node;
+      }
+
+      function deleteNode(node, key, traces) {
+        if (!node) return { node: null, deleted: false };
+        if (key < node.key) {
+          const result = deleteNode(node.left, key, traces);
+          node.left = result.node;
+          return {
+            node: result.deleted ? rebalance(node, traces) : node,
+            deleted: result.deleted,
+          };
+        }
+        if (key > node.key) {
+          const result = deleteNode(node.right, key, traces);
+          node.right = result.node;
+          return {
+            node: result.deleted ? rebalance(node, traces) : node,
+            deleted: result.deleted,
+          };
+        }
+        if (!node.left) return { node: node.right, deleted: true };
+        if (!node.right) return { node: node.left, deleted: true };
+        const successor = minNode(node.right);
+        node.key = successor.key;
+        const result = deleteNode(node.right, successor.key, traces);
+        node.right = result.node;
+        return { node: rebalance(node, traces), deleted: true };
+      }
+
+      function searchNode(node, key) {
+        if (!node || node.key === key) return node;
+        return searchNode(key < node.key ? node.left : node.right, key);
+      }
+
+      function rankNode(node, key) {
+        if (!node) return 0;
+        if (key <= node.key) return rankNode(node.left, key);
+        return size(node.left) + 1 + rankNode(node.right, key);
+      }
+
+      function selectNode(node, index) {
+        if (!node || index < 0 || index >= size(node)) return null;
+        const leftSize = size(node.left);
+        if (index === leftSize) return node.key;
+        return index < leftSize
+          ? selectNode(node.left, index)
+          : selectNode(node.right, index - leftSize - 1);
+      }
+
+      function rangeMaxNode(node, lower, upper) {
+        if (!node || lower > upper) return null;
+        if (
+          node.max < lower ||
+          (node.key < lower && subtreeMax(node.right) < lower)
+        )
+          return null;
+        if (node.key < lower) return rangeMaxNode(node.right, lower, upper);
+        if (node.key > upper) return rangeMaxNode(node.left, lower, upper);
+        const candidates = [
+          node.key,
+          rangeMaxNode(node.left, lower, upper),
+          rangeMaxNode(node.right, lower, upper),
+        ].filter((value) => value !== null);
+        return candidates.length ? Math.max(...candidates) : null;
+      }
+
+      function collectNodes(node, depth, rows) {
+        if (!node) return;
+        collectNodes(node.left, depth + 1, rows);
+        rows.push({ node, depth });
+        collectNodes(node.right, depth + 1, rows);
+      }
+
+      function validateNode(node, lower = -Infinity, upper = Infinity) {
+        if (!node) return { valid: true, count: 0, max: -Infinity, height: 0 };
+        const left = validateNode(node.left, lower, node.key);
+        const right = validateNode(node.right, node.key, upper);
+        const expectedSize = 1 + left.count + right.count;
+        const expectedMax = Math.max(node.key, left.max, right.max);
+        const expectedHeight = 1 + Math.max(left.height, right.height);
+        const local =
+          lower < node.key &&
+          node.key < upper &&
+          Math.abs(left.height - right.height) <= 1 &&
+          node.size === expectedSize &&
+          node.max === expectedMax &&
+          node.height === expectedHeight;
+        return {
+          valid: left.valid && right.valid && local,
+          count: expectedSize,
+          max: expectedMax,
+          height: expectedHeight,
+        };
+      }
+
+      function svgElement(name, attrs = {}) {
+        const element = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          name,
+        );
+        Object.entries(attrs).forEach(([key, value]) =>
+          element.setAttribute(key, value),
+        );
+        return element;
+      }
+
+      function renderTree() {
+        const svg = document.querySelector("#tree-svg");
+        svg.innerHTML = "";
+        if (!treeState.root) {
+          svg.setAttribute("viewBox", "0 0 620 355");
+          const empty = svgElement("text", {
+            x: 310,
+            y: 178,
+            class: "tree-empty",
+          });
+          empty.textContent = "A árvore está vazia";
+          svg.appendChild(empty);
+        } else {
+          const rows = [];
+          collectNodes(treeState.root, 0, rows);
+          const positions = new Map();
+          const width = Math.max(620, rows.length * 82 + 80);
+          const maxDepth = Math.max(...rows.map((row) => row.depth));
+          const verticalGap = Math.max(76, Math.min(105, 300 / (maxDepth + 1)));
+          rows.forEach((row, index) =>
+            positions.set(row.node, {
+              x: 40 + index * ((width - 80) / Math.max(rows.length - 1, 1)),
+              y: 42 + row.depth * verticalGap,
+            }),
+          );
+          const heightSvg = Math.max(300, 90 + maxDepth * verticalGap);
+          svg.setAttribute("viewBox", `0 0 ${width} ${heightSvg}`);
+          svg.style.height = `${Math.min(355, Math.max(300, heightSvg))}px`;
+          const edges = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "g",
+          );
+          rows.forEach((row) => {
+            const from = positions.get(row.node);
+            [row.node.left, row.node.right].forEach((child) => {
+              if (!child) return;
+              const to = positions.get(child);
+              edges.appendChild(
+                svgElement("line", {
+                  x1: from.x,
+                  y1: from.y + 20,
+                  x2: to.x,
+                  y2: to.y - 20,
+                  class: "tree-edge",
+                }),
+              );
+            });
+          });
+          svg.appendChild(edges);
+          rows.forEach((row) => {
+            const node = row.node;
+            const point = positions.get(node);
+            const group = svgElement("g", {
+              class: `tree-node${Math.abs(balance(node)) > 1 ? " unbalanced" : ""}`,
+            });
+            group.appendChild(
+              svgElement("circle", { cx: point.x, cy: point.y, r: 22 }),
+            );
+            const keyText = svgElement("text", {
+              x: point.x,
+              y: point.y + 5,
+              class: "key",
+            });
+            keyText.textContent = node.key;
+            group.appendChild(keyText);
+            const meta = svgElement("text", {
+              x: point.x,
+              y: point.y + 39,
+              class: "meta",
+            });
+            meta.textContent = `h${node.height} · s${node.size} · max${node.max}`;
+            group.appendChild(meta);
+            svg.appendChild(group);
+          });
+        }
+        const info = validateNode(treeState.root);
+        document.querySelector("#metric-size").textContent = size(
+          treeState.root,
+        );
+        document.querySelector("#metric-height").textContent = height(
+          treeState.root,
+        );
+        document.querySelector("#metric-root").textContent = treeState.root
+          ? treeState.root.key
+          : "—";
+        document.querySelector("#metric-max").textContent = treeState.root
+          ? treeState.root.max
+          : "—";
+        const valid = document.querySelector("#metric-valid");
+        valid.textContent = info.valid ? "✓ válido" : "✕ revisar";
+        valid.style.color = info.valid ? "var(--mint)" : "var(--red)";
+        const rows = [];
+        collectNodes(treeState.root, 0, rows);
+        document.querySelector("#node-table-wrap").innerHTML = rows.length
+          ? `<table class="node-table"><thead><tr><th>chave</th><th>esquerda</th><th>direita</th><th>altura</th><th>size</th><th>máximo</th><th>BF</th></tr></thead><tbody>${rows.map(({ node }) => `<tr><td>${node.key}</td><td>${node.left ? node.left.key : "—"}</td><td>${node.right ? node.right.key : "—"}</td><td>${node.height}</td><td>${node.size}</td><td>${node.max}</td><td>${balance(node)}</td></tr>`).join("")}</tbody></table>`
+          : "";
+        const log = document.querySelector("#trace-log");
+        log.innerHTML =
+          treeState.log
+            .slice(-9)
+            .map((item) => `<div>&gt; ${item}</div>`)
+            .join("") || "&gt; aguardando operação";
+      }
+
+      function setStatus(message, kind = "") {
+        const element = document.querySelector("#tree-status");
+        element.className = `status ${kind}`;
+        element.textContent = message;
+      }
+
+      function readNumber(id) {
+        const value = Number(document.querySelector(`#${id}`).value);
+        return Number.isFinite(value) ? Math.trunc(value) : null;
+      }
+
+      function insertKey(key) {
+        if (key === null)
+          return setStatus("Digite uma chave inteira.", "error");
+        const traces = [];
+        const result = insertNode(treeState.root, key, traces);
+        treeState.root = result.node;
+        if (!result.inserted) {
+          treeState.log.push(`insert(${key}) ignorado: chave duplicada`);
+          setStatus(`A chave ${key} já estava na árvore.`, "warn");
+        } else {
+          treeState.log.push(
+            `insert(${key})${traces.length ? ` · ${traces.join(" · ")}` : ""}`,
+          );
+          setStatus(
+            traces.length
+              ? `Inserção concluída. ${traces.join("; ")}.`
+              : `Inserção de ${key} concluída sem rotação.`,
+            "success",
+          );
+        }
+        renderTree();
+      }
+
+      function deleteKey(key) {
+        if (key === null)
+          return setStatus("Digite uma chave inteira.", "error");
+        const traces = [];
+        const result = deleteNode(treeState.root, key, traces);
+        treeState.root = result.node;
+        treeState.log.push(
+          `delete(${key})${result.deleted ? " concluído" : " ignorado: ausente"}${traces.length ? ` · ${traces.join(" · ")}` : ""}`,
+        );
+        setStatus(
+          result.deleted
+            ? `A chave ${key} foi removida. ${traces.length ? traces.join("; ") + "." : "Os resumos foram atualizados."}`
+            : `A chave ${key} não estava presente.`,
+          result.deleted ? "success" : "warn",
+        );
+        renderTree();
+      }
+
+      function runSortedStep() {
+        if (treeState.demoIndex >= sortedDemo.length) {
+          setStatus(
+            "A sequência crescente terminou. Limpe e execute novamente para observar desde o início.",
+            "warn",
+          );
+          return;
+        }
+        const key = sortedDemo[treeState.demoIndex++];
+        document.querySelector("#tree-key").value = key;
+        insertKey(key);
+        document.querySelector("#demo-label").textContent =
+          `Próximo: ${sortedDemo[treeState.demoIndex] ?? "fim"}`;
+      }
+
+      function stopDemo() {
+        if (treeState.playTimer) window.clearInterval(treeState.playTimer);
+        treeState.playTimer = null;
+      }
+
+      document
+        .querySelector("#insert-btn")
+        .addEventListener("click", () => insertKey(readNumber("tree-key")));
+      document
+        .querySelector("#delete-btn")
+        .addEventListener("click", () => deleteKey(readNumber("tree-key")));
+      document.querySelector("#search-btn").addEventListener("click", () => {
+        const key = readNumber("tree-key");
+        const found = key !== null && Boolean(searchNode(treeState.root, key));
+        treeState.log.push(`search(${key}) → ${found ? "FOUND" : "NOT_FOUND"}`);
+        setStatus(
+          found ? `${key} está presente.` : `${key} não está presente.`,
+          found ? "success" : "warn",
+        );
+        renderTree();
+      });
+      document.querySelector("#reset-btn").addEventListener("click", () => {
+        stopDemo();
+        treeState.root = null;
+        treeState.log = [];
+        treeState.demoIndex = 0;
+        document.querySelector("#demo-label").textContent =
+          "Sequência: 10, 20, 30, 40, 50, 25";
+        setStatus("Árvore limpa. Comece inserindo uma chave.");
+        renderTree();
+      });
+      document
+        .querySelector("#sorted-demo-btn")
+        .addEventListener("click", () => {
+          stopDemo();
+          treeState.root = null;
+          treeState.log = [];
+          treeState.demoIndex = 0;
+          sortedDemo.forEach((key) => insertKey(key));
+          document.querySelector("#demo-label").textContent =
+            "ordem crescente carregada: 10, 20, 30, 40, 50, 25";
+          setStatus(
+            "Sequência carregada. Repare nas rotações e no balanceamento final.",
+            "success",
+          );
+        });
+      document
+        .querySelector("#next-demo-btn")
+        .addEventListener("click", runSortedStep);
+      document.querySelector("#play-demo-btn").addEventListener("click", () => {
+        stopDemo();
+        if (treeState.demoIndex >= sortedDemo.length) {
+          treeState.root = null;
+          treeState.log = [];
+          treeState.demoIndex = 0;
+        }
+        treeState.playTimer = window.setInterval(() => {
+          runSortedStep();
+          if (treeState.demoIndex >= sortedDemo.length) stopDemo();
+        }, 650);
+      });
+      document
+        .querySelector("#pause-demo-btn")
+        .addEventListener("click", stopDemo);
+      document.querySelector("#rank-btn").addEventListener("click", () => {
+        const key = readNumber("rank-key");
+        document.querySelector("#query-result").textContent =
+          key === null
+            ? "Digite um k válido."
+            : `rank(${key}) = ${rankNode(treeState.root, key)} · chaves menores que ${key}.`;
+      });
+      document.querySelector("#select-btn").addEventListener("click", () => {
+        const index = readNumber("select-index");
+        const result =
+          index === null ? null : selectNode(treeState.root, index);
+        document.querySelector("#query-result").textContent =
+          result === null
+            ? `select(${index}) não existe para esta árvore.`
+            : `select(${index}) = ${result}. O índice é 0-based.`;
+      });
+      document.querySelector("#range-btn").addEventListener("click", () => {
+        const a = readNumber("range-a");
+        const b = readNumber("range-b");
+        const result =
+          a === null || b === null
+            ? null
+            : rangeMaxNode(treeState.root, Math.min(a, b), Math.max(a, b));
+        document.querySelector("#query-result").textContent =
+          result === null
+            ? "Intervalo vazio ou inválido."
+            : `range_agg(${Math.min(a, b)}, ${Math.max(a, b)}) = ${result} · máximo no intervalo fechado.`;
+      });
+
+      document
+        .querySelector("#theta-slider")
+        .addEventListener("input", (event) => {
+          const theta = Number(event.target.value);
+          document.querySelector("#theta-value").textContent = theta.toFixed(2);
+          const concentration = Math.min(96, Math.round(18 + theta * 67));
+          const mid = Math.round((100 - concentration) * 0.72);
+          const cold = 100 - concentration - mid;
+          document.querySelector("#hot-bar").style.width = `${concentration}%`;
+          document.querySelector("#mid-bar").style.width = `${mid}%`;
+          document.querySelector("#cold-bar").style.width = `${cold}%`;
+          document.querySelector("#hot-value").textContent =
+            `${concentration}%`;
+          document.querySelector("#mid-value").textContent = `${mid}%`;
+          document.querySelector("#cold-value").textContent = `${cold}%`;
+          const explanation =
+            theta < 0.2
+              ? "Acesso quase uniforme: chaves diferentes recebem frequências mais parecidas."
+              : theta < 0.8
+                ? "Há concentração moderada. A carga começa a favorecer um conjunto de chaves quentes."
+                : theta < 1.05
+                  ? "Poucas chaves concentram muitos acessos, como no padrão YCSB usado pelo grupo 5."
+                  : "A concentração é muito forte. Compare com cuidado a cauda e o efeito sobre localidade e remoções.";
+          document.querySelector("#theta-explanation").textContent =
+            explanation;
+        });
+
+      document.querySelectorAll(".copy-code").forEach((button) =>
+        button.addEventListener("click", async () => {
+          const source = document.querySelector(`#${button.dataset.copy}`);
+          const text = source.innerText;
+          try {
+            await navigator.clipboard.writeText(text);
+            const old = button.textContent;
+            button.textContent = "Copiado";
+            window.setTimeout(() => {
+              button.textContent = old;
+            }, 1300);
+          } catch (error) {
+            button.textContent = "Selecione o bloco";
+          }
+        }),
+      );
+
+      const checklistStorage = (() => {
+        try {
+          const storage = window.localStorage;
+          const probe = "grupo5-storage-probe";
+          storage.setItem(probe, "ok");
+          storage.removeItem(probe);
+          return storage;
+        } catch (error) {
+          return null;
+        }
+      })();
+
+      function readChecklist(key) {
+        return checklistStorage ? checklistStorage.getItem(key) : null;
+      }
+
+      function writeChecklist(key, value) {
+        if (checklistStorage) checklistStorage.setItem(key, value);
+      }
+
+      const checkboxes = document.querySelectorAll("[data-check]");
+      function updateChecklist() {
+        let count = 0;
+        checkboxes.forEach((box) => {
+          const done = box.checked;
+          if (done) count += 1;
+          box.closest(".check-item").classList.toggle("done", done);
+          writeChecklist(`grupo5-check-${box.dataset.check}`, String(done));
+        });
+        document.querySelector("#check-count").textContent =
+          `${count}/${checkboxes.length}`;
+        document.querySelector("#check-bar").style.width =
+          `${(count / checkboxes.length) * 100}%`;
+      }
+      checkboxes.forEach((box) => {
+        box.checked =
+          readChecklist(`grupo5-check-${box.dataset.check}`) === "true";
+        box.addEventListener("change", updateChecklist);
+      });
+      updateChecklist();
+
+      document
+        .querySelector("#quiz-form")
+        .addEventListener("submit", (event) => {
+          event.preventDefault();
+          const answer = { q1: "b", q2: "c", q3: "a", q4: "b", q5: "a" };
+          let score = 0;
+          Object.entries(answer).forEach(([question, correct]) => {
+            if (
+              document.querySelector(`input[name="${question}"]:checked`)
+                ?.value === correct
+            )
+              score += 1;
+          });
+          const result = document.querySelector("#quiz-result");
+          result.textContent = `${score}/5 corretas. ${score === 5 ? "Você já tem uma boa base para começar a implementação." : "Use as respostas erradas como pontos para revisar antes da defesa."}`;
+          result.classList.add("show");
+        });
+
+      renderTree();
+    </script>
+  </body>
+</html>

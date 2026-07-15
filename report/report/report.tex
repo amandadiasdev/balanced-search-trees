@@ -1,0 +1,148 @@
+\documentclass[12pt]{article}
+\usepackage{report}
+\usepackage{graphicx,url,multirow}
+\usepackage{placeins}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{xcolor}
+\usepackage{lipsum}
+\sloppy
+\title{{Árvore AVL Aumentada sob Cargas SOSD}}
+\author{Amanda Souza (2510101045), Milena Silva (2510100191), Rafaela Nunes (2510101040)}
+\address{Universidade Federal do Pampa
+\email{\{amandadds, milenacs2, rafaelanunes\}.aluno@unipampa.edu.br}
+}
+\begin{document} 
+\maketitle
+
+\section{Introdução}\label{sec:introduction}
+
+{Árvores representam relações hierárquicas por meio de nós e arestas. Um nó pode ter descendentes, e o percurso entre esses elementos define caminhos, níveis e subárvores. Essa organização aparece em índices, sistemas de arquivos, compiladores e outras aplicações que precisam localizar ou organizar dados sem percorrer uma coleção inteira.}
+
+{Uma árvore binária restringe cada nó a, no máximo, dois filhos. Na árvore binária de busca (BST), as chaves menores que a chave de um nó ficam à esquerda, enquanto as maiores ficam à direita. Busca, inserção e remoção percorrem um caminho da raiz até uma posição da árvore. O custo dessas operações depende da altura. Uma BST com distribuição equilibrada tem caminhos curtos, mas inserções ordenadas podem produzir uma cadeia com altura linear, ou seja, onde cada nó tem apenas um filho e a estrutura da árvore acaba sendo semelhante a uma lista.}
+
+{A árvore AVL evita essa estrutura semelhante a uma lista ao limitar a diferença entre as alturas das subárvores de cada nó. Quando uma inserção ou remoção viola esse limite, rotações locais restauram o balanceamento. Uma característica interessante é que árvores podem armazenar metadados derivados de cada subárvore. Por exemplo, tamanho, altura e valor máximo permitem responder consultas de ordem e agregação sem visitar todos os nós.}
+
+{Mesmo que a inserção de metadados e rotações mantenham a estrutura de árvore balanceada, elas introduzem custos adicionais para cada operação. Por exemplo, durante uma rotação, pode ser necessário atualizar o tamanho e o valor máximo de cada nó afetado, o que gera um custo computacional adicional. Por outro lado, uma árvore com balanceamento adequado pode reduzir significativamente o número de nós visitados durante uma busca, resultando em um desempenho melhor em operações de consulta quando comparada com uma lista ordenada.}
+
+
+{Este trabalho visa avaliar o desempenho de operações de inserção, remoção e busca em uma árvore AVL aumentada com metadados de tamanho e valor máximo, em comparação com uma lista ordenada. A avaliação considera diferentes escalas, ordens de inserção e enviesamentos de acesso, medindo latências e analisando como essas variáveis afetam o desempenho relativo das duas estruturas.}
+
+{O restante deste trabalho está organizado como segue. A Seção~\ref{sec:implementation} apresenta as decisões de design e a organização da implementação. A Seção~\ref{sec:experiments} descreve a metodologia experimental e discute os resultados. A Seção~\ref{sec:conclusion} sintetiza as conclusões e registra o uso de inteligência artificial.}
+
+\section{Implementação}\label{sec:implementation}
+
+\subsection{{Decisões de Design}}\label{sec:implementation:design}
+
+{A AVL foi escolhida por fornecer altura logarítmica com uma regra local de balanceamento. Uma BST sem balanceamento teria implementação menor, mas a ordem \texttt{sorted} poderia produzir altura linear. Uma árvore rubro-negra ou uma treap também atenderiam ao limite assintótico, embora introduzissem, respectivamente, regras adicionais de cor ou uma fonte extra de aleatoriedade.}
+
+{Cada nó mantém a chave, os dois filhos, o pai, a altura, o tamanho e o máximo da subárvore. O ponteiro \texttt{parent} permite subir até a raiz sem recursão ou pilha externa. Seu custo é uma referência por nó e a obrigação de atualizar os dois sentidos de cada ligação durante remoções e rotações. O método \texttt{refresh} recalcula altura, tamanho e máximo a partir dos filhos.}
+
+{Os invariantes são a ordenação estrita de BST, a correspondência entre filhos e pais, a raiz sem pai, o fator de balanceamento entre $-1$ e $1$ e a correção dos três metadados. Nas rotações, o nó que desce é atualizado antes do pivô que sobe. Essa ordem evita que o novo topo use metadados antigos. \texttt{rank} e \texttt{select} descartam subárvores completas pelo campo de tamanho. Como o agregado do grupo é a própria chave, \texttt{range\_agg} procura o predecessor do limite superior e verifica o limite inferior.}
+
+{O \textit{baseline} usa bisseção sobre uma lista Python. Busca e localização da posição acabam sendo eficientes por se beneficiarem da estrutura da lista, mas inserções e remoções internas deslocam elementos subsequentes, o que requer mais operações. Por fim, inserções ordenadas são um caso favorável, pois ocorrem ao final da lista.}
+
+\subsection{{Organização e Implementação}}\label{sec:implementation:organization}
+
+{O código está separado por responsabilidade. \texttt{src/augmented\_avl.py} contém \texttt{Node} e \texttt{AugmentedAVLTree}; \texttt{src/run\_trace.py} executa rastros e compara buscas com o oráculo; \texttt{src/benchmark.py} implementa a lista ordenada e coleta métricas; \texttt{src/run\_experiments.py} expande a matriz JSON, cria identificadores estáveis e persiste checkpoints; \texttt{src/plot\_results.py} agrega os pares e produz as figuras. Testes ficam em \texttt{tests/}, configurações e material didático em \texttt{docs/}, resultados em \texttt{results/} e o manuscrito em \texttt{report/}.}
+
+{A implementação usa classes para encapsular as duas estruturas, \texttt{dataclass} com \texttt{slots} para os nós, anotações de tipo e iteradores para processar rastros sem carregá-los integralmente. \texttt{array("Q")} armazena as latências com oito bytes por amostra. \texttt{pathlib}, gerenciadores de contexto, \texttt{csv}, \texttt{hashlib} e \texttt{itertools.product} sustentam a execução reproduzível. O \texttt{uv}\footnote{\url{https://github.com/astral-sh/uv}} fixa e instala as dependências.}
+
+{O executor produz um \texttt{run\_id} determinístico para cada combinação e grava cada resultado. Uma nova execução ignora somente casos concluídos com sucesso, o que permite retomar a bateria sem repetir medições válidas. A correção é verificada por testes feitos com o método \texttt{assert\_valid} e pela comparação das buscas com o arquivo \texttt{.expected}. A versão medida passou em 28 testes e verificações com Ruff\footnote{\url{https://github.com/astral-sh/ruff}} e mypy\footnote{\url{https://github.com/python/mypy}}.}
+
+\section{{Experimentos}}\label{sec:experiments}
+
+\subsection{{Descrição dos Experimentos}}\label{sec:experiments:description}
+
+{Os experimentos respondem a duas perguntas: (Q1) como escala e ordem de inserção afetam o desempenho relativo da AVL e da lista ordenada? (Q2) como o enviesamento Zipfiano afeta a remoção? Q1 é examinada pela variação de escala e pela Figura~\ref{fig:speedup}. Q2 é examinada pela variação de $\theta$ e pela Figura~\ref{fig:theta}.}
+
+\begin{table}[!ht]
+\centering
+\small
+\caption{{Ambiente definido para a bateria definitiva.}}
+\label{tab:testbed}
+\begin{tabular}{lp{0.62\linewidth}}
+\hline
+{Componente} & {Especificação definitiva} \\
+\hline
+{Dispositivo} & {IdeaPad 3 15ALC6 (82MF)} \\
+{Sistema operacional} & {Ubuntu 26.04 LTS, kernel Linux 7.0.0-27-generic} \\
+{Processador} & {AMD Ryzen 5 5500U, 12 threads, 2,10~GHz} \\
+{Memória} & {8~GB DDR4, 3.200~MHz} \\
+{Armazenamento} & {SSD M.2 NVMe de 256~GB} \\
+{Runtime} & {CPython 3.13.5 (Clang 20.1.4)} \\
+\hline
+\end{tabular}
+\end{table}
+
+{O conjunto \texttt{books\_200M\_uint32} fornece chaves de 32 bits. O estudo de escala usa 1 mil, 10 mil, 100 mil e 1 milhão de operações, com universo e carga máxima iguais a cada escala. Mantivemos a mistura \texttt{45:25:30}, reserva de 10\%, 70\% de acertos em buscas, 5\% de remoções ausentes, semente 5 e $\theta=0{,}99$. As ordens \texttt{sorted} e \texttt{shuffle} e as duas implementações formam os pares comparados. O estudo de sensibilidade fixa 100 mil operações e varia $\theta$ em $\{0; 0{,}6; 0{,}99; 1{,}2\}$. Cada combinação possui cinco repetições, totalizando 140 execuções e 28,22 milhões de operações medidas.}
+
+{O cronômetro \texttt{perf\_counter\_ns} envolve somente a chamada da estrutura para cada operação. Para inserção, remoção e busca, registramos média, p50 e p99. O tempo total do rastro inclui leitura e despacho. Também registramos rotações, tamanho e altura finais. As razões dos gráficos são calculadas entre lista e AVL no mesmo rastro e repetição; a linha conecta a mediana das cinco razões. Os pontos esmaecidos mostram as repetições individuais.}
+
+{A reprodução usa \path{docs/estudo-empirico-grupo-5-relatorio.json} e os comandos documentados no \texttt{README.md}. O CSV preserva parâmetros, ambiente e identificadores. Rastros completos são reutilizados entre implementações, enquanto resultados parciais permitem retomada. O material preparado para publicação no repositório GitHub inclui código, \texttt{uv.lock}, configurações, instruções, resultados, gráficos e os registros de interação com inteligência artificial.}
+
+\subsection{{Resultados e Discussão}}\label{sec:experiments:results}
+
+{Na configuração principal do grupo, com 1 milhão de operações, inserções ordenadas e $\theta=0{,}99$, a lista reduziu o custo de inserção porque cada chave crescente foi acrescentada ao final. A lista também apresentou menor latência média de remoção, mas seu p99 nessa operação foi 1,81 vez o p99 da AVL. A AVL foi mais rápida nas buscas. A Tabela~\ref{tab:latencies} resume as medianas das cinco repetições.}
+
+\begin{table}[!ht]
+\centering
+\small
+\caption{{Medianas de latência com 1 milhão de operações ordenadas (em $\mu$s).}}
+\label{tab:latencies}
+\begin{tabular}{llrrr}
+\hline
+{Estrutura} & {Operação} & {Média} & {p50} & {p99} \\
+\hline
+{AVL} & {Inserção} & {19,764} & {18,299} & {31,010} \\
+{Lista} & {Inserção} & {5,152} & {5,168} & {6,775} \\
+{AVL} & {Remoção} & {16,954} & {17,041} & {30,451} \\
+{Lista} & {Remoção} & {12,633} & {6,774} & {55,175} \\
+{AVL} & {Busca} & {4,276} & {3,911} & {7,054} \\
+{Lista} & {Busca} & {5,860} & {5,727} & {8,242} \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.85\linewidth]{../results/graficos/speedup-escala-ordem.pdf}
+\caption{{Razão de latência lista/AVL para $\theta=0{,}99$. Valores acima de 1 favorecem a AVL, enquanto valores abaixo de 1 favorecem a lista.}}
+\label{fig:speedup}
+\end{figure}
+\FloatBarrier
+
+{Na Figura~\ref{fig:speedup}, a razão de inserção sob \texttt{sorted} permaneceu próxima de 0,27. Ela passou de 0,274 em 1 mil operações para 0,261 em 1 milhão. Na maior escala, a razão do workload completo foi 0,576, o que corresponde a uma lista 1,74 vezes mais rápida. Inserções crescentes são acrescentadas ao final da lista, enquanto a AVL percorre ancestrais, atualiza metadados e pode executar rotações.}
+
+{Sob \texttt{shuffle}, a razão do workload completo passou de 0,579 em 1 mil operações para 0,606 em 100 mil e 1,193 em 1 milhão. O ponto de cruzamento observado ficou entre 100 mil e 1 milhão de operações. Na maior escala, a AVL foi 1,19 vezes mais rápida. A razão de inserção chegou a 1,252, e o p99 foi 33,454~$\mu$s na AVL e 77,246~$\mu$s na lista, uma razão de 2,30. Inserções internas deslocam uma parcela crescente do vetor. A AVL terminou com altura 21 para 212.376 chaves no caso embaralhado. Sob \texttt{sorted}, a altura final foi 19 após 496.063 rotações.}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.68\linewidth]{../results/graficos/impacto-theta-remocao.pdf}
+\caption{{Efeito de $\theta$ na remoção em 100 mil operações, que representa a maior escala com variação completa dentre os experimentos realizados.}}
+\label{fig:theta}
+\end{figure}
+\FloatBarrier
+
+{Na Figura~\ref{fig:theta}, a latência média de remoção da lista sob \texttt{sorted} caiu de 5,678 para 4,854~$\mu$s entre $\theta=0$ e $\theta=1{,}2$, uma redução de 15\%. A AVL permaneceu entre 12,821 e 12,999~$\mu$s. Com inserções embaralhadas, ambas variaram pouco: a AVL ficou entre 12,597 e 13,043~$\mu$s, e a lista entre 5,609 e 5,671~$\mu$s.}
+
+{O parâmetro $\theta$ atua sobre posições do conjunto vivo, e o gerador substitui uma chave removida pela última chave desse conjunto. Assim, uma posição quente não fica associada permanentemente ao mesmo valor. O resultado mede a interação entre concentração dos acessos, evolução do conjunto vivo e posição ordenada da chave. Como não foram coletados contadores de hardware, a contribuição da localidade de cache não foi isolada.}
+
+\section{Considerações Finais}\label{sec:conclusion}
+
+\subsection{Visão Geral}\label{sec:conclusion:overview}
+
+{Uma estrutura de dados combina uma garantia teórica com os custos concretos de sua representação. A altura logarítmica protege a AVL de caminhos longos, mas ponteiros, metadados e rotações têm custo. A lista ordenada dispensa esse trabalho quando as chaves chegam em ordem crescente; o mesmo arranjo se torna caro quando as inserções alcançam posições internas.}
+
+{Na maior escala, a lista foi 1,74 vezes mais rápida no workload ordenado, enquanto a AVL foi 1,19 vezes mais rápida no workload embaralhado. O p99 da inserção embaralhada da lista foi 2,30 vezes o p99 da AVL. A variação de $\theta$ reduziu em 15\% a latência média de remoção da lista com inserções ordenadas. A AVL variou pouco. No workload embaralhado, o ponto de cruzamento observado ficou entre 100 mil e 1 milhão de operações.}
+
+{Os resultados descrevem uma máquina e uma implementação específicas. A ausência de contadores de hardware impede separar efeitos de cache, e cinco repetições não capturam variações entre máquinas. Ainda assim, os quatro tamanhos mostram o ponto em que os deslocamentos da lista superam o custo de balanceamento. Uma replicação em outro processador permitiria avaliar a estabilidade desse ponto de cruzamento.}
+
+\subsection{Uso de Inteligência Artificial}\label{sec:conclusion:ai}
+
+{O grupo adotou transparência como critério para o uso de inteligência artificial. O material preparado para o repositório GitHub inclui logs das conversas, prompts, respostas e artefatos gerados, além do histórico necessário para relacionar essas interações ao código e à documentação. Essa prática permite distinguir as contribuições da equipe do apoio automatizado e fornece material para a arguição.}
+
+{O apoio foi realizado com OpenAI Codex v0.144.3 e os modelos GPT 5.6 Luna e GPT 5.6 Sol, ambos configurados com esforço alto. As ferramentas auxiliaram o planejamento, a implementação, os testes, a análise dos resultados e a redação. Os programas do projeto geraram os rastros, as medições e os gráficos; o grupo revisou os artefatos e permanece responsável pelas decisões e conclusões.}
+
+\end{document}

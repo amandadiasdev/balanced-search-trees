@@ -1,0 +1,1540 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Explicação interativa da implementação da árvore AVL aumentada do grupo 5."
+    />
+    <title>Como implementamos a AVL aumentada — Grupo 5</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f6f4ee;
+        --surface: #fffdf8;
+        --ink: #18201d;
+        --muted: #63706a;
+        --line: #d8ddd7;
+        --green: #176b51;
+        --green-dark: #0d4937;
+        --green-soft: #e3f2eb;
+        --amber: #9b5d08;
+        --amber-soft: #fff0cf;
+        --blue: #245f91;
+        --blue-soft: #e7f1fa;
+        --red: #a13c32;
+        --red-soft: #fbe8e4;
+        --code: #16211d;
+        --radius: 18px;
+        --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        --sans:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--sans);
+        line-height: 1.62;
+      }
+
+      a {
+        color: var(--green-dark);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid #f1b44b;
+        outline-offset: 3px;
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .hero {
+        padding: 42px 0 24px;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--green);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.15;
+        letter-spacing: -0.025em;
+      }
+
+      h1 {
+        max-width: 890px;
+        margin: 0;
+        font-size: clamp(2.2rem, 5vw, 4.7rem);
+      }
+
+      .lead {
+        max-width: 790px;
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: clamp(1.02rem, 2vw, 1.25rem);
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(250px, 0.55fr);
+        gap: 18px;
+        margin-top: 28px;
+      }
+
+      .card,
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .hero-main {
+        padding: 24px;
+      }
+
+      .hero-main h2 {
+        margin: 0 0 8px;
+        font-size: clamp(1.35rem, 3vw, 2rem);
+      }
+
+      .hero-main p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .contract-list {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 20px;
+        list-style: none;
+      }
+
+      .contract-list li {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        gap: 10px;
+        align-items: start;
+      }
+
+      .contract-list strong {
+        display: block;
+        font-size: 0.94rem;
+      }
+
+      .contract-list span:last-child {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .number {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--green-soft);
+        color: var(--green-dark);
+        font-weight: 800;
+      }
+
+      nav {
+        position: sticky;
+        z-index: 20;
+        top: 0;
+        border-block: 1px solid var(--line);
+        background: rgb(246 244 238 / 92%);
+        backdrop-filter: blur(12px);
+      }
+
+      .nav-inner {
+        display: flex;
+        gap: 8px;
+        padding: 10px 0;
+        overflow-x: auto;
+      }
+
+      .nav-inner a {
+        flex: 0 0 auto;
+        border-radius: 999px;
+        padding: 7px 12px;
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .nav-inner a:hover {
+        background: var(--surface);
+        color: var(--green-dark);
+      }
+
+      main {
+        padding-bottom: 64px;
+      }
+
+      section {
+        padding-top: 70px;
+        scroll-margin-top: 48px;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 0.72fr) minmax(300px, 1.28fr);
+        gap: 34px;
+        align-items: end;
+        margin-bottom: 24px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        font-size: clamp(1.8rem, 3.5vw, 3rem);
+      }
+
+      .section-head p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      code,
+      pre {
+        font-family: var(--mono);
+      }
+
+      code {
+        font-size: 0.92em;
+      }
+
+      .node-layout {
+        display: grid;
+        grid-template-columns: 0.8fr 1.2fr;
+        gap: 18px;
+      }
+
+      .node-object {
+        padding: 24px;
+      }
+
+      .node-object h3,
+      .metadata h3 {
+        margin: 0 0 14px;
+      }
+
+      .object-box {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+
+      .field {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .field:last-child {
+        border-bottom: 0;
+      }
+
+      .field > * {
+        padding: 11px 13px;
+      }
+
+      .field code {
+        background: #f0f2ed;
+        color: var(--green-dark);
+        font-weight: 700;
+      }
+
+      .field span {
+        color: var(--muted);
+        font-size: 0.91rem;
+      }
+
+      .metadata {
+        padding: 24px;
+      }
+
+      .formula-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .formula {
+        min-height: 148px;
+        border-radius: 14px;
+        padding: 15px;
+        background: var(--green-soft);
+      }
+
+      .formula strong {
+        display: block;
+        color: var(--green-dark);
+        font-family: var(--mono);
+      }
+
+      .formula code {
+        display: block;
+        margin: 10px 0;
+        color: var(--ink);
+        font-size: 0.82rem;
+      }
+
+      .formula span {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .parent-note {
+        margin-top: 12px;
+        border-left: 4px solid var(--amber);
+        border-radius: 0 12px 12px 0;
+        padding: 12px 14px;
+        background: var(--amber-soft);
+        font-size: 0.92rem;
+      }
+
+      .demo-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(270px, 0.5fr);
+        gap: 18px;
+      }
+
+      .tree-stage {
+        min-height: 500px;
+        padding: 18px;
+      }
+
+      .tree-stage svg {
+        display: block;
+        width: 100%;
+        min-height: 355px;
+      }
+
+      .edge {
+        stroke: #9ba9a2;
+        stroke-width: 3;
+      }
+
+      .parent-edge {
+        fill: none;
+        stroke: var(--amber);
+        stroke-width: 2;
+        stroke-dasharray: 7 6;
+        marker-end: url(#parentArrow);
+      }
+
+      .tree-node circle {
+        fill: var(--surface);
+        stroke: var(--green);
+        stroke-width: 3;
+      }
+
+      .tree-node text.key {
+        fill: var(--ink);
+        font-size: 23px;
+        font-weight: 800;
+        text-anchor: middle;
+      }
+
+      .tree-node text.meta {
+        fill: var(--muted);
+        font-family: var(--mono);
+        font-size: 12px;
+        text-anchor: middle;
+      }
+
+      .tree-node.unbalanced circle {
+        fill: var(--red-soft);
+        stroke: var(--red);
+      }
+
+      .tree-node.pivot circle {
+        fill: var(--amber-soft);
+        stroke: var(--amber);
+      }
+
+      .tree-node.new-root circle {
+        fill: var(--green-soft);
+        stroke-width: 4;
+      }
+
+      .tree-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+      }
+
+      .button-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .button {
+        min-height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px 13px;
+        background: var(--surface);
+        color: var(--ink);
+        cursor: pointer;
+        font-weight: 750;
+      }
+
+      .button:hover:not(:disabled) {
+        border-color: var(--green);
+        color: var(--green-dark);
+      }
+
+      .button.primary {
+        border-color: var(--green);
+        background: var(--green);
+        color: white;
+      }
+
+      .button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+
+      .step-count {
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .demo-explanation {
+        padding: 22px;
+      }
+
+      .demo-explanation .phase {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 4px 9px;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-size: 0.76rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .demo-explanation h3 {
+        margin: 13px 0 8px;
+        font-size: 1.4rem;
+      }
+
+      .demo-explanation p {
+        color: var(--muted);
+      }
+
+      .checklist {
+        display: grid;
+        gap: 8px;
+        margin: 18px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .checklist li {
+        position: relative;
+        padding-left: 24px;
+        font-size: 0.9rem;
+      }
+
+      .checklist li::before {
+        position: absolute;
+        left: 0;
+        color: var(--green);
+        content: "✓";
+        font-weight: 900;
+      }
+
+      .operation-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+
+      .operation {
+        padding: 20px;
+      }
+
+      .operation .tag {
+        color: var(--green);
+        font-family: var(--mono);
+        font-size: 0.82rem;
+        font-weight: 800;
+      }
+
+      .operation h3 {
+        margin: 6px 0 10px;
+      }
+
+      .operation p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .operation .complexity {
+        display: inline-block;
+        margin-top: 14px;
+        border-radius: 8px;
+        padding: 5px 8px;
+        background: #eef0eb;
+        font-family: var(--mono);
+        font-size: 0.8rem;
+      }
+
+      .query-lab {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .query-controls,
+      .query-output {
+        padding: 22px;
+      }
+
+      .segmented {
+        display: grid;
+        gap: 8px;
+      }
+
+      .query-button {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        gap: 12px;
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: var(--surface);
+        color: var(--ink);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .query-button strong {
+        font-family: var(--mono);
+      }
+
+      .query-button span {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .query-button[aria-pressed="true"] {
+        border-color: var(--green);
+        background: var(--green-soft);
+      }
+
+      .query-output h3 {
+        margin-top: 0;
+      }
+
+      .query-result {
+        display: inline-block;
+        border-radius: 10px;
+        padding: 8px 12px;
+        background: var(--code);
+        color: #dff6e9;
+        font-family: var(--mono);
+        font-weight: 800;
+      }
+
+      .path {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        align-items: center;
+        margin-top: 16px;
+      }
+
+      .path span {
+        border-radius: 999px;
+        padding: 5px 9px;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-family: var(--mono);
+        font-size: 0.82rem;
+      }
+
+      .path i {
+        color: var(--muted);
+        font-style: normal;
+      }
+
+      .architecture {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(150px, 1fr));
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .module {
+        position: relative;
+        padding: 17px;
+      }
+
+      .module strong {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--green-dark);
+        font-family: var(--mono);
+        font-size: 0.86rem;
+      }
+
+      .module span {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .trace-example {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      pre {
+        margin: 0;
+        overflow-x: auto;
+        border-radius: 14px;
+        padding: 17px;
+        background: var(--code);
+        color: #e8efe9;
+        font-size: 0.83rem;
+        line-height: 1.55;
+      }
+
+      .code-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 750;
+      }
+
+      .validation-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+
+      .validation-card {
+        padding: 20px;
+      }
+
+      .validation-card b {
+        display: inline-grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border-radius: 9px;
+        background: var(--green-soft);
+        color: var(--green-dark);
+      }
+
+      .validation-card h3 {
+        margin: 13px 0 8px;
+      }
+
+      .validation-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.91rem;
+      }
+
+      .terminal {
+        margin-top: 18px;
+        border: 1px solid #2b3933;
+        border-radius: 15px;
+        overflow: hidden;
+        background: var(--code);
+      }
+
+      .terminal-head {
+        display: flex;
+        gap: 7px;
+        align-items: center;
+        padding: 10px 14px;
+        background: #25312c;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #d56e63;
+      }
+
+      .dot:nth-child(2) {
+        background: #e5b95c;
+      }
+
+      .dot:nth-child(3) {
+        background: #70b382;
+      }
+
+      .terminal pre {
+        border-radius: 0;
+      }
+
+      .footer {
+        border-top: 1px solid var(--line);
+        padding: 24px 0 38px;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      @media (max-width: 920px) {
+        .hero-grid,
+        .node-layout,
+        .demo-layout,
+        .query-lab {
+          grid-template-columns: 1fr;
+        }
+
+        .architecture {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .operation-grid,
+        .validation-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .shell {
+          width: min(100% - 20px, 1180px);
+        }
+
+        .hero {
+          padding-top: 28px;
+        }
+
+        .section-head {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .formula-grid,
+        .operation-grid,
+        .validation-grid,
+        .trace-example,
+        .architecture {
+          grid-template-columns: 1fr;
+        }
+
+        .field {
+          grid-template-columns: 112px 1fr;
+        }
+
+        .tree-stage {
+          min-height: auto;
+          padding: 10px;
+        }
+
+        .tree-stage svg {
+          min-height: 300px;
+        }
+
+        .query-button {
+          grid-template-columns: 1fr;
+          gap: 2px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="shell">
+        <p class="eyebrow">Árvore de busca balanceada · Grupo 5</p>
+        <h1>Da chave ao experimento, como a implementação funciona</h1>
+        <p class="lead">
+          Uma leitura visual do código real. A árvore combina balanceamento AVL,
+          ponteiros para o pai e três metadados por nó para responder buscas,
+          estatísticas de ordem e máximo em intervalo com eficiência.
+        </p>
+
+        <div class="hero-grid">
+          <article class="card hero-main">
+            <h2>A ideia em uma frase</h2>
+            <p>
+              Cada mutação altera poucos ponteiros, recalcula resumos locais e
+              sobe por <code>parent</code> até a raiz, corrigindo qualquer
+              desbalanceamento encontrado no caminho.
+            </p>
+          </article>
+          <ol class="card contract-list" aria-label="Resumo dos contratos">
+            <li>
+              <span class="number">1</span>
+              <span
+                ><strong>Conjunto</strong
+                ><span>chaves inteiras únicas</span></span
+              >
+            </li>
+            <li>
+              <span class="number">2</span>
+              <span><strong>AVL</strong><span>fator entre −1 e 1</span></span>
+            </li>
+            <li>
+              <span class="number">3</span>
+              <span
+                ><strong>Aumento</strong
+                ><span>altura, tamanho e máximo</span></span
+              >
+            </li>
+          </ol>
+        </div>
+      </div>
+    </header>
+
+    <nav aria-label="Seções da explicação">
+      <div class="shell nav-inner">
+        <a href="#no">O nó</a>
+        <a href="#rotacao">Rebalanceamento</a>
+        <a href="#operacoes">Operações</a>
+        <a href="#arquitetura">Arquitetura</a>
+        <a href="#validacao">Validação</a>
+        <a href="#executar">Executar</a>
+      </div>
+    </nav>
+
+    <main class="shell">
+      <section id="no">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">01 · representação</p>
+            <h2>Um nó resume sua subárvore</h2>
+          </div>
+          <p>
+            <code>Node</code> usa <code>@dataclass(slots=True, eq=False)</code>.
+            Isso reduz repetição na definição, evita um dicionário dinâmico por
+            instância e impede comparações recursivas acidentais entre pais e
+            filhos.
+          </p>
+        </div>
+
+        <div class="node-layout">
+          <article class="panel node-object">
+            <h3>Anatomia de <code>Node</code></h3>
+            <div class="object-box">
+              <div class="field">
+                <code>key: int</code><span>define a ordenação BST</span>
+              </div>
+              <div class="field">
+                <code>left</code><span>subárvore com chaves menores</span>
+              </div>
+              <div class="field">
+                <code>right</code><span>subárvore com chaves maiores</span>
+              </div>
+              <div class="field">
+                <code>parent</code><span>caminho ascendente até a raiz</span>
+              </div>
+              <div class="field">
+                <code>height</code><span>altura da subárvore</span>
+              </div>
+              <div class="field">
+                <code>size</code><span>quantidade total de nós</span>
+              </div>
+              <div class="field">
+                <code>subtree_max</code><span>maior chave abaixo deste nó</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel metadata">
+            <h3>O método <code>refresh()</code></h3>
+            <div class="formula-grid">
+              <div class="formula">
+                <strong>height</strong>
+                <code>1 + max(h(left), h(right))</code>
+                <span
+                  >Expõe o fator de balanceamento sem percorrer
+                  descendentes.</span
+                >
+              </div>
+              <div class="formula">
+                <strong>size</strong>
+                <code>1 + size(left) + size(right)</code>
+                <span
+                  >Permite implementar <code>rank</code> e
+                  <code>select</code>.</span
+                >
+              </div>
+              <div class="formula">
+                <strong>subtree_max</strong>
+                <code>max(key, max(left), max(right))</code>
+                <span>Permite podar regiões em <code>range_agg</code>.</span>
+              </div>
+            </div>
+            <div class="parent-note">
+              <strong>Por que manter <code>parent</code>?</strong> Depois de
+              inserir, remover ou rotacionar, a implementação volta à raiz sem
+              criar uma pilha externa de ancestrais. O custo adicional é manter
+              o vínculo ascendente sempre que um ponteiro de filho muda.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="rotacao">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">02 · transformação estrutural</p>
+            <h2>Inserir, atualizar, rotacionar</h2>
+          </div>
+          <p>
+            Use os controles para acompanhar a sequência ordenada
+            <code>10, 20, 30</code>. As linhas cinza representam filhos; as
+            linhas tracejadas mostram os ponteiros
+            <code>parent</code> relevantes.
+          </p>
+        </div>
+
+        <div class="demo-layout">
+          <article class="panel tree-stage">
+            <svg
+              id="rotation-svg"
+              viewBox="0 0 720 380"
+              role="img"
+              aria-labelledby="rotation-title rotation-desc"
+            >
+              <title id="rotation-title">Demonstração de rotação AVL</title>
+              <desc id="rotation-desc">
+                A sequência 10, 20 e 30 provoca uma rotação à esquerda e produz
+                20 como raiz.
+              </desc>
+              <defs>
+                <marker
+                  id="parentArrow"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#9b5d08"></path>
+                </marker>
+              </defs>
+              <g id="rotation-content"></g>
+            </svg>
+            <div class="tree-controls">
+              <span class="step-count" id="step-count" aria-live="polite"
+                >Passo 1 de 4</span
+              >
+              <div class="button-row">
+                <button class="button" id="previous-step" type="button">
+                  Anterior
+                </button>
+                <button class="button primary" id="next-step" type="button">
+                  Próximo
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <aside class="panel demo-explanation" aria-live="polite">
+            <span class="phase" id="step-phase">Inserção</span>
+            <h3 id="step-title">10 torna-se a raiz</h3>
+            <p id="step-text">
+              A árvore vazia recebe uma folha. O construtor inicia altura e
+              tamanho com 1, define o máximo como 10 e mantém parent igual a
+              None.
+            </p>
+            <ul class="checklist" id="step-checks"></ul>
+          </aside>
+        </div>
+      </section>
+
+      <section id="operacoes">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">03 · interface pública</p>
+            <h2>Seis operações, um modelo comum</h2>
+          </div>
+          <p>
+            A estrutura é um conjunto. Inserções duplicadas e remoções ausentes
+            retornam <code>False</code> sem modificar a árvore. As consultas
+            usam os metadados armazenados em vez de recontar subárvores.
+          </p>
+        </div>
+
+        <div class="operation-grid">
+          <article class="panel operation">
+            <span class="tag">insert(key)</span>
+            <h3>Inserção</h3>
+            <p>
+              Desce iterativamente, conecta uma folha com seu pai e rebalanceia
+              os ancestrais.
+            </p>
+            <span class="complexity">O(log n)</span>
+          </article>
+          <article class="panel operation">
+            <span class="tag">delete(key)</span>
+            <h3>Remoção</h3>
+            <p>
+              Reduz o caso de dois filhos ao sucessor e centraliza a reconexão
+              em <code>_replace_subtree</code>.
+            </p>
+            <span class="complexity">O(log n)</span>
+          </article>
+          <article class="panel operation">
+            <span class="tag">search(key)</span>
+            <h3>Busca</h3>
+            <p>
+              Escolhe esquerda ou direita a cada comparação e devolve apenas
+              presença ou ausência.
+            </p>
+            <span class="complexity">O(log n)</span>
+          </article>
+          <article class="panel operation">
+            <span class="tag">rank(key)</span>
+            <h3>Quantidade de menores</h3>
+            <p>
+              Soma uma subárvore esquerda inteira sempre que desce para a
+              direita.
+            </p>
+            <span class="complexity">O(log n)</span>
+          </article>
+          <article class="panel operation">
+            <span class="tag">select(index)</span>
+            <h3>Chave pela posição</h3>
+            <p>
+              Compara o índice com <code>left.size</code> e redefine a posição
+              ao descer à direita.
+            </p>
+            <span class="complexity">O(log n)</span>
+          </article>
+          <article class="panel operation">
+            <span class="tag">range_agg(a, b)</span>
+            <h3>Máximo no intervalo</h3>
+            <p>
+              Procura o maior candidato em <code>[a, b]</code> e usa
+              <code>subtree_max</code> para encerrar cedo.
+            </p>
+            <span class="complexity">O(log n)</span>
+          </article>
+        </div>
+
+        <div class="query-lab">
+          <article class="panel query-controls">
+            <p class="eyebrow">Laboratório de consultas</p>
+            <div
+              class="segmented"
+              role="group"
+              aria-label="Escolha uma consulta"
+            >
+              <button
+                class="query-button"
+                type="button"
+                data-query="rank"
+                aria-pressed="true"
+              >
+                <strong>rank(35)</strong
+                ><span>quantas chaves são menores que 35?</span>
+              </button>
+              <button
+                class="query-button"
+                type="button"
+                data-query="select"
+                aria-pressed="false"
+              >
+                <strong>select(4)</strong
+                ><span>qual chave ocupa o índice 4?</span>
+              </button>
+              <button
+                class="query-button"
+                type="button"
+                data-query="range"
+                aria-pressed="false"
+              >
+                <strong>range_agg(21, 59)</strong
+                ><span>qual é o máximo no intervalo?</span>
+              </button>
+            </div>
+          </article>
+          <article class="panel query-output">
+            <p class="eyebrow">Árvore: 10 · 20 · 30 · 40 · 50 · 60 · 70</p>
+            <h3 id="query-title">Somando regiões já conhecidas</h3>
+            <p id="query-text">
+              Ao passar por 40, a busca segue à esquerda. Em 20, conta o próprio
+              nó e toda a subárvore esquerda. Em 30, conta mais um.
+            </p>
+            <span class="query-result" id="query-result">resultado = 3</span>
+            <div
+              class="path"
+              id="query-path"
+              aria-label="Caminho da consulta"
+            ></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="arquitetura">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">04 · fluxo do projeto</p>
+            <h2>Do dataset ao CSV</h2>
+          </div>
+          <p>
+            Os módulos têm responsabilidades estreitas. O gerador define o
+            estado esperado; o executor avalia a AVL; o benchmark mede a AVL e a
+            referência baseada em lista ordenada sobre o mesmo rastro.
+          </p>
+        </div>
+
+        <div
+          class="architecture"
+          aria-label="Mapa dos módulos e artefatos do projeto"
+        >
+          <article class="panel module">
+            <strong>workload_generator.py</strong>
+            <span>amostra chaves, produz operações e calcula o oráculo</span>
+          </article>
+          <article class="panel module">
+            <strong>arquivo .trace</strong>
+            <span
+              >contém uma operação I, D ou S por linha e alimenta executor e
+              benchmark</span
+            >
+          </article>
+          <article class="panel module">
+            <strong>run_trace.py</strong>
+            <span
+              >executa a AVL como fluxo e grava somente respostas de busca</span
+            >
+          </article>
+          <article class="panel module">
+            <strong>arquivo .expected</strong>
+            <span
+              >é consultado pelo executor ou verificador para conferir cada
+              busca</span
+            >
+          </article>
+          <article class="panel module">
+            <strong>benchmark.py</strong>
+            <span>gera média, p50, p99, rotações, altura e tamanho</span>
+          </article>
+        </div>
+
+        <div class="trace-example">
+          <div>
+            <div class="code-label">
+              <span>g5-demo.trace</span><span>entrada</span>
+            </div>
+            <pre><code># mix=45:25:30 theta=0.99 seed=5
+I 10
+I 4
+S 10
+D 10
+S 10</code></pre>
+          </div>
+          <div>
+            <div class="code-label">
+              <span>g5-demo.expected</span><span>oráculo</span>
+            </div>
+            <pre><code>10 FOUND
+10 NOT_FOUND</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="validacao">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">05 · confiança</p>
+            <h2>A correção é verificada em camadas</h2>
+          </div>
+          <p>
+            Nenhuma única checagem precisa provar tudo. Invariantes internos,
+            comparação diferencial e execução contra o oráculo cobrem falhas
+            estruturais e comportamentais por caminhos independentes.
+          </p>
+        </div>
+
+        <div class="validation-grid">
+          <article class="panel validation-card">
+            <b>1</b>
+            <h3>Invariantes locais</h3>
+            <p>
+              <code>assert_valid()</code> recalcula ordenação, altura, tamanho,
+              máximo, balanceamento, pais e ausência de ciclos.
+            </p>
+          </article>
+          <article class="panel validation-card">
+            <b>2</b>
+            <h3>Referências independentes</h3>
+            <p>
+              Os testes comparam a AVL com <code>set</code>, lista ordenada e
+              bisseções da biblioteca padrão.
+            </p>
+          </article>
+          <article class="panel validation-card">
+            <b>3</b>
+            <h3>Contrato de integração</h3>
+            <p>
+              A CLI confere o candidato linha a linha contra o oráculo e retorna
+              código diferente de zero em qualquer divergência.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="executar">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">06 · reprodução</p>
+            <h2>Execute a demonstração</h2>
+          </div>
+          <p>
+            As opções públicas e as mensagens de terminal estão em Português do
+            Brasil. Apenas <code>FOUND</code> e
+            <code>NOT_FOUND</code> permanecem em inglês por exigência do
+            enunciado.
+          </p>
+        </div>
+
+        <div
+          class="terminal"
+          aria-label="Comandos para executar a demonstração"
+        >
+          <div class="terminal-head" aria-hidden="true">
+            <span class="dot"></span><span class="dot"></span
+            ><span class="dot"></span>
+          </div>
+          <pre><code>uv sync
+
+uv run python src/workload_generator.py gerar \
+  --sintetico 100 --operacoes 30 --universo 100 \
+  --mistura 45:25:30 --theta 0.99 \
+  --ordem-insercao ordenada --semente 5 --saida g5-demo
+
+uv run python src/run_trace.py g5-demo.trace \
+  --saida candidate.out --esperado g5-demo.expected \
+  --mostrar-passos --validar-a-cada 1
+
+uv run pytest</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="shell">
+        Explicação baseada em <code>src/augmented_avl.py</code>,
+        <code>src/run_trace.py</code>, <code>src/benchmark.py</code>,
+        <code>src/workload_generator.py</code> e nos testes do projeto.
+      </div>
+    </footer>
+
+    <script>
+      const rotationSteps = [
+        {
+          phase: "Inserção",
+          title: "10 torna-se a raiz",
+          text: "A árvore vazia recebe uma folha. O construtor inicia altura e tamanho com 1, define o máximo como 10 e mantém parent igual a None.",
+          checks: ["root.key = 10", "root.parent = None", "height = size = 1"],
+          nodes: [
+            {
+              key: 10,
+              x: 360,
+              y: 115,
+              meta: "h=1 · s=1 · max=10",
+              className: "new-root",
+            },
+          ],
+          edges: [],
+          parents: [],
+        },
+        {
+          phase: "Inserção",
+          title: "20 entra à direita",
+          text: "A comparação 20 > 10 encontra o primeiro espaço vazio. A folha aponta para 10 por parent; depois refresh atualiza o resumo da raiz.",
+          checks: ["10.right = 20", "20.parent = 10", "10: h=2 · s=2 · max=20"],
+          nodes: [
+            {
+              key: 10,
+              x: 300,
+              y: 90,
+              meta: "h=2 · s=2 · max=20",
+              className: "",
+            },
+            {
+              key: 20,
+              x: 470,
+              y: 245,
+              meta: "h=1 · s=1 · max=20",
+              className: "pivot",
+            },
+          ],
+          edges: [[300, 125, 455, 216]],
+          parents: [[455, 220, 315, 122]],
+        },
+        {
+          phase: "Detecção",
+          title: "30 expõe o desbalanceamento",
+          text: "Após conectar 30, o nó 10 recebe fator −2. O filho direito 20 tem fator −1, portanto este é o caso direita-direita e exige uma rotação simples à esquerda.",
+          checks: ["30.parent = 20", "balance(10) = −2", "pivot = 20"],
+          nodes: [
+            {
+              key: 10,
+              x: 220,
+              y: 70,
+              meta: "h=3 · s=3 · max=30",
+              className: "unbalanced",
+            },
+            {
+              key: 20,
+              x: 385,
+              y: 190,
+              meta: "h=2 · s=2 · max=30",
+              className: "pivot",
+            },
+            {
+              key: 30,
+              x: 550,
+              y: 310,
+              meta: "h=1 · s=1 · max=30",
+              className: "",
+            },
+          ],
+          edges: [
+            [235, 102, 370, 160],
+            [400, 222, 535, 280],
+          ],
+          parents: [
+            [370, 165, 240, 101],
+            [535, 285, 405, 221],
+          ],
+        },
+        {
+          phase: "Rotação",
+          title: "20 ocupa o topo local",
+          text: "_replace_subtree coloca o pivô na posição antiga de 10. Em seguida, 10 torna-se filho esquerdo, os parents são corrigidos e refresh executa primeiro em 10 e depois em 20.",
+          checks: [
+            "20.parent = None",
+            "10.parent = 20",
+            "30.parent = 20",
+            "todos os fatores estão entre −1 e 1",
+          ],
+          nodes: [
+            {
+              key: 20,
+              x: 360,
+              y: 75,
+              meta: "h=2 · s=3 · max=30",
+              className: "new-root",
+            },
+            {
+              key: 10,
+              x: 205,
+              y: 245,
+              meta: "h=1 · s=1 · max=10",
+              className: "",
+            },
+            {
+              key: 30,
+              x: 515,
+              y: 245,
+              meta: "h=1 · s=1 · max=30",
+              className: "",
+            },
+          ],
+          edges: [
+            [345, 110, 220, 214],
+            [375, 110, 500, 214],
+          ],
+          parents: [
+            [220, 216, 345, 112],
+            [500, 216, 375, 112],
+          ],
+        },
+      ];
+
+      const queryData = {
+        rank: {
+          title: "Somando regiões já conhecidas",
+          text: "Ao passar por 40, a busca segue à esquerda. Em 20, conta o próprio nó e toda a subárvore esquerda. Em 30, conta mais um.",
+          result: "resultado = 3",
+          path: ["40 → esquerda", "20 → soma 2", "30 → soma 1"],
+        },
+        select: {
+          title: "Reinterpretando o índice localmente",
+          text: "A raiz 40 possui três nós à esquerda. Como 4 é maior, descartamos esses três e a raiz. O novo índice é 0 na subárvore direita e conduz a 50.",
+          result: "resultado = 50",
+          path: ["40 · left_size=3", "índice 4 → 0", "50 · left_size=0"],
+        },
+        range: {
+          title: "Buscando o melhor candidato válido",
+          text: "40 pertence ao intervalo e vira candidato. A busca segue à direita; 60 excede o limite 59, então desce à esquerda e encontra 50.",
+          result: "resultado = 50",
+          path: ["40 · candidato", "60 > 59", "50 · novo máximo"],
+        },
+      };
+
+      let rotationIndex = 0;
+      const rotationContent = document.querySelector("#rotation-content");
+      const previousButton = document.querySelector("#previous-step");
+      const nextButton = document.querySelector("#next-step");
+
+      function svgElement(name, attributes = {}) {
+        const element = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          name,
+        );
+        Object.entries(attributes).forEach(([key, value]) =>
+          element.setAttribute(key, value),
+        );
+        return element;
+      }
+
+      function renderRotation() {
+        const step = rotationSteps[rotationIndex];
+        rotationContent.replaceChildren();
+
+        step.edges.forEach(([x1, y1, x2, y2]) => {
+          rotationContent.append(
+            svgElement("line", { x1, y1, x2, y2, class: "edge" }),
+          );
+        });
+
+        step.parents.forEach(([x1, y1, x2, y2]) => {
+          rotationContent.append(
+            svgElement("path", {
+              d: `M ${x1} ${y1} Q ${(x1 + x2) / 2 + 34} ${(y1 + y2) / 2} ${x2} ${y2}`,
+              class: "parent-edge",
+            }),
+          );
+        });
+
+        step.nodes.forEach((node) => {
+          const group = svgElement("g", {
+            class: `tree-node ${node.className}`.trim(),
+            transform: `translate(${node.x} ${node.y})`,
+          });
+          group.append(svgElement("circle", { r: 38 }));
+          const key = svgElement("text", { y: 8, class: "key" });
+          key.textContent = node.key;
+          group.append(key);
+          const metadata = svgElement("text", { y: 63, class: "meta" });
+          metadata.textContent = node.meta;
+          group.append(metadata);
+          rotationContent.append(group);
+        });
+
+        document.querySelector("#step-count").textContent =
+          `Passo ${rotationIndex + 1} de ${rotationSteps.length}`;
+        document.querySelector("#step-phase").textContent = step.phase;
+        document.querySelector("#step-title").textContent = step.title;
+        document.querySelector("#step-text").textContent = step.text;
+        const checks = document.querySelector("#step-checks");
+        checks.replaceChildren();
+        step.checks.forEach((check) => {
+          const item = document.createElement("li");
+          item.textContent = check;
+          checks.append(item);
+        });
+        previousButton.disabled = rotationIndex === 0;
+        nextButton.disabled = rotationIndex === rotationSteps.length - 1;
+      }
+
+      previousButton.addEventListener("click", () => {
+        rotationIndex = Math.max(0, rotationIndex - 1);
+        renderRotation();
+      });
+
+      nextButton.addEventListener("click", () => {
+        rotationIndex = Math.min(rotationSteps.length - 1, rotationIndex + 1);
+        renderRotation();
+      });
+
+      document.querySelectorAll(".query-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".query-button").forEach((candidate) => {
+            candidate.setAttribute(
+              "aria-pressed",
+              String(candidate === button),
+            );
+          });
+          const query = queryData[button.dataset.query];
+          document.querySelector("#query-title").textContent = query.title;
+          document.querySelector("#query-text").textContent = query.text;
+          document.querySelector("#query-result").textContent = query.result;
+          const path = document.querySelector("#query-path");
+          path.replaceChildren();
+          query.path.forEach((part, index) => {
+            if (index > 0) {
+              const arrow = document.createElement("i");
+              arrow.textContent = "→";
+              path.append(arrow);
+            }
+            const step = document.createElement("span");
+            step.textContent = part;
+            path.append(step);
+          });
+        });
+      });
+
+      function renderInitialQuery() {
+        const button = document.querySelector('[data-query="rank"]');
+        button.click();
+      }
+
+      renderRotation();
+      renderInitialQuery();
+    </script>
+  </body>
+</html>

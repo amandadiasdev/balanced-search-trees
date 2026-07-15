@@ -1,0 +1,1558 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Plano sistemático para implementar, validar, medir e defender a árvore AVL aumentada do grupo 5."
+    />
+    <title>Plano de implementação · Grupo 5</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f7f8f4;
+        --surface: #ffffff;
+        --ink: #19211d;
+        --muted: #5c6961;
+        --line: #d8ded9;
+        --green: #155f4a;
+        --green-soft: #e1f1e9;
+        --blue: #24499c;
+        --blue-soft: #e9eefc;
+        --amber: #8a5a10;
+        --amber-soft: #fff1d6;
+        --red: #9d3434;
+        --red-soft: #fbe9e7;
+        --code: #122019;
+        --radius: 14px;
+        --shadow: 0 8px 26px rgb(28 45 35 / 8%);
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        line-height: 1.65;
+      }
+
+      a {
+        color: var(--blue);
+      }
+
+      a:focus-visible,
+      button:focus-visible,
+      input:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid #f0b642;
+        outline-offset: 3px;
+      }
+
+      .shell {
+        width: min(1440px, calc(100% - 32px));
+        margin-inline: auto;
+      }
+
+      .hero {
+        padding: 46px 0 28px;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .eyebrow,
+      .section-kicker {
+        color: var(--green);
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+        gap: 34px;
+        align-items: end;
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.18;
+      }
+
+      h1 {
+        max-width: 900px;
+        margin: 10px 0 16px;
+        font-size: clamp(2.2rem, 5vw, 4.7rem);
+        letter-spacing: -0.045em;
+      }
+
+      h2 {
+        margin: 8px 0 14px;
+        font-size: clamp(1.7rem, 3vw, 2.55rem);
+        letter-spacing: -0.025em;
+      }
+
+      h3 {
+        margin: 0 0 10px;
+        font-size: 1.08rem;
+      }
+
+      p {
+        margin: 0 0 13px;
+      }
+
+      .lead {
+        max-width: 820px;
+        color: var(--muted);
+        font-size: 1.12rem;
+      }
+
+      .hero-note {
+        border-left: 4px solid var(--green);
+        padding: 18px 20px;
+        background: var(--green-soft);
+        border-radius: 0 var(--radius) var(--radius) 0;
+      }
+
+      .hero-note strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: 34px;
+        padding: 30px 0 70px;
+      }
+
+      nav {
+        position: sticky;
+        top: 16px;
+        align-self: start;
+        max-height: calc(100vh - 32px);
+        overflow: auto;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      nav strong {
+        display: block;
+        margin: 0 8px 9px;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      nav a {
+        display: block;
+        padding: 7px 9px;
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 0.88rem;
+        text-decoration: none;
+      }
+
+      nav a:hover,
+      nav a[aria-current="true"] {
+        background: var(--green-soft);
+        color: var(--green);
+      }
+
+      main {
+        min-width: 0;
+      }
+
+      section {
+        scroll-margin-top: 18px;
+        margin-bottom: 28px;
+        padding: clamp(22px, 4vw, 38px);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .spec-grid,
+      .grid-2,
+      .grid-3,
+      .contract-grid,
+      .risk-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .spec-grid {
+        grid-template-columns: repeat(6, minmax(120px, 1fr));
+        margin-top: 22px;
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .contract-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .risk-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-2 > *,
+      .grid-3 > *,
+      .contract-grid > *,
+      .risk-grid > *,
+      .architecture > * {
+        min-width: 0;
+      }
+
+      .spec,
+      .card,
+      .contract,
+      .risk,
+      .decision {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: #fbfcfa;
+      }
+
+      .spec {
+        padding: 13px;
+      }
+
+      .spec small {
+        display: block;
+        color: var(--muted);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .spec strong {
+        display: block;
+        margin: 2px 0;
+        color: var(--green);
+        font-size: 1.28rem;
+      }
+
+      .spec span {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .card,
+      .contract,
+      .risk,
+      .decision {
+        padding: 18px;
+      }
+
+      .contract code {
+        color: var(--blue);
+        font-size: 1rem;
+        font-weight: 800;
+      }
+
+      .contract .return {
+        display: inline-block;
+        margin: 8px 0;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .callout {
+        margin: 18px 0;
+        padding: 15px 17px;
+        border-left: 4px solid var(--blue);
+        border-radius: 0 10px 10px 0;
+        background: var(--blue-soft);
+      }
+
+      .callout.warning {
+        border-color: var(--amber);
+        background: var(--amber-soft);
+      }
+
+      .callout.danger {
+        border-color: var(--red);
+        background: var(--red-soft);
+      }
+
+      code {
+        padding: 0.12em 0.34em;
+        border: 1px solid #dce2dd;
+        border-radius: 5px;
+        background: #f0f3f0;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 0.91em;
+      }
+
+      pre {
+        overflow: auto;
+        margin: 14px 0;
+        padding: 17px;
+        border-radius: 11px;
+        background: var(--code);
+        color: #e7f5ec;
+        line-height: 1.52;
+      }
+
+      pre code {
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+      }
+
+      table {
+        width: 100%;
+        margin: 16px 0;
+        border-collapse: collapse;
+        font-size: 0.91rem;
+      }
+
+      th,
+      td {
+        padding: 11px 10px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--green);
+        font-size: 0.74rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      ul,
+      ol {
+        padding-left: 1.3rem;
+      }
+
+      li + li {
+        margin-top: 6px;
+      }
+
+      .architecture {
+        display: grid;
+        grid-template-columns: 1fr 70px 1.25fr;
+        gap: 16px;
+        align-items: stretch;
+        margin: 22px 0;
+      }
+
+      .architecture .node {
+        padding: 20px;
+        border: 2px solid var(--green);
+        border-radius: var(--radius);
+        background: var(--green-soft);
+      }
+
+      .architecture .tree {
+        border-color: var(--blue);
+        background: var(--blue-soft);
+      }
+
+      .architecture .arrow {
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        font-size: 2rem;
+      }
+
+      .fields {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 12px;
+      }
+
+      .fields code {
+        display: block;
+        background: rgb(255 255 255 / 65%);
+        text-align: center;
+      }
+
+      .parent-cycle {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .parent-cycle div {
+        padding: 12px 8px;
+        border-top: 3px solid var(--green);
+        background: #f4f7f4;
+        font-size: 0.82rem;
+        text-align: center;
+      }
+
+      .steps {
+        counter-reset: phase;
+        display: grid;
+        gap: 14px;
+      }
+
+      .step {
+        counter-increment: phase;
+        display: grid;
+        grid-template-columns: 46px minmax(0, 1fr);
+        gap: 14px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      .step::before {
+        content: counter(phase, decimal-leading-zero);
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--green);
+        color: white;
+        font-weight: 800;
+      }
+
+      .step h3 {
+        margin-top: 2px;
+      }
+
+      .done-when {
+        margin-top: 10px;
+        padding: 9px 11px;
+        border-radius: 8px;
+        background: var(--green-soft);
+        color: var(--green);
+        font-size: 0.84rem;
+      }
+
+      details {
+        border-top: 1px solid var(--line);
+        padding: 13px 0;
+      }
+
+      summary {
+        cursor: pointer;
+        font-weight: 750;
+      }
+
+      .checklist {
+        display: grid;
+        gap: 9px;
+      }
+
+      .check-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 11px 12px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fbfcfa;
+      }
+
+      .check-item input {
+        width: 1.1rem;
+        height: 1.1rem;
+        margin-top: 0.22rem;
+        accent-color: var(--green);
+      }
+
+      .progress {
+        display: flex;
+        justify-content: space-between;
+        margin: 8px 0 13px;
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .progress-track {
+        height: 7px;
+        margin-bottom: 17px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #e6eae7;
+      }
+
+      .progress-track span {
+        display: block;
+        width: 0;
+        height: 100%;
+        background: var(--green);
+        transition: width 180ms ease;
+      }
+
+      .sources {
+        color: var(--muted);
+        font-size: 0.87rem;
+      }
+
+      footer {
+        padding: 24px 0 40px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      @media (max-width: 1120px) {
+        .spec-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        nav {
+          position: static;
+          display: flex;
+          width: 100%;
+          min-width: 0;
+          max-height: none;
+          gap: 4px;
+          overflow-x: auto;
+        }
+
+        nav strong {
+          display: none;
+        }
+
+        nav a {
+          flex: 0 0 auto;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .shell {
+          width: min(100% - 20px, 1440px);
+        }
+
+        .hero {
+          padding-top: 30px;
+        }
+
+        .hero-grid,
+        .grid-2,
+        .grid-3,
+        .contract-grid,
+        .risk-grid,
+        .architecture {
+          grid-template-columns: 1fr;
+        }
+
+        .architecture .arrow {
+          transform: rotate(90deg);
+        }
+
+        .spec-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .parent-cycle {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        section {
+          padding: 20px 16px;
+        }
+
+        table {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+
+        nav,
+        .progress,
+        .progress-track {
+          display: none;
+        }
+
+        .layout {
+          display: block;
+        }
+
+        section {
+          break-inside: avoid;
+          box-shadow: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <div class="eyebrow">Estruturas de Dados · Grupo 5</div>
+          <h1>
+            Uma AVL aumentada que o grupo consegue implementar, medir e
+            defender.
+          </h1>
+          <p class="lead">
+            Plano sistemático para transformar o trace do SOSD em uma
+            implementação Python correta, enxuta e explicável. A estratégia
+            central combina uma AVL, metadados locais e ponteiros para o pai.
+          </p>
+        </div>
+        <aside class="hero-note">
+          <strong>Decisão incorporada</strong>
+          Cada nó terá um atributo <code>parent</code>. Inserções, remoções e
+          rotações manterão o vínculo nos dois sentidos. O rebalanceamento usará
+          esse ponteiro para voltar iterativamente à raiz.
+        </aside>
+      </div>
+      <div class="shell spec-grid" aria-label="Configuração fixa do grupo 5">
+        <div class="spec">
+          <small>dataset</small><strong>amzn</strong
+          ><span>books_200M_uint32</span>
+        </div>
+        <div class="spec">
+          <small>theta</small><strong>0.99</strong
+          ><span>acessos concentrados</span>
+        </div>
+        <div class="spec">
+          <small>mix I:D:S</small><strong>45:25:30</strong
+          ><span>mistura nominal</span>
+        </div>
+        <div class="spec">
+          <small>range_agg</small><strong>máximo</strong
+          ><span>intervalo [a, b]</span>
+        </div>
+        <div class="spec">
+          <small>ordem</small><strong>ordenada</strong
+          ><span>caso patológico</span>
+        </div>
+        <div class="spec">
+          <small>seed</small><strong>5</strong><span>reprodutibilidade</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="shell layout">
+      <nav aria-label="Seções do plano">
+        <strong>Navegação</strong>
+        <a href="#alvo">01 · Alvo</a>
+        <a href="#evidencias">02 · Evidências</a>
+        <a href="#arquitetura">03 · Arquitetura</a>
+        <a href="#contratos">04 · Contratos</a>
+        <a href="#algoritmos">05 · Algoritmos</a>
+        <a href="#arquivos">06 · Arquivos</a>
+        <a href="#trace">07 · Trace</a>
+        <a href="#testes">08 · Testes</a>
+        <a href="#benchmark">09 · Benchmark</a>
+        <a href="#fases">10 · Fases</a>
+        <a href="#corretude">11 · Corretude</a>
+        <a href="#riscos">12 · Riscos</a>
+        <a href="#checklist">13 · Checklist</a>
+      </nav>
+
+      <main>
+        <section id="alvo">
+          <div class="section-kicker">01 · definição de pronto</div>
+          <h2>O trabalho termina com evidência, não apenas com código.</h2>
+          <div class="grid-2">
+            <div class="card">
+              <h3>Corretude estrutural</h3>
+              <ul>
+                <li>Seis operações obedecem a contratos explícitos.</li>
+                <li>BST, AVL, pais e metadados permanecem válidos.</li>
+                <li>
+                  O driver passa no oráculo e confere a quantidade de respostas.
+                </li>
+                <li>Consultas aumentadas têm testes independentes.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Evidência empírica e defesa</h3>
+              <ul>
+                <li>Benchmark registra média, p50, p99 e ambiente.</li>
+                <li>Experimentos variam escala, theta, ordem e baseline.</li>
+                <li>Cada gráfico deriva de dados reais preservados.</li>
+                <li>O grupo explica rotações, curvas e decisões.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="evidencias">
+          <div class="section-kicker">02 · leitura dos artefatos</div>
+          <h2>Quatro fatos locais condicionam o plano.</h2>
+          <div class="grid-2">
+            <div class="decision">
+              <h3>O nome real do gerador</h3>
+              <p>
+                O PDF usa <code>gen_workload.py</code>. O arquivo presente é
+                <code>workload_generator.py</code>. Todos os novos comandos
+                usarão o nome real. O arquivo fornecido não será duplicado.
+              </p>
+            </div>
+            <div class="decision">
+              <h3>O limite do oráculo</h3>
+              <p>
+                O verificador usa <code>zip</code>. Além do resultado
+                <code>[OK]</code>, precisamos comparar a contagem de linhas de
+                <code>candidate.out</code> e <code>.expected</code>.
+              </p>
+            </div>
+            <div class="decision">
+              <h3>O que o trace não testa</h3>
+              <p>
+                O trace contém somente I, D e S. <code>rank</code>,
+                <code>select</code>, <code>range_agg</code> e os metadados
+                exigem testes diferenciais próprios.
+              </p>
+            </div>
+            <div class="decision">
+              <h3>A mistura pode mudar</h3>
+              <p>
+                Quando as chaves inseríveis acabam, o gerador converte
+                tentativas de inserção em busca. O relatório deve registrar
+                contagens efetivas, não apenas a mistura nominal.
+              </p>
+            </div>
+          </div>
+          <div class="callout warning">
+            <strong>Recorte oficial.</strong> Dataset, theta, mix, máximo, ordem
+            e seed permanecem fixos nas comparações do grupo 5. Execuções
+            exploratórias diferentes devem ser identificadas.
+          </div>
+        </section>
+
+        <section id="arquitetura">
+          <div class="section-kicker">03 · desenho mínimo</div>
+          <h2>Duas classes concentram o domínio.</h2>
+          <p class="lead">
+            A AVL é determinística, mantém altura forte e expõe rotações fáceis
+            de explicar. Não precisamos de fábricas, classes abstratas ou uma
+            infraestrutura genérica de agregação.
+          </p>
+          <div
+            class="architecture"
+            role="img"
+            aria-label="Node pertence a AugmentedAVLTree e mantém referência ao pai"
+          >
+            <div class="node">
+              <h3>Node</h3>
+              <p><code>@dataclass(slots=True, eq=False)</code></p>
+              <div class="fields">
+                <code>key</code><code>parent</code><code>left</code
+                ><code>right</code><code>height</code><code>size</code
+                ><code>subtree_max</code>
+              </div>
+            </div>
+            <div class="arrow" aria-hidden="true">↔</div>
+            <div class="node tree">
+              <h3>AugmentedAVLTree</h3>
+              <p>É dona de <code>root</code> e <code>rotation_count</code>.</p>
+              <div class="fields">
+                <code>insert</code><code>delete</code><code>search</code
+                ><code>rank</code><code>select</code><code>range_agg</code
+                ><code>assert_valid</code>
+              </div>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <h3><code>parent</code> é um invariante</h3>
+              <ul>
+                <li><code>root.parent is None</code>.</li>
+                <li>Todo filho aponta de volta para o nó.</li>
+                <li>Nenhum ciclo ou nó repetido é permitido.</li>
+                <li>
+                  Rotações atualizam a raiz e os dois sentidos da ligação.
+                </li>
+              </ul>
+              <div
+                class="parent-cycle"
+                aria-label="Ciclo de atualização por parent"
+              >
+                <div>mudar ligação</div>
+                <div>ajustar parent</div>
+                <div>refresh</div>
+                <div>subir ao ancestral</div>
+              </div>
+            </div>
+            <div class="card">
+              <h3>Um único ponto para metadados</h3>
+              <pre><code>height = 1 + max(height(left), height(right))
+size = 1 + size(left) + size(right)
+subtree_max = max(key, max(left), max(right))</code></pre>
+              <p>
+                <code>Node.refresh()</code> será o único lugar que calcula os
+                três valores. Em uma rotação, o nó que desce é atualizado antes
+                do pivô.
+              </p>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>Simplificação específica do grupo.</strong> Como o agregado
+            é o máximo da própria chave, <code>range_agg(a, b)</code> equivale a
+            procurar o predecessor de <code>b</code> e verificar se ele alcança
+            <code>a</code>. A consulta usa um caminho <code>O(log n)</code>.
+            <code>subtree_max</code> continua obrigatório, atualizado e testado.
+          </div>
+        </section>
+
+        <section id="contratos">
+          <div class="section-kicker">04 · superfície pública</div>
+          <h2>Casos ambíguos são decididos antes do código.</h2>
+          <div class="contract-grid">
+            <div class="contract">
+              <code>insert(k)</code><br /><span class="return">bool</span>
+              <p>
+                Retorna <code>True</code> se inserir. Duplicata retorna
+                <code>False</code> sem alterar a árvore.
+              </p>
+            </div>
+            <div class="contract">
+              <code>delete(k)</code><br /><span class="return">bool</span>
+              <p>
+                Retorna <code>True</code> se remover. Chave ausente retorna
+                <code>False</code>.
+              </p>
+            </div>
+            <div class="contract">
+              <code>search(k)</code><br /><span class="return">bool</span>
+              <p>Árvore vazia ou chave ausente produz <code>False</code>.</p>
+            </div>
+            <div class="contract">
+              <code>rank(k)</code><br /><span class="return">int</span>
+              <p>
+                Conta chaves estritamente menores, mesmo quando
+                <code>k</code> não existe.
+              </p>
+            </div>
+            <div class="contract">
+              <code>select(i)</code><br /><span class="return">int</span>
+              <p>
+                Índice baseado em zero. Fora de faixa levanta
+                <code>IndexError</code>.
+              </p>
+            </div>
+            <div class="contract">
+              <code>range_agg(a, b)</code><br /><span class="return"
+                >int | None</span
+              >
+              <p>
+                Intervalo fechado. Vazio retorna <code>None</code>.
+                <code>a &gt; b</code> levanta <code>ValueError</code>.
+              </p>
+            </div>
+          </div>
+          <p class="sources">
+            Também ofereceremos <code>len(tree)</code> e
+            <code>assert_valid()</code>. O segundo é um instrumento de teste e
+            não participa da região cronometrada.
+          </p>
+        </section>
+
+        <section id="algoritmos">
+          <div class="section-kicker">05 · ordem da implementação</div>
+          <h2>Construir em fatias pequenas e verificáveis.</h2>
+          <div class="steps">
+            <article class="step">
+              <div>
+                <h3>Nó e <code>refresh()</code></h3>
+                <p>
+                  Criar estado inicial, ligação de pai e recálculo local dos
+                  três metadados.
+                </p>
+                <div class="done-when">
+                  Avançar quando uma folha e um nó com dois filhos recalcularem
+                  corretamente.
+                </div>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Busca e tamanho</h3>
+                <p>
+                  Implementar caminho iterativo sem mutação e
+                  <code>len(tree)</code>.
+                </p>
+                <div class="done-when">
+                  Avançar quando raiz, folha, ausente e árvore vazia passarem.
+                </div>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Rotações com <code>parent</code></h3>
+                <p>
+                  Criar <code>replace_subtree</code>. Ligar pivô ao antigo pai,
+                  mover a subárvore intermediária, ajustar pais, atualizar nó
+                  que desceu e depois pivô.
+                </p>
+                <div class="done-when">
+                  Avançar quando LL, RR, LR e RL preservarem ordem, pais e
+                  metadados.
+                </div>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Inserção iterativa</h3>
+                <p>
+                  Localizar posição, ligar o novo nó ao pai e rebalancear
+                  subindo pelos ancestrais.
+                </p>
+                <div class="done-when">
+                  Avançar quando 10 mil inserções ordenadas passarem sem
+                  recursão e com AVL válida.
+                </div>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Remoção completa</h3>
+                <p>
+                  Tratar folha, um filho e dois filhos. No último caso, copiar a
+                  chave do sucessor e remover o sucessor físico. Rebalancear a
+                  partir do pai afetado.
+                </p>
+                <div class="done-when">
+                  Avançar quando folha, um filho, dois filhos, raiz e ausente
+                  passarem.
+                </div>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>
+                  <code>rank</code>, <code>select</code> e
+                  <code>range_agg</code>
+                </h3>
+                <p>
+                  Usar <code>size</code> para saltos de ordem e a busca de
+                  predecessor para o máximo do intervalo.
+                </p>
+                <div class="done-when">
+                  Avançar quando consultas coincidirem com uma lista ordenada
+                  independente.
+                </div>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Validador estrutural</h3>
+                <p>
+                  Verificar ciclos, ordem, pais, altura, fator AVL, tamanho,
+                  máximo e tamanho global.
+                </p>
+                <div class="done-when">
+                  Pronto quando o teste diferencial validar cada estado mutável.
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="arquivos">
+          <div class="section-kicker">06 · organização</div>
+          <h2>Poucos arquivos, fronteiras claras.</h2>
+          <pre><code>balanced_search_tree/
+├── src/
+│   ├── augmented_avl.py      # Node + AugmentedAVLTree
+│   ├── run_trace.py          # rastro → candidate.out
+│   ├── benchmark.py          # medição + SortedListSet
+│   ├── helper_functions.py   # bisseções + parser em PT-BR
+│   └── workload_generator.py # gerador e verificador
+├── pyproject.toml            # Python 3.12, NumPy, pytest, Ruff, mypy
+├── tests/
+│   ├── test_augmented_avl.py
+│   ├── test_benchmark.py
+│   ├── test_run_trace.py
+│   └── test_workload_generator.py
+├── results/                  # saídas geradas
+└── docs/
+    ├── plano-implementacao-grupo-5.md
+    └── plano-implementacao-grupo-5.html</code></pre>
+          <p>
+            Não criaremos pacote, subpacotes, interfaces ou utilitários
+            antecipadamente. Cada arquivo existe porque separa estrutura,
+            execução ou medição.
+          </p>
+        </section>
+
+        <section id="trace">
+          <div class="section-kicker">07 · integração real</div>
+          <h2>Processar como fluxo e conferir duas vezes.</h2>
+          <div class="grid-2">
+            <div class="card">
+              <h3>Contrato de <code>run_trace.py</code></h3>
+              <ol>
+                <li>Ignorar comentários e linhas vazias.</li>
+                <li>Converter a chave para <code>int</code>.</li>
+                <li>Executar I, D ou S.</li>
+                <li>Escrever somente buscas.</li>
+                <li>Contar operações efetivas.</li>
+                <li>Rejeitar código desconhecido com número de linha.</li>
+              </ol>
+              <p>O trace e a saída nunca serão carregados por inteiro.</p>
+            </div>
+            <div class="card">
+              <h3>Smoke test do grupo 5</h3>
+              <pre><code>python src/workload_generator.py gerar \
+  --sintetico 10000 --operacoes 50000 \
+  --universo 10000 --mistura 45:25:30 \
+  --theta 0.99 --ordem-insercao ordenada \
+  --semente 5 --saida g5-smoke
+
+python src/run_trace.py g5-smoke.trace \
+  --saida candidate.out
+
+python src/workload_generator.py verificar \
+  --esperado g5-smoke.expected \
+  --candidato candidate.out</code></pre>
+            </div>
+          </div>
+          <div class="callout danger">
+            <strong>Condição adicional.</strong> Depois de
+            <code>verificar</code>, comparar a quantidade de linhas dos dois
+            arquivos. O resultado <code>[OK]</code> sozinho não protege contra
+            toda truncagem.
+          </div>
+        </section>
+
+        <section id="testes">
+          <div class="section-kicker">08 · contrato durável</div>
+          <h2>O oráculo é necessário, mas não suficiente.</h2>
+          <div class="grid-3">
+            <div class="card">
+              <h3>Determinísticos</h3>
+              <ul>
+                <li>Quatro rotações.</li>
+                <li>Todos os casos de remoção.</li>
+                <li>Duplicata e ausente.</li>
+                <li>Fronteiras de rank, select e intervalo.</li>
+                <li>Pais após cada mutação.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Diferencial</h3>
+              <p>
+                Com <code>random.Random(5)</code>, comparar cada estado com um
+                <code>set</code> e sua lista ordenada. Conferir tamanho,
+                percurso, buscas, rank, select e intervalos.
+              </p>
+            </div>
+            <div class="card">
+              <h3>Integração</h3>
+              <p>
+                Gerar trace sintético real, executar o CLI real, chamar o
+                verificador real e conferir a contagem de linhas. Nenhum mock do
+                gerador ou da árvore.
+              </p>
+            </div>
+          </div>
+          <pre><code>uv run pytest
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy</code></pre>
+        </section>
+
+        <section id="benchmark">
+          <div class="section-kicker">09 · estudo empírico</div>
+          <h2>Medir a árvore sem esconder o pipeline.</h2>
+          <div class="grid-2">
+            <div class="card">
+              <h3>Instrumentação</h3>
+              <ul>
+                <li>
+                  <code>perf_counter_ns()</code> ao redor somente da operação.
+                </li>
+                <li>Tempo total de parede registrado separadamente.</li>
+                <li>
+                  Latências em <code>array('Q')</code>, com 8 bytes por amostra.
+                </li>
+                <li>Amostragem determinística somente se a memória exigir.</li>
+                <li>Nenhum <code>assert_valid()</code> na região medida.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Baseline pequena</h3>
+              <p>
+                <code>SortedListSet</code> ficará dentro de
+                <code>benchmark.py</code> e usará <code>list</code> mais
+                <code>bisect</code>. Busca é logarítmica, mas inserção e remoção
+                deslocam elementos e expõem o custo linear.
+              </p>
+            </div>
+          </div>
+          <h3>Campos mínimos do CSV</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Grupo</th>
+                <th>Campos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Identidade</td>
+                <td><code>run_id</code>, implementação, dataset, repetição</td>
+              </tr>
+              <tr>
+                <td>Carga</td>
+                <td>
+                  max_load, universe, ops solicitadas, I/D/S efetivas, theta,
+                  mix, ordem, seed
+                </td>
+              </tr>
+              <tr>
+                <td>Latência</td>
+                <td>operação, mean_ns, p50_ns, p99_ns, wall_time_ns</td>
+              </tr>
+              <tr>
+                <td>Estrutura</td>
+                <td>rotações, tamanho final, altura final</td>
+              </tr>
+              <tr>
+                <td>Ambiente</td>
+                <td>
+                  Python, plataforma, máquina, warm-up e política de amostragem
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <h3>Matriz obrigatória</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Estudo</th>
+                <th>Variação</th>
+                <th>Manter fixo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Escala</td>
+                <td>Quatro ordens de grandeza viáveis</td>
+                <td>Configuração do grupo 5</td>
+              </tr>
+              <tr>
+                <td>Enviesamento</td>
+                <td>theta 0.0, 0.6, 0.99 e 1.2</td>
+                <td>amzn, mistura, ordem ordenada e semente 5</td>
+              </tr>
+              <tr>
+                <td>Ordem</td>
+                <td>ordenada e embaralhada</td>
+                <td>amzn, mix, theta e seed 5</td>
+              </tr>
+              <tr>
+                <td>Baseline</td>
+                <td>AVL e lista ordenada</td>
+                <td>O mesmo trace</td>
+              </tr>
+              <tr>
+                <td>Teoria</td>
+                <td>Tamanho</td>
+                <td>Mesma máquina e metodologia</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout warning">
+            Começar o estudo de escala com <code>ops = universe</code>. O
+            comando de 50 milhões de operações pode esgotar as chaves inseríveis
+            e alterar a mistura efetiva. Registrar sempre I, D e S observadas.
+          </div>
+        </section>
+
+        <section id="fases">
+          <div class="section-kicker">10 · execução</div>
+          <h2>Seis marcos com saída verificável.</h2>
+          <div class="steps">
+            <article class="step">
+              <div>
+                <h3>Preparar</h3>
+                <p>Pyproject, ignore, dependências e trace sintético.</p>
+                <div class="done-when">
+                  Saída: <code>.trace</code> e <code>.expected</code> com seed
+                  5.
+                </div>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Núcleo</h3>
+                <p>Node, parent, refresh, rotações, inserção e validador.</p>
+                <div class="done-when">
+                  Saída: quatro rotações e inserções ordenadas válidas.
+                </div>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Completar</h3>
+                <p>Remoção, rank, select, range_agg e diferencial.</p>
+                <div class="done-when">
+                  Saída: resultados iguais à referência independente.
+                </div>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Integrar</h3>
+                <p>Driver streaming, candidate e checagem dupla.</p>
+                <div class="done-when">
+                  Saída: <code>[OK]</code> e contagens iguais.
+                </div>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Medir</h3>
+                <p>Benchmark, baseline, CSV e piloto real.</p>
+                <div class="done-when">
+                  Saída: CSV reproduzível e sem falhas.
+                </div>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>Defender</h3>
+                <p>
+                  Gráficos, interpretação, justificativa, roteiro e prompts.
+                </p>
+                <div class="done-when">
+                  Saída: cada número aponta para uma execução preservada.
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="corretude">
+          <div class="section-kicker">11 · argumento para a defesa</div>
+          <h2>Quatro invariantes sustentam todas as operações.</h2>
+          <details open>
+            <summary>Ordenação da BST</summary>
+            <p>
+              Inserção e busca escolhem o lado pela comparação. A remoção usa o
+              sucessor. Rotações preservam a ordem porque apenas reorganizam
+              subárvores cujos intervalos já são compatíveis.
+            </p>
+          </details>
+          <details>
+            <summary>Balanceamento AVL</summary>
+            <p>
+              Apenas ancestrais do ponto alterado podem mudar de altura.
+              <code>parent</code> visita exatamente esse caminho. Cada ancestral
+              é atualizado e rotacionado quando o fator sai de [-1, 1].
+            </p>
+          </details>
+          <details>
+            <summary>Metadados</summary>
+            <p>
+              <code>refresh()</code> usa filhos já corretos. Em rotações, o nó
+              que desce é atualizado primeiro. A subida repete o argumento local
+              até a raiz.
+            </p>
+          </details>
+          <details>
+            <summary>Ponteiros parentais</summary>
+            <p>
+              Toda mudança de filho atualiza a referência inversa no mesmo
+              bloco. <code>replace_subtree</code> cobre o antigo pai ou a raiz.
+              A subárvore transferida e o nó que desce também recebem novos
+              pais.
+            </p>
+          </details>
+          <details>
+            <summary>Consultas aumentadas</summary>
+            <p>
+              Rank e select usam <code>size</code> para descartar blocos. Range
+              usa ordenação e máximo da subárvore. Com altura AVL, cada uma
+              visita um caminho logarítmico no caso específico do grupo 5.
+            </p>
+          </details>
+        </section>
+
+        <section id="riscos">
+          <div class="section-kicker">12 · prevenção</div>
+          <h2>Riscos conhecidos recebem controles simples.</h2>
+          <div class="risk-grid">
+            <div class="risk">
+              <h3>Parent obsoleto</h3>
+              <p>
+                <code>replace_subtree</code> e validador após cada mutação em
+                teste.
+              </p>
+            </div>
+            <div class="risk">
+              <h3>Metadado silenciosamente errado</h3>
+              <p><code>refresh()</code> único e testes das quatro rotações.</p>
+            </div>
+            <div class="risk">
+              <h3>Candidate truncado</h3>
+              <p>Oráculo mais comparação explícita da quantidade de linhas.</p>
+            </div>
+            <div class="risk">
+              <h3>Consulta aumentada sem prova</h3>
+              <p>Teste diferencial independente para rank, select e range.</p>
+            </div>
+            <div class="risk">
+              <h3>Medição contaminada</h3>
+              <p>
+                Cronometrar somente a operação e registrar tempo total à parte.
+              </p>
+            </div>
+            <div class="risk">
+              <h3>Memória das latências</h3>
+              <p>
+                <code>array('Q')</code> e amostragem declarada quando
+                necessária.
+              </p>
+            </div>
+            <div class="risk">
+              <h3>Mix nominal divergente</h3>
+              <p>
+                Contar operações efetivas e relatar esgotamento de inseríveis.
+              </p>
+            </div>
+            <div class="risk">
+              <h3>Otimização prematura</h3>
+              <p>Medir primeiro e mudar apenas gargalos demonstrados.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="checklist">
+          <div class="section-kicker">13 · controle de avanço</div>
+          <h2>Checklist operacional.</h2>
+          <div class="progress">
+            <span>Progresso salvo neste navegador</span
+            ><strong id="progress-count">0/15</strong>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <span id="progress-bar"></span>
+          </div>
+          <div class="checklist" id="plan-checklist">
+            <label class="check-item"
+              ><input type="checkbox" data-check="node" /><span
+                >Node usa slots, identidade e parent.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="links" /><span
+                >Raiz e todos os vínculos parentais são válidos.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="refresh" /><span
+                >Refresh é o único cálculo de metadados.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="rotations" /><span
+                >LL, RR, LR e RL passam.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="delete" /><span
+                >Todos os casos de remoção passam.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="queries" /><span
+                >As seis operações obedecem aos contratos.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="differential" /><span
+                >Teste diferencial com seed 5 passa.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="oracle" /><span
+                >Trace sintético passa no oráculo.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="lines" /><span
+                >Candidate e expected têm o mesmo número de linhas.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="lint" /><span
+                >Pytest, Ruff e mypy passam.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="scale" /><span
+                >Quatro ordens de grandeza foram medidas ou limitadas com
+                justificativa.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="theta" /><span
+                >Os quatro valores de theta foram comparados.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="order" /><span
+                >As ordens ordenada e embaralhada foram comparadas.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="baseline" /><span
+                >AVL e baseline usaram o mesmo trace.</span
+              ></label
+            >
+            <label class="check-item"
+              ><input type="checkbox" data-check="defense" /><span
+                >Cada gráfico e afirmação apontam para evidência
+                reproduzível.</span
+              ></label
+            >
+          </div>
+          <div class="callout">
+            <strong>Primeira sequência executável.</strong> Pyproject → folha →
+            refresh → rotações com parent → inserção ordenada → remoção →
+            consultas → diferencial → trace → benchmark → piloto real.
+          </div>
+        </section>
+
+        <p class="sources">
+          Fontes locais usadas neste plano:
+          <a href="project-instructions.pdf">project-instructions.pdf</a>,
+          <a href="carga-de-trabalho-grupo-5.html"
+            >carga-de-trabalho-grupo-5.html</a
+          >,
+          <a href="grupo-5-arvore-aumentada.html"
+            >grupo-5-arvore-aumentada.html</a
+          >,
+          <a href="operacoes-arvore-grupo-5.html"
+            >operacoes-arvore-grupo-5.html</a
+          >
+          e <a href="../src/workload_generator.py">workload_generator.py</a>. A
+          versão Markdown contém o detalhamento textual completo e permanece
+          adequada para revisão por diff.
+        </p>
+      </main>
+    </div>
+
+    <footer>
+      <div class="shell">
+        Plano do grupo 5 · AVL aumentada · Python 3.12 · artefato autocontido e
+        sem dependências externas.
+      </div>
+    </footer>
+
+    <script>
+      "use strict";
+
+      const storageKey = "balanced-search-tree-group-5-plan";
+      const checklist = [...document.querySelectorAll("[data-check]")];
+      const progressCount = document.querySelector("#progress-count");
+      const progressBar = document.querySelector("#progress-bar");
+
+      function loadChecks() {
+        let saved = {};
+        try {
+          saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+        } catch {
+          saved = {};
+        }
+        checklist.forEach((input) => {
+          input.checked = Boolean(saved[input.dataset.check]);
+        });
+      }
+
+      function updateProgress() {
+        const completed = checklist.filter((input) => input.checked).length;
+        progressCount.textContent = `${completed}/${checklist.length}`;
+        progressBar.style.width = `${(completed / checklist.length) * 100}%`;
+        const saved = Object.fromEntries(
+          checklist.map((input) => [input.dataset.check, input.checked]),
+        );
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(saved));
+        } catch {
+          /* Local persistence is optional. */
+        }
+      }
+
+      checklist.forEach((input) =>
+        input.addEventListener("change", updateProgress),
+      );
+      loadChecks();
+      updateProgress();
+
+      const links = [...document.querySelectorAll("nav a")];
+      const sections = links
+        .map((link) => document.querySelector(link.hash))
+        .filter(Boolean);
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort(
+              (left, right) => right.intersectionRatio - left.intersectionRatio,
+            )[0];
+          if (!visible) return;
+          links.forEach((link) => link.removeAttribute("aria-current"));
+          document
+            .querySelector(`nav a[href="#${visible.target.id}"]`)
+            ?.setAttribute("aria-current", "true");
+        },
+        { rootMargin: "-15% 0px -70%", threshold: [0.1, 0.5] },
+      );
+      sections.forEach((section) => observer.observe(section));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+[project]
+name = "balanced-search-tree"
+version = "0.1.0"
+description = "Augmented AVL tree for the Group 5 SOSD workload"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.11.0",
+    "numpy>=2.0",
+    "scipy>=1.18.0",
+    "tabulate>=0.10.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.14",
+    "pytest>=8.0",
+    "ruff>=0.9",
+    "types-tabulate>=0.10.0.20260508",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["SOSD", "src/workload_generator.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = [
+    "src/augmented_avl.py",
+    "src/helper_functions.py",
+    "src/run_trace.py",
+    "src/benchmark.py",
+    "src/run_experiments.py",
+    "src/plot_results.py",
+]
