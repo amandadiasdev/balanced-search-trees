@@ -13,5 +13,12 @@ report/report/*.blg
 report/report/*.fdb_latexmk
 report/report/*.fls
 report/report/*.log
+report/*.aux
+report/*.bbl
+report/*.blg
+report/*.fdb_latexmk
+report/*.fls
+report/*.log
+uv (Copy).lock
 
 conversation_logs/
