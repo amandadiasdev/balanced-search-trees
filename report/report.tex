@@ -58,7 +58,9 @@
 
 {Após cada mutação, \texttt{rebalance\_from} percorre os ancestrais. Ele recalcula o fator e aplica a rotação adequada quando a diferença de alturas sai de $[-1,1]$.}
 
-{Os testes exercitam LL, RR, LR e RL. Outro teste executa 1.000 mutações com semente 5, compara as consultas com referências independentes e chama \texttt{assert\_valid} após cada operação.}
+{Os testes exercitam os quatro casos de desbalanceamento: esquerda-esquerda (LL), direita-direita (RR), esquerda-direita (LR) e direita-esquerda (RL). LL e RR usam uma rotação simples; LR e RL usam uma rotação dupla.}
+
+{Outro teste executa 1.000 mutações com semente 5, compara as consultas com referências independentes e chama \texttt{assert\_valid} após cada operação.}
 
 {O \textit{baseline} usa bisseção sobre uma lista Python. Busca e localização da posição acabam sendo eficientes por se beneficiarem da estrutura da lista, mas inserções e remoções internas deslocam elementos subsequentes, o que requer mais operações. Por fim, inserções ordenadas são um caso favorável, pois ocorrem ao final da lista.}
 
