@@ -7,6 +7,8 @@
 \usepackage[brazil]{babel}
 \usepackage{xcolor}
 \usepackage{lipsum}
+\newcommand{\externallink}[2]{{\color{blue}\leavevmode
+\pdfstartlink attr{/Border[0 0 0]} user{/Subtype/Link/A<</S/URI/URI(#2)>>}#1\pdfendlink}}
 \sloppy
 \title{{Árvore AVL Aumentada sob Cargas SOSD}}
 \author{Amanda Souza (2510101045), Milena Silva (2510100191), Rafaela Nunes (2510101040)}
@@ -15,6 +17,13 @@
 }
 \begin{document} 
 \maketitle
+
+\begin{center}
+\textbf{Vídeo da apresentação}\\
+{\small\urlstyle{same}\color{blue}\leavevmode
+\pdfstartlink attr{/Border[0 0 0]} user{/Subtype/Link/A<</S/URI/URI(https://drive.google.com/file/d/1RuJahYzTP7xFd5BAIHLhYXINWvLnhIYy/view?usp=sharing)>>}
+\url{https://drive.google.com/file/d/1RuJahYzTP7xFd5BAIHLhYXINWvLnhIYy/view?usp=sharing}\pdfendlink}
+\end{center}
 
 \section{Introdução}\label{sec:introduction}
 
@@ -40,6 +49,16 @@
 {Cada nó mantém a chave, os dois filhos, o pai, a altura, o tamanho e o máximo da subárvore. O ponteiro \texttt{parent} permite subir até a raiz sem recursão ou pilha externa. Seu custo é uma referência por nó e a obrigação de atualizar os dois sentidos de cada ligação durante remoções e rotações. O método \texttt{refresh} recalcula altura, tamanho e máximo a partir dos filhos.}
 
 {Os invariantes são a ordenação estrita de BST, a correspondência entre filhos e pais, a raiz sem pai, o fator de balanceamento entre $-1$ e $1$ e a correção dos três metadados. Nas rotações, o nó que desce é atualizado antes do pivô que sobe. Essa ordem evita que o novo topo use metadados antigos. \texttt{rank} e \texttt{select} descartam subárvores completas pelo campo de tamanho. Como o agregado do grupo é a própria chave, \texttt{range\_agg} procura o predecessor do limite superior e verifica o limite inferior.}
+
+{Na rotação à esquerda, o pivô é o filho direito. A subárvore esquerda do pivô passa ao lado direito do nó rebaixado. Suas chaves estão entre as duas chaves locais, o que preserva a ordenação da BST.}
+
+{A rotação à direita aplica o argumento simétrico. \texttt{replace\_subtree} liga o pivô ao antigo pai ou à raiz. Cada ponteiro de filho alterado recebe o \texttt{parent} correspondente.}
+
+{O nó rebaixado é atualizado antes do pivô. Assim, altura, tamanho e máximo são calculados a partir de filhos já corretos. Casos duplos compõem duas rotações simples e preservam os mesmos invariantes.}
+
+{Após cada mutação, \texttt{rebalance\_from} percorre os ancestrais. Ele recalcula o fator e aplica a rotação adequada quando a diferença de alturas sai de $[-1,1]$.}
+
+{Os testes exercitam LL, RR, LR e RL. Outro teste executa 1.000 mutações com semente 5, compara as consultas com referências independentes e chama \texttt{assert\_valid} após cada operação.}
 
 {O \textit{baseline} usa bisseção sobre uma lista Python. Busca e localização da posição acabam sendo eficientes por se beneficiarem da estrutura da lista, mas inserções e remoções internas deslocam elementos subsequentes, o que requer mais operações. Por fim, inserções ordenadas são um caso favorável, pois ocorrem ao final da lista.}
 
@@ -78,32 +97,66 @@
 
 {O conjunto \texttt{books\_200M\_uint32} fornece chaves de 32 bits. O estudo de escala usa 1 mil, 10 mil, 100 mil e 1 milhão de operações, com universo e carga máxima iguais a cada escala. Mantivemos a mistura \texttt{45:25:30}, reserva de 10\%, 70\% de acertos em buscas, 5\% de remoções ausentes, semente 5 e $\theta=0{,}99$. As ordens \texttt{sorted} e \texttt{shuffle} e as duas implementações formam os pares comparados. O estudo de sensibilidade fixa 100 mil operações e varia $\theta$ em $\{0; 0{,}6; 0{,}99; 1{,}2\}$. Cada combinação possui cinco repetições, totalizando 140 execuções e 28,22 milhões de operações medidas.}
 
+{A matriz contém quatro escalas decimais, de $10^3$ a $10^6$ operações. Os extremos diferem por um fator de $10^3$. Nenhuma execução com $10^7$ operações foi realizada, por isso as conclusões ficam restritas à faixa medida.}
+
 {O cronômetro \texttt{perf\_counter\_ns} envolve somente a chamada da estrutura para cada operação. Para inserção, remoção e busca, registramos média, p50 e p99. O tempo total do rastro inclui leitura e despacho. Também registramos rotações, tamanho e altura finais. As razões dos gráficos são calculadas entre lista e AVL no mesmo rastro e repetição; a linha conecta a mediana das cinco razões. Os pontos esmaecidos mostram as repetições individuais.}
 
 {A reprodução usa \path{docs/estudo-empirico-grupo-5-relatorio.json} e os comandos documentados no \texttt{README.md}. O CSV preserva parâmetros, ambiente e identificadores. Rastros completos são reutilizados entre implementações, enquanto resultados parciais permitem retomada. O material preparado para publicação no repositório GitHub inclui código, \texttt{uv.lock}, configurações, instruções, resultados, gráficos e os registros de interação com inteligência artificial.}
 
 \subsection{{Resultados e Discussão}}\label{sec:experiments:results}
 
-{Na configuração principal do grupo, com 1 milhão de operações, inserções ordenadas e $\theta=0{,}99$, a lista reduziu o custo de inserção porque cada chave crescente foi acrescentada ao final. A lista também apresentou menor latência média de remoção, mas seu p99 nessa operação foi 1,81 vez o p99 da AVL. A AVL foi mais rápida nas buscas. A Tabela~\ref{tab:latencies} resume as medianas das cinco repetições.}
+{As Tabelas~\ref{tab:latencies:sorted} e~\ref{tab:latencies:shuffle} apresentam as medianas das cinco repetições. Cada célula usa somente execuções com $\theta=0{,}99$ e informa latência em $\mu$s.}
 
 \begin{table}[!ht]
 \centering
-\small
-\caption{{Medianas de latência com 1 milhão de operações ordenadas (em $\mu$s).}}
-\label{tab:latencies}
-\begin{tabular}{llrrr}
+\caption{{Latências por escala com inserções ordenadas (em $\mu$s).}}
+\label{tab:latencies:sorted}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llrrrrrrrrr}
 \hline
-{Estrutura} & {Operação} & {Média} & {p50} & {p99} \\
+{Escala} & {Estrutura} & \multicolumn{3}{c}{Inserção} & \multicolumn{3}{c}{Remoção} & \multicolumn{3}{c}{Busca} \\
+{} & {} & {Média} & {p50} & {p99} & {Média} & {p50} & {p99} & {Média} & {p50} & {p99} \\
 \hline
-{AVL} & {Inserção} & {19,764} & {18,299} & {31,010} \\
-{Lista} & {Inserção} & {5,152} & {5,168} & {6,775} \\
-{AVL} & {Remoção} & {16,954} & {17,041} & {30,451} \\
-{Lista} & {Remoção} & {12,633} & {6,774} & {55,175} \\
-{AVL} & {Busca} & {4,276} & {3,911} & {7,054} \\
-{Lista} & {Busca} & {5,860} & {5,727} & {8,242} \\
+$10^3$ & {AVL} & {9,809} & {9,987} & {21,860} & {7,621} & {7,613} & {17,879} & {2,540} & {2,444} & {3,352} \\
+$10^3$ & {Lista} & {2,725} & {2,863} & {3,772} & {2,908} & {2,864} & {3,841} & {2,786} & {2,863} & {3,772} \\
+$10^4$ & {AVL} & {12,750} & {12,782} & {24,095} & {9,816} & {10,057} & {20,115} & {2,803} & {2,863} & {3,423} \\
+$10^4$ & {Lista} & {3,567} & {3,702} & {4,400} & {3,807} & {3,841} & {5,168} & {3,597} & {3,771} & {4,680} \\
+$10^5$ & {AVL} & {15,888} & {15,644} & {27,657} & {12,821} & {13,200} & {24,585} & {3,288} & {3,283} & {4,819} \\
+$10^5$ & {Lista} & {4,360} & {4,330} & {5,727} & {5,263} & {4,819} & {9,429} & {4,534} & {4,400} & {6,216} \\
+$10^6$ & {AVL} & {19,764} & {18,299} & {31,010} & {16,954} & {17,041} & {30,451} & {4,276} & {3,911} & {7,054} \\
+$10^6$ & {Lista} & {5,152} & {5,168} & {6,775} & {12,633} & {6,774} & {55,175} & {5,860} & {5,727} & {8,242} \\
 \hline
 \end{tabular}
+}
 \end{table}
+
+\begin{table}[!ht]
+\centering
+\caption{{Latências por escala com inserções embaralhadas (em $\mu$s).}}
+\label{tab:latencies:shuffle}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llrrrrrrrrr}
+\hline
+{Escala} & {Estrutura} & \multicolumn{3}{c}{Inserção} & \multicolumn{3}{c}{Remoção} & \multicolumn{3}{c}{Busca} \\
+{} & {} & {Média} & {p50} & {p99} & {Média} & {p50} & {p99} & {Média} & {p50} & {p99} \\
+\hline
+$10^3$ & {AVL} & {8,981} & {8,590} & {14,318} & {7,622} & {7,613} & {11,873} & {2,522} & {2,375} & {3,352} \\
+$10^3$ & {Lista} & {2,891} & {2,864} & {3,841} & {2,974} & {2,864} & {3,841} & {2,847} & {2,863} & {3,423} \\
+$10^4$ & {AVL} & {11,710} & {11,035} & {22,280} & {9,872} & {9,987} & {19,975} & {2,816} & {2,863} & {3,771} \\
+$10^4$ & {Lista} & {3,930} & {3,841} & {5,657} & {3,915} & {3,841} & {5,308} & {3,637} & {3,771} & {4,889} \\
+$10^5$ & {AVL} & {14,922} & {14,178} & {26,680} & {12,739} & {12,990} & {24,305} & {3,304} & {3,283} & {4,400} \\
+$10^5$ & {Lista} & {6,471} & {6,076} & {12,362} & {5,609} & {5,308} & {9,079} & {4,494} & {4,400} & {5,727} \\
+$10^6$ & {AVL} & {20,956} & {18,997} & {33,454} & {17,033} & {17,251} & {30,800} & {4,437} & {4,330} & {7,054} \\
+$10^6$ & {Lista} & {26,137} & {21,093} & {77,246} & {18,919} & {14,806} & {55,734} & {6,103} & {6,146} & {8,870} \\
+\hline
+\end{tabular}
+}
+\end{table}
+\FloatBarrier
+
+{Na configuração principal, com 1 milhão de operações e inserções ordenadas, a lista apresentou menor média de inserção. Na remoção, sua média também foi menor, mas seu p99 foi 1,81 vez o p99 da AVL.}
+
+{A AVL apresentou menor latência de busca nessa configuração. A lista acrescenta chaves crescentes ao final, enquanto a AVL percorre ancestrais, atualiza metadados e pode executar rotações.}
 
 \begin{figure}[!ht]
 \centering
@@ -117,6 +170,22 @@
 
 {Sob \texttt{shuffle}, a razão do workload completo passou de 0,579 em 1 mil operações para 0,606 em 100 mil e 1,193 em 1 milhão. O ponto de cruzamento observado ficou entre 100 mil e 1 milhão de operações. Na maior escala, a AVL foi 1,19 vezes mais rápida. A razão de inserção chegou a 1,252, e o p99 foi 33,454~$\mu$s na AVL e 77,246~$\mu$s na lista, uma razão de 2,30. Inserções internas deslocam uma parcela crescente do vetor. A AVL terminou com altura 21 para 212.376 chaves no caso embaralhado. Sob \texttt{sorted}, a altura final foi 19 após 496.063 rotações.}
 
+{Na AVL, inserção, remoção e busca percorrem caminhos de $O(\log n)$. Sob \texttt{sorted}, o tamanho final passou de 259 para 212.648 chaves, e seu logaritmo na base 2 cresceu 2,21 vezes.}
+
+{No mesmo intervalo, as médias da AVL cresceram 2,02 vezes na inserção, 2,23 na remoção e 1,68 na busca. Sob \texttt{shuffle}, os fatores foram 2,33, 2,24 e 1,76, enquanto o logaritmo cresceu 2,26 vezes.}
+
+{Esses fatores são compatíveis com caminhos logarítmicos, mas não demonstram sozinhos o limite assintótico. Alocação, ponteiros, atualização dos metadados e rotações também compõem a latência da AVL.}
+
+{Na lista, busca e localização da posição usam bisseção em $O(\log n)$. Inserções internas e remoções deslocam elementos em $O(n)$. Sob \texttt{sorted}, a inserção ocorre no fim, mas ainda executa a bisseção.}
+
+{$O(n)$ significa que o trabalho pode crescer na mesma proporção que a quantidade de elementos. Se a lista dobrar, uma operação no início pode precisar deslocar aproximadamente o dobro de posições.}
+
+{A bisseção encontra a posição sem percorrer a lista inteira. Porém, depois dessa busca, inserir ou remover no meio ainda exige mover todos os elementos posteriores. Esse deslocamento domina o custo da operação.}
+
+{Sob \texttt{shuffle}, a média e o p99 da inserção da lista cresceram 9,04 e 20,11 vezes. O p99 da remoção cresceu 14,51 vezes. A média da busca cresceu 2,14 vezes.}
+
+{Os deslocamentos usam memória contígua e rotinas nativas, enquanto o tamanho varia durante o rastro. Por isso, o crescimento medido não precisa igualar o fator da escala, embora o custo linear continue explicando a tendência.}
+
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.68\linewidth]{../results/graficos/impacto-theta-remocao.pdf}
@@ -127,7 +196,33 @@
 
 {Na Figura~\ref{fig:theta}, a latência média de remoção da lista sob \texttt{sorted} caiu de 5,678 para 4,854~$\mu$s entre $\theta=0$ e $\theta=1{,}2$, uma redução de 15\%. A AVL permaneceu entre 12,821 e 12,999~$\mu$s. Com inserções embaralhadas, ambas variaram pouco: a AVL ficou entre 12,597 e 13,043~$\mu$s, e a lista entre 5,609 e 5,671~$\mu$s.}
 
-{O parâmetro $\theta$ atua sobre posições do conjunto vivo, e o gerador substitui uma chave removida pela última chave desse conjunto. Assim, uma posição quente não fica associada permanentemente ao mesmo valor. O resultado mede a interação entre concentração dos acessos, evolução do conjunto vivo e posição ordenada da chave. Como não foram coletados contadores de hardware, a contribuição da localidade de cache não foi isolada.}
+{Os rastros de cada ordem mantiveram as mesmas contagens de inserções e remoções entre os valores de $\theta$. A Tabela~\ref{tab:theta:rotations} compara as rotações simples executadas pela AVL.}
+
+\begin{table}[!ht]
+\centering
+\small
+\caption{{Rotações medianas da AVL em 100 mil operações.}}
+\label{tab:theta:rotations}
+\begin{tabular}{rrrrr}
+\hline
+{$\theta$} & \multicolumn{2}{c}{\texttt{sorted}} & \multicolumn{2}{c}{\texttt{shuffle}} \\
+{} & {Rotações} & {por 1.000 mutações} & {Rotações} & {por 1.000 mutações} \\
+\hline
+{0} & {49.970} & {713,1} & {38.346} & {546,6} \\
+{0,6} & {49.756} & {710,1} & {38.123} & {543,4} \\
+{0,99} & {49.613} & {708,0} & {35.541} & {506,6} \\
+{1,2} & {48.402} & {690,8} & {32.309} & {460,6} \\
+\hline
+\end{tabular}
+\end{table}
+
+{Entre $\theta=0$ e $\theta=1{,}2$, as rotações por mil mutações caíram 3,1\% sob \texttt{sorted} e 15,7\% sob \texttt{shuffle}. As alturas finais medianas permaneceram em 16 e 17, respectivamente.}
+
+{A associação mostra que a concentração alterou a atividade de rebalanceamento nesses rastros. Ela não demonstra que valores maiores de $\theta$ reduzam rotações em outras cargas.}
+
+{O parâmetro $\theta$ atua sobre posições do conjunto vivo. Após uma remoção, o gerador ocupa a posição com a última chave do conjunto. Assim, uma posição quente não permanece ligada ao mesmo valor.}
+
+{A repetição de posições pode favorecer reutilização de dados, mas a disposição dos nós Python e a troca de chaves dificultam atribuir a latência ao cache. Sem contadores de hardware, localidade permanece uma hipótese, não uma conclusão.}
 
 \section{Considerações Finais}\label{sec:conclusion}
 
@@ -137,12 +232,21 @@
 
 {Na maior escala, a lista foi 1,74 vezes mais rápida no workload ordenado, enquanto a AVL foi 1,19 vezes mais rápida no workload embaralhado. O p99 da inserção embaralhada da lista foi 2,30 vezes o p99 da AVL. A variação de $\theta$ reduziu em 15\% a latência média de remoção da lista com inserções ordenadas. A AVL variou pouco. No workload embaralhado, o ponto de cruzamento observado ficou entre 100 mil e 1 milhão de operações.}
 
-{Os resultados descrevem uma máquina e uma implementação específicas. A ausência de contadores de hardware impede separar efeitos de cache, e cinco repetições não capturam variações entre máquinas. Ainda assim, os quatro tamanhos mostram o ponto em que os deslocamentos da lista superam o custo de balanceamento. Uma replicação em outro processador permitiria avaliar a estabilidade desse ponto de cruzamento.}
+{Os resultados descrevem uma máquina, uma implementação e a faixa de $10^3$ a $10^6$ operações. Os quatro pontos observados localizam o cruzamento do workload embaralhado entre 100 mil e 1 milhão.}
+
+{Os extremos da faixa diferem por um fator de $10^3$, e nenhuma execução com $10^7$ operações foi realizada. Portanto, o estudo não sustenta extrapolações além de 1 milhão de operações.}
+
+{Cinco repetições não representam variações entre máquinas. Uma replicação em outro processador permitiria avaliar a estabilidade do cruzamento. Contadores de hardware permitiriam testar a hipótese de localidade de cache.}
 
 \subsection{Uso de Inteligência Artificial}\label{sec:conclusion:ai}
 
-{O grupo adotou transparência como critério para o uso de inteligência artificial. O material preparado para o repositório GitHub inclui logs das conversas, prompts, respostas e artefatos gerados, além do histórico necessário para relacionar essas interações ao código e à documentação. Essa prática permite distinguir as contribuições da equipe do apoio automatizado e fornece material para a arguição.}
+{O grupo adotou transparência como critério para o uso de inteligência artificial. As conversas estão disponíveis no GitHub\footnote{\externallink{Acessar os registros de conversas}{https://github.com/amandadiasdev/balanced-search-trees/tree/main/conversation-logs}}.}
 
-{O apoio foi realizado com OpenAI Codex v0.144.3 e os modelos GPT 5.6 Luna e GPT 5.6 Sol, ambos configurados com esforço alto. As ferramentas auxiliaram o planejamento, a implementação, os testes, a análise dos resultados e a redação. Os programas do projeto geraram os rastros, as medições e os gráficos; o grupo revisou os artefatos e permanece responsável pelas decisões e conclusões.}
+{A skill \texttt{decision-grill}, extensão local de \texttt{grill-with-docs}\footnote{\externallink{Acessar a skill grill-with-docs}{https://github.com/mattpocock/skills/blob/main/skills/engineering/grill-with-docs/SKILL.md}}, apoiou o registro das decisões iniciais. O fluxo Writing Assistant organizou as perguntas experimentais e revisou a clareza do texto.}
+
+{O apoio foi realizado com OpenAI Codex v0.144.3 e os modelos GPT 5.6 Luna e GPT 5.6 Sol, ambos configurados com esforço alto. As ferramentas auxiliaram o planejamento, a implementação, os testes, a análise e a redação.}
+
+{Os programas do projeto geraram rastros, medições e gráficos. O grupo conferiu os resultados nos dados, revisou os artefatos e permanece responsável pelas decisões e conclusões.}
+
 
 \end{document}
